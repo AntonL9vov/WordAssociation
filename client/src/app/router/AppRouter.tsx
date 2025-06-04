@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { routesConfig, RouteConfig } from "./config";
 import { MainLayout, AuthLayout } from "../layouts";
-const NotFoundPage = () => <div>404 - Page Not Found</div>;
 
 // Function to get the appropriate layout component
 const getLayout = (layoutName: string | undefined) => {
@@ -19,26 +18,15 @@ const getLayout = (layoutName: string | undefined) => {
 // Recursive function to render routes from configuration
 const renderRoutes = (routes: RouteConfig[]) => {
   return routes.map((route) => {
-    // Get the appropriate component based on the path
-    console.log(
-      route.path,
-      route.path.includes("*") ? NotFoundPage : route.element
-    );
-
-    const PageComponent = route.path.includes("*")
-      ? NotFoundPage
-      : route.element;
-
-    // Get the appropriate layout
+    const PageComponent = route.element;
     const LayoutComponent = route.meta?.layout
       ? getLayout(route.meta.layout)
       : ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
-    // Check if the route requires authentication
     const requiresAuth = route.meta?.auth;
+    const isAuthenticated = false; // TODO: Implement actual auth check
 
-    // Placeholder for authentication check
-    const isAuthenticated = false; // This will be replaced with actual auth check
+    const routeElement = <LayoutComponent>{PageComponent}</LayoutComponent>;
 
     return (
       <Route
@@ -48,13 +36,7 @@ const renderRoutes = (routes: RouteConfig[]) => {
           requiresAuth && !isAuthenticated ? (
             <Navigate to="/login" replace />
           ) : (
-            <LayoutComponent>
-              {typeof PageComponent === "function" ? (
-                <PageComponent />
-              ) : (
-                PageComponent
-              )}
-            </LayoutComponent>
+            routeElement
           )
         }
       >
