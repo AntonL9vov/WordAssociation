@@ -54,6 +54,8 @@ tsconfig.tsbuildinfo
 # Keep package-lock.json in git
 !package-lock.json
 !**/package-lock.json
+client/package-lock.json
+server/package-lock.json
 
 # Windows image file caches
 Thumbs.db
