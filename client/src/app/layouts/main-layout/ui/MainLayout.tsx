@@ -1,4 +1,6 @@
+import { MainHeader } from "@/widgets/main-header/ui/MainHeader";
 import { MainFooter } from "@widgets/main-footer";
+import "./style.css";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -6,8 +8,8 @@ interface MainLayoutProps {
 
 export const MainLayout = ({ children }: MainLayoutProps) => (
   <div className="main-layout">
-    <header>Game Header</header>
-    <main>{children}</main>
+    <MainHeader />
+    <main className="main-content">{children}</main>
     <MainFooter />
   </div>
 );
