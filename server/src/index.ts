@@ -3,6 +3,7 @@ import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
 import { GameService } from "./services/gameService";
+import { v4 as uuidv4 } from "uuid";
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -26,31 +27,43 @@ const gameService = GameService.getInstance();
 
 // Socket.IO connection handling
 io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+  console.log("connection event received");
+  let userId: string;
+
+  socket.on("user-connect", () => {
+    userId = uuidv4();
+    console.log("A user connected:", userId);
+    socket.emit("user-connected", userId);
+  });
 
   // Create game
-  socket.on("create-game", () => {
-    const gameId = gameService.createGame();
-    socket.join(gameId);
-    socket.emit("game-created", { gameId });
+  socket.on("create-game", ({ playerName }: { playerName: string }) => {
+    console.log("create-game event received");
+    const game = gameService.createGame(userId, playerName);
+    socket.join(game.id);
+    socket.emit("game-created", { game });
   });
 
   // Join game
-  socket.on("join-game", (gameId: string, playerName: string) => {
-    try {
-      const game = gameService.joinGame(gameId, socket.id, playerName);
-      socket.join(gameId);
-      socket.emit("game-joined", { gameId, game });
-      io.to(gameId).emit("player-joined", { playerId: socket.id, playerName });
-    } catch (error) {
-      socket.emit("error", { message: error });
+  socket.on(
+    "join-game",
+    ({ gameId, playerName }: { gameId: string; playerName: string }) => {
+      console.log("game-joined event received", gameId, playerName);
+      try {
+        const game = gameService.joinGame(gameId, userId, playerName);
+        socket.join(gameId);
+        socket.emit("game-joined", { game });
+        io.to(gameId).emit("player-joined", { playerId: userId, playerName });
+      } catch (error) {
+        socket.emit("error", { message: error });
+      }
     }
-  });
+  );
 
   // Submit word
   socket.on("submit-word", (gameId: string, word: string) => {
     try {
-      gameService.submitWord(gameId, socket.id, word);
+      gameService.submitWord(gameId, userId, word);
     } catch (error) {
       socket.emit("error", { message: error });
     }
@@ -63,15 +76,15 @@ io.on("connection", (socket) => {
 
   socket.on("leave-game-room", (gameId: string) => {
     socket.leave(gameId);
-    gameService.removePlayer(gameId, socket.id);
+    gameService.removePlayer(gameId, userId);
   });
 
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    console.log("User disconnected:", userId);
     // Remove player from all rooms
     Object.keys(io.sockets.adapter.rooms).forEach((room) => {
-      if (room !== socket.id) {
-        gameService.removePlayer(room, socket.id);
+      if (room !== userId) {
+        gameService.removePlayer(room, userId);
       }
     });
   });

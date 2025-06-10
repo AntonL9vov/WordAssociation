@@ -7,7 +7,6 @@ import {
   Player,
 } from "../types/game";
 
-
 export class GameService {
   private static instance: GameService;
   private games: Record<string, Game | undefined>;
@@ -22,7 +21,7 @@ export class GameService {
     return GameService.instance;
   }
 
-  createGame(): string {
+  createGame(playerId: string, playerName: string): Game {
     const gameId = Math.random().toString(36).substring(2);
     this.games[gameId] = {
       id: gameId,
@@ -33,7 +32,7 @@ export class GameService {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    return gameId;
+    return this.joinGame(gameId, playerId, playerName);
   }
 
   joinGame(gameId: string, playerId: string, playerName: string): Game {
@@ -186,5 +185,17 @@ export class GameService {
 
   deleteGame(gameId: string): void {
     this.games[gameId] = undefined;
+  }
+
+  getGames(): Record<string, Game | undefined> {
+    return this.games;
+  }
+
+  getPlayers(gameId: string): Player[] {
+    const game = this.games[gameId];
+    if (!game) {
+      return [];
+    }
+    return game.players;
   }
 }

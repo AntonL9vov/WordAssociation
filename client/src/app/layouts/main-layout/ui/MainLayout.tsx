@@ -1,5 +1,5 @@
-import { MainHeader } from "@/widgets/main-header/ui/MainHeader";
-import { MainFooter } from "@widgets/main-footer";
+import { MainHeader } from "@/widgets";
+import { MainFooter } from "@/widgets";
 import "./style.css";
 
 interface MainLayoutProps {

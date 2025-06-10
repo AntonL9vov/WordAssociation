@@ -1,14 +1,10 @@
-import { useEffect } from "react";
-import { TextField } from "@mui/material";
+import { EnterGame } from "@/widgets";
+import "./style.css";
 
 export const HomePage = () => {
-  useEffect(() => {
-    console.log("home page");
-  }, []);
-
   return (
     <div className="home-page">
-      <TextField label="Player Name" variant="outlined" />
+      <EnterGame />
     </div>
   );
 };
