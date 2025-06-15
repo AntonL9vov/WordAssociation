@@ -1,0 +1,28 @@
+.messenger-history {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #8f8f8f transparent;
+}
+
+/* WebKit-based browsers */
+.messenger-history::-webkit-scrollbar {
+    width: 8px;
+}
+
+.messenger-history::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.messanger-history::-webkit-scrollbar-thumb {
+    background-color: #8f8f8f;
+    border-radius: 4px;
+}
+
+.messanger-history::-webkit-scrollbar-thumb:hover {
+    background-color: #6d6d6d;
+}

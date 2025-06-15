@@ -5,3 +5,4 @@
 export { EnterGame } from "./enter-game";
 export { MainHeader } from "./main-header";
 export { MainFooter } from "./main-footer";
+export { GameMessenger } from "./game-messenger";
