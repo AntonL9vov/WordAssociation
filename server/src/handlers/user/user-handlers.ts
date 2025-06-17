@@ -1,14 +1,16 @@
 import { Socket } from "socket.io";
-import { UserService, UserHandler } from "../../types/users";
-import { emitConnectUser, emitGetUser } from "../../emitters/user";
+import { UserService, UserHandler, User } from "../../types/users";
+import {
+  emitConnectUser,
+  emitDeleteUser,
+  emitGetUser,
+  emitUpdateUser,
+} from "../../emitters/user";
 
 const userConnectHandler: UserHandler = {
   event: "user:connect",
   handler: (userService: UserService, socket: Socket, name: string) => {
-    console.log("user:connect event received");
-    console.log("A user connected:", socket.id);
     const user = userService.addUser(name);
-    console.log("User added:", user);
     emitConnectUser(socket, user);
   },
 };
@@ -21,4 +23,25 @@ const getUserHandler: UserHandler = {
   },
 };
 
-export const userHandlers: UserHandler[] = [userConnectHandler, getUserHandler];
+const updateUserHandler: UserHandler = {
+  event: "user:update",
+  handler: (userService: UserService, socket: Socket, user: User) => {
+    const updatedUser = userService.updateUser(user);
+    emitUpdateUser(socket, updatedUser);
+  },
+};
+
+const deleteUserHandler: UserHandler = {
+  event: "user:delete",
+  handler: (userService: UserService, socket: Socket, id: string) => {
+    userService.deleteUser(id);
+    emitDeleteUser(socket, id);
+  },
+};
+
+export const userHandlers: UserHandler[] = [
+  userConnectHandler,
+  getUserHandler,
+  updateUserHandler,
+  deleteUserHandler,
+];
