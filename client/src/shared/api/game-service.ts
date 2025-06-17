@@ -49,7 +49,6 @@ export class GameService {
   }
 
   createGame(playerName: string) {
-    console.log("createGame");
     this.socketService.emit("create-game", { playerName });
   }
 
