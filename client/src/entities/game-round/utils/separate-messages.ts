@@ -1,15 +1,12 @@
 import { RoundMessages } from "../types/round-message";
 
 export const separateMessages = (
-  messages: RoundMessages,
+  { messages }: RoundMessages,
   selfId: string = "1"
 ) => {
+  //TODO: Maybe rewrite to one iteration
   return {
-    selfMessages: Object.values(messages.messages).filter(
-      (message) => message.senderId === selfId
-    ),
-    opponentMessages: Object.values(messages.messages).filter(
-      (message) => message.senderId !== selfId
-    ),
+    selfMessages: messages.filter((message) => message.senderId === selfId),
+    opponentMessages: messages.filter((message) => message.senderId !== selfId),
   };
 };
