@@ -1,14 +1,4 @@
-export interface User {
-  id: string;
-  name: string;
-}
-
-export interface UsersStorage {
-  getUserById(id: string): User | undefined;
-  addUser(user: Omit<User, "id">): User;
-  updateUser(user: User): User;
-  deleteUser(id: string): void;
-}
+import type { User, UsersStorage } from "../types/users";
 
 export class UsersService {
   private usersStorage: UsersStorage;

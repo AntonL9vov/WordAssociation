@@ -1,10 +1,7 @@
-import {
-  User,
-  UsersStorage as UsersStorageInterface,
-} from "../services/usersService";
 import { v4 as uuidv4 } from "uuid";
+import { User, UsersStorage as IUsersStorage } from "../types/users";
 
-export class UsersStorage implements UsersStorageInterface {
+export class UsersStorage implements IUsersStorage {
   private users: User[] = [];
 
   getUserById(id: string): User | undefined {

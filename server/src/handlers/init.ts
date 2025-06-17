@@ -1,17 +1,13 @@
-import { Server } from "socket.io";
+import { InitConfig } from "../types/base";
 
-export type Handler = {
-  event: string;
-  handler: (...args: any[]) => void;
-};
-
-export const init = (io: Server, handlers: Handler[]) => {
+export const initHandlers = ({ io, handlers }: InitConfig) => {
   io.on("connection", (socket) => {
     console.log("connection event received");
-    console.log("A user connected:", socket.id);
 
     handlers.forEach((handler) => {
-      socket.on(handler.event, handler.handler);
+      socket.on(handler.event, (...args: unknown[]) =>
+        handler.handler(socket, ...args)
+      );
     });
   });
 };
