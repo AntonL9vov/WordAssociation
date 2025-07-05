@@ -7,14 +7,14 @@ export interface User {
 }
 
 export interface UsersStorage {
-  getUserById(id: string): User | undefined;
+  getUser(id: string): User | undefined;
   addUser(user: Omit<User, "id">): User;
   updateUser(user: User): User;
   deleteUser(id: string): void;
 }
 
-export interface UserService {
-  getUserById(id: string): User | undefined;
+export interface UsersService {
+  getUser(id: string): User | undefined;
   addUser(name: string): User;
   updateUser(user: User): User;
   deleteUser(id: string): void;
@@ -22,7 +22,7 @@ export interface UserService {
 
 export interface UserHandler extends Omit<Handler, "handler"> {
   handler: (
-    userService: UserService,
+    userService: UsersService,
     socket: Socket,
     ...args: any[]
   ) => void;

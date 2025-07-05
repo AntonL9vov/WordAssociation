@@ -1,45 +1,62 @@
-export interface Player {
-    id: string;
-    name: string;
-    words: string[];
+import { Socket } from "socket.io";
+import { User, UsersService } from "./users";
+import { Handler } from "./base";
+
+export interface Word {
+  id: string;
+  word: string;
+  playerId: string;
+  playerName: string;
+  timestamp: Date;
+}
+
+export interface Round {
+  id: string;
+  words: Word[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Game {
-    id: string;
-    players: Player[];
-    currentRound: number;
-    state: GameState;
-    lastWord: string | null;
-    createdAt: Date;
-    updatedAt: Date;
+  id: string;
+  rounds: Round[];
+  createdAt: Date;
+  updatedAt: Date;
+  startWord: string;
+  isFinished: boolean; //TODO: remake to new Type where if isStarted is false isFinished can never be true
+  isStarted: boolean;
+  players: User[];
 }
 
-export enum GameState {
-    WAITING_FOR_PLAYERS = 'WAITING_FOR_PLAYERS',
-    INITIAL_WORDS = 'INITIAL_WORDS',
-    ASSOCIATION_ROUND = 'ASSOCIATION_ROUND',
-    GAME_OVER = 'GAME_OVER'
+export interface GamesStorage {
+  getGame(gameId: string): Game | undefined;
+  createGame(): Game;
+  deleteGame(gameId: string): void;
+  updateGame(
+    gameId: string,
+    game: Partial<Omit<Game, "id" | "createdAt" | "updatedAt">>
+  ): Game;
 }
 
-export interface GameEvent {
-    type: GameEventType;
-    data: any;
-    gameId: string;
+export interface GameService {
+  getGame(gameId: string): Game | undefined;
+  createGame(playerId: string): Game;
+  deleteGame(gameId: string): void;
+  emitWord(gameId: string, word: string, playerId: string): Word;
+  addPlayerToGame(gameId: string, playerId: string): Game;
+  checkIsRoundFinished(gameId: string): boolean;
+  checkIsGameFinished(gameId: string): boolean;
+  finishGame(gameId: string): void;
+  checkLastRound(gameId: string): boolean;
+  addRound(gameId: string): void;
+  startGame(gameId: string, startWord: string): void;
 }
 
-export enum GameEventType {
-    PLAYER_JOINED = 'PLAYER_JOINED',
-    PLAYER_LEFT = 'PLAYER_LEFT',
-    WORD_SUBMITTED = 'WORD_SUBMITTED',
-    ROUND_STARTED = 'ROUND_STARTED',
-    GAME_ENDED = 'GAME_ENDED'
+export interface GameHandler extends Omit<Handler, "handler"> {
+  handler: (gameService: GameService, socket: Socket, ...args: any[]) => void;
 }
 
-export interface GameStats {
-    gameId: string;
-    winner: Player | null;
-    rounds: number;
-    initialWords: string[];
-    finalWord: string;
-    duration: number;
+export interface GameServiceEmitters {
+  gameFinished(game: Game): void;
+  newRoundStarted(game: Game): void;
 }

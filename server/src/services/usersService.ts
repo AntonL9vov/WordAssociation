@@ -7,8 +7,8 @@ export class UsersService {
     this.usersStorage = usersStorage;
   }
 
-  getUserById(id: string): User | undefined {
-    return this.usersStorage.getUserById(id);
+  getUser(id: string): User | undefined {
+    return this.usersStorage.getUser(id);
   }
 
   addUser(name: string): User {

@@ -22,14 +22,14 @@ describe('UsersStorage', () => {
 
   describe('getUserById', () => {
     it('should return undefined for non-existent user', () => {
-      const user = usersStorage.getUserById('non-existent-id');
+      const user = usersStorage.getUser('non-existent-id');
       expect(user).toBeUndefined();
     });
 
     it('should return user by id', () => {
       const userData = { name: 'Test User' };
       const addedUser = usersStorage.addUser(userData);
-      const retrievedUser = usersStorage.getUserById(addedUser.id);
+      const retrievedUser = usersStorage.getUser(addedUser.id);
 
       expect(retrievedUser).toBeDefined();
       expect(retrievedUser).toEqual(addedUser);
@@ -45,7 +45,7 @@ describe('UsersStorage', () => {
       const result = usersStorage.updateUser(updatedUser);
       expect(result).toEqual(updatedUser);
 
-      const retrievedUser = usersStorage.getUserById(addedUser.id);
+      const retrievedUser = usersStorage.getUser(addedUser.id);
       expect(retrievedUser).toEqual(updatedUser);
     });
 
@@ -66,7 +66,7 @@ describe('UsersStorage', () => {
       const addedUser = usersStorage.addUser(userData);
 
       usersStorage.deleteUser(addedUser.id);
-      const retrievedUser = usersStorage.getUserById(addedUser.id);
+      const retrievedUser = usersStorage.getUser(addedUser.id);
       expect(retrievedUser).toBeUndefined();
     });
 

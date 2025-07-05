@@ -1,0 +1,52 @@
+import type { GamesStorage as IGameStorage } from "../types/game";
+import { Game } from "../types/game";
+import { v4 as uuidv4 } from "uuid";
+
+export class GamesStorage implements IGameStorage {
+  private games: Record<string, Game>;
+
+  constructor(initialState: Record<string, Game> = {}) {
+    this.games = initialState;
+  }
+
+  getGame(gameId: string): Game | undefined {
+    return this.games[gameId];
+  }
+
+  createGame(): Game {
+    const game = {
+      id: uuidv4(),
+      rounds: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      startWord: "",
+      isFinished: false,
+      players: [],
+      isStarted: false,
+    };
+
+    this.games[game.id] = game;
+    return game;
+  }
+
+  deleteGame(gameId: string): void {
+    delete this.games[gameId];
+  }
+
+  getGames(): Game[] {
+    return Object.values(this.games);
+  }
+
+  updateGame(
+    gameId: string,
+    game: Pick<Game, "rounds" | "startWord" | "isFinished" | "players">
+  ): Game {
+    this.games[gameId] = {
+      ...this.games[gameId],
+      ...game,
+      updatedAt: new Date(),
+    };
+
+    return this.games[gameId];
+  }
+}

@@ -2,9 +2,13 @@ import { v4 as uuidv4 } from "uuid";
 import { User, UsersStorage as IUsersStorage } from "../types/users";
 
 export class UsersStorage implements IUsersStorage {
-  private users: User[] = [];
+  private users: User[];
 
-  getUserById(id: string): User | undefined {
+  constructor(initialState: User[] = []) {
+    this.users = initialState;
+  }
+
+  getUser(id: string): User | undefined {
     return this.users.find((user) => user.id === id);
   }
 
