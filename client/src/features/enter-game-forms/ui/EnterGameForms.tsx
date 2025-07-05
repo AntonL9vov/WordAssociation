@@ -24,7 +24,7 @@ export const EnterGameForms = ({ onJoinGame }: EnterGameFormsProps) => {
   };
 
   return (
-    <div className="enter-game">
+    <div className="enter-game-forms">
       {currentStep === null && (
         <>
           <Button

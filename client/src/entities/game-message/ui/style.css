@@ -1,8 +1,68 @@
 .game-message {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-    border-radius: 1rem;
-    background-color: #f5f5f5;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-primary);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+}
+
+.game-message:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.message-author {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+}
+
+.message-time {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+}
+
+.message-content {
+    color: var(--text-secondary);
+    line-height: var(--line-height-relaxed);
+    word-wrap: break-word;
+}
+
+.message-system {
+    background-color: var(--info-50);
+    border-color: var(--info-200);
+}
+
+.message-system .message-content {
+    color: var(--info-700);
+    font-style: italic;
+}
+
+.message-error {
+    background-color: var(--error-50);
+    border-color: var(--error-200);
+}
+
+.message-error .message-content {
+    color: var(--error-700);
+}
+
+.message-success {
+    background-color: var(--success-50);
+    border-color: var(--success-200);
+}
+
+.message-success .message-content {
+    color: var(--success-700);
 }

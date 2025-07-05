@@ -1,12 +1,16 @@
 .messenger-history {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--space-md);
     overflow-y: auto;
+    padding: var(--space-md);
+    background-color: var(--bg-primary);
+    flex: 1;
+    min-height: 0;
 
     /* Firefox */
     scrollbar-width: thin;
-    scrollbar-color: #8f8f8f transparent;
+    scrollbar-color: var(--neutral-400) transparent;
 }
 
 /* WebKit-based browsers */
@@ -18,11 +22,11 @@
     background: transparent;
 }
 
-.messanger-history::-webkit-scrollbar-thumb {
-    background-color: #8f8f8f;
-    border-radius: 4px;
+.messenger-history::-webkit-scrollbar-thumb {
+    background-color: var(--neutral-400);
+    border-radius: var(--radius-sm);
 }
 
-.messanger-history::-webkit-scrollbar-thumb:hover {
-    background-color: #6d6d6d;
+.messenger-history::-webkit-scrollbar-thumb:hover {
+    background-color: var(--neutral-500);
 }

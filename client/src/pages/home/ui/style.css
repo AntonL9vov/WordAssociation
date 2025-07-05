@@ -6,8 +6,9 @@
   height: 100%;
   width: 100%;
   box-sizing: border-box;
-  padding: 20px;
-  background-color: #f5f5f5;
+  padding: var(--space-lg);
+  background-color: var(--bg-secondary);
   flex-grow: 1;
   min-height: 0;
+  color: var(--text-primary);
 }

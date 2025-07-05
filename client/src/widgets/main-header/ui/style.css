@@ -1,9 +1,23 @@
 .main-header {
-    padding: 10px;
-    text-align: center;
-    background-color: #333;
-    color: #fff;
+    padding: var(--space-md);
+    background-color: var(--bg-elevated);
+    color: var(--text-primary);
     width: 100%;
-    border: 0;
+    border-bottom: 1px solid var(--border-primary);
     margin: 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
 }
