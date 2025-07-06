@@ -35,9 +35,13 @@ export class BaseSocket {
     this.app.use(express.json());
 
     this.httpServer.listen(this.port, () => {
-      console.log(`Server is running on port ${this.port}`);
-      console.log(`Documentation available at: http://localhost:${this.port}/docs`);
-      console.log(`API docs JSON: http://localhost:${this.port}/api/docs`);
+      console.log(`🚀 Server is running on port ${this.port}`);
+      console.log(`📚 Documentation available at:`);
+      console.log(`   • WebSocket UI: http://localhost:${this.port}/docs`);
+      console.log(`   • Swagger UI: http://localhost:${this.port}/docs/swagger`);
+      console.log(`   • JSON API: http://localhost:${this.port}/api/docs`);
+      console.log(`   • OpenAPI: http://localhost:${this.port}/api/docs/openapi`);
+      console.log(`🔌 WebSocket server: ws://localhost:${this.port}`);
     });
   }
 
