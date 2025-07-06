@@ -3,6 +3,7 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import { BaseSocket as IBaseSocket } from "./base-socket-type";
+import { DocumentationMiddleware } from "../middleware/documentationMiddleware";
 
 export class BaseSocket {
   private app: express.Application;
@@ -35,6 +36,8 @@ export class BaseSocket {
 
     this.httpServer.listen(this.port, () => {
       console.log(`Server is running on port ${this.port}`);
+      console.log(`Documentation available at: http://localhost:${this.port}/docs`);
+      console.log(`API docs JSON: http://localhost:${this.port}/api/docs`);
     });
   }
 
@@ -52,5 +55,12 @@ export class BaseSocket {
     this.sockets.forEach((socket) => {
       socket.initSocket(this.socket as Socket);
     });
+  }
+
+  /**
+   * Настраивает документацию в Express приложении
+   */
+  setupDocumentation(docMiddleware: DocumentationMiddleware): void {
+    docMiddleware.setupRoutes(this.app);
   }
 }
