@@ -36,7 +36,7 @@ export const gameSocketEvents: Record<string, SocketEvents> = {
         callback: (socket: Socket, error: Error) => {
           socket.emit(
             gameSocketEvents.create.emit["game:created:error"].event,
-            error
+            error.message
           );
         },
       },
