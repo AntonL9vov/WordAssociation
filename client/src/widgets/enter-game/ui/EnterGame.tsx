@@ -1,16 +1,34 @@
 import "./style.css";
 import { EnterGameForms } from "@/features";
-import { gameService } from "@shared/api/game-service";
+import {
+  createGame,
+  initCreateGameListener,
+  initJoinGameListener,
+  joinGame,
+} from "../api/socket-hooks";
+import { useEffect } from "react";
+import { gameService } from "@/shared/api/game-service";
 
 export const EnterGame = () => {
-  const handleJoinGame = (name: string, gameId?: string) => {
+  const clearJoinGameListeners = initJoinGameListener();
+  const clearCreateGameListeners = initCreateGameListener();
+
+  const handleJoinGame = (gameId?: string) => {
+    const name = gameService.getUser()!.name;
+
     if (gameId) {
-      console.log("joinGame", gameId, name);
-      gameService.joinGame(gameId, name);
+      joinGame(gameId, name);
     } else {
-      gameService.createGame(name);
+      createGame(name);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      clearJoinGameListeners();
+      clearCreateGameListeners();
+    };
+  }, []);
 
   return <EnterGameForms onJoinGame={handleJoinGame} />;
 };

@@ -4,3 +4,5 @@
 
 export { HomePage } from './home';
 export { GamePage } from './game';
+export { AuthPage } from './auth';
+export { NotFoundPage } from './not-found';

@@ -1,12 +1,11 @@
-export interface Player {
+export interface User {
   id: string;
   name: string;
-  words: string[];
 }
 
 export interface Game {
   id: string;
-  players: Player[];
+  players: User[];
   currentRound: number;
   state: GameState;
   lastWord: string | null;
@@ -37,7 +36,7 @@ export enum GameEventType {
 
 export interface GameStats {
   gameId: string;
-  winner: Player | null;
+  winner: User | null;
   rounds: number;
   initialWords: string[];
   finalWord: string;

@@ -8,19 +8,18 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 export type CurrentStep = "create" | "join" | null;
 
 export type EnterGameFormsProps = {
-  onJoinGame: (name: string, gameId?: string) => void;
+  onJoinGame: (gameId?: string) => void;
 };
 
 export const EnterGameForms = ({ onJoinGame }: EnterGameFormsProps) => {
   const [currentStep, setCurrentStep] = useState<CurrentStep>(null);
 
-  const handleCreateGame = (name: string) => {
-    onJoinGame(name);
+  const handleCreateGame = () => {
+    onJoinGame();
   };
 
-  const handleJoinGame = (name: string, gameId?: string) => {
-    console.log("handleJoinGame", name, gameId);
-    onJoinGame(name, gameId);
+  const handleJoinGame = (gameId?: string) => {
+    onJoinGame(gameId);
   };
 
   return (

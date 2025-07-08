@@ -1,17 +1,18 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { AppRouter } from "./router";
-import { ThemeProvider } from "@/shared";
+import { AuthProvider } from "@/shared/context/AuthContext";
+import { ThemeProvider } from "@/shared/context/ThemeContext";
 import "@shared/styles/global.css";
 
-export const App = () => {
+export const App: React.FC = () => {
   return (
-    <React.StrictMode>
+    <BrowserRouter>
       <ThemeProvider>
-        <BrowserRouter>
+        <AuthProvider>
           <AppRouter />
-        </BrowserRouter>
+        </AuthProvider>
       </ThemeProvider>
-    </React.StrictMode>
+    </BrowserRouter>
   );
 };

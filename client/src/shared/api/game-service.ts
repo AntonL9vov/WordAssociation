@@ -1,77 +1,66 @@
-import { Game } from "../lib/types";
-import { SocketService } from "./socket";
+import { API_CONFIG } from "../config/api";
+import { Game, User } from "../lib/types";
+import { io, Socket } from "socket.io-client";
 
 export type GameServiceListener = (data: any) => void;
 
-export type GameServiceEvent =
-  | "game-created"
-  | "game-joined"
-  | "player-joined"
-  | "player-left"
-  | "word-submitted"
-  | "round-started"
-  | "game-ended"
-  | "user-connected";
-
-export type GameServiceListeners = Record<
-  GameServiceEvent,
-  GameServiceListener[]
->;
+export type GameServiceListeners = Record<string, ((...args: any[]) => void)[]>;
 
 export type GameCreatedEvent = {
   game: Game;
 };
 
 export class GameService {
-  private socketService: SocketService;
+  private socketService: Socket;
   private game: Game | null = null;
-  private userId: string | null = null;
+  private user: User | null = null;
 
-  listeners: GameServiceListeners = {
-    "game-created": [(data: GameCreatedEvent) => (this.game = data.game)],
-    "game-joined": [(data: GameCreatedEvent) => (this.game = data.game)],
-    "player-joined": [],
-    "player-left": [],
-    "word-submitted": [],
-    "round-started": [],
-    "game-ended": [],
-    "user-connected": [(data: string) => this.userId = data],
-  };
+  private listeners: GameServiceListeners;
 
   constructor() {
-    this.socketService = new SocketService();
-    this.connect();
-    this.initListeners();
+    this.socketService = io(API_CONFIG.wsUrl);
+    this.listeners = {};
   }
 
-  connect() {
-    this.socketService.emit("user-connect")
-  }
+  addListener(event: string, listener: (...args: any[]) => void) {
+    if (!this.listeners[event]) {
+      this.listeners[event] = [];
+    }
 
-  createGame(playerName: string) {
-    this.socketService.emit("create-game", { playerName });
-  }
+    this.listeners[event].push(listener);
 
-  joinGame(gameId: string, playerName: string) {
-    console.log("joinGame1", gameId, playerName);
-    this.socketService.emit("join-game", { gameId, playerName });
-  }
-
-  initListeners() {
-    Object.entries(this.listeners).forEach(([event, listeners]) => {
-      this.socketService.on(event, (data) => {
-        console.log(event, data);
-        listeners.forEach((listener) => listener(data));
-      });
+    this.socketService.off(event);
+    this.socketService.on(event, (data) => {
+      this.listeners[event].forEach((listener) => listener(data));
     });
+
+    console.log("listeners", this.listeners);
+
+    return () => {
+      this.listeners[event] = this.listeners[event].filter(
+        (l) => l !== listener
+      );
+      if (this.listeners[event].length === 0) {
+        this.socketService.off(event);
+      }
+    };
+  }
+
+  emit(event: string, data: any) {
+    console.log("emit", event, data);
+    this.socketService.emit(event, data);
   }
 
   getGame(): Game | null {
     return this.game;
   }
 
-  getUserId(): string | null {
-    return this.userId;
+  getUser(): User | null {
+    return this.user;
+  }
+
+  setUser(user: User | null) {
+    this.user = user;
   }
 }
 
