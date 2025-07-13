@@ -51,11 +51,6 @@ const renderRoutes = (routes: RouteConfig[]) => {
   });
 };
 
-export const AppRouter: React.FC = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.log(location);
-  }, [location]);
+export const AppRouter = () => {
   return <Routes>{renderRoutes(routesConfig)}</Routes>;
 };

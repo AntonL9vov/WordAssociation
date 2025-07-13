@@ -14,7 +14,7 @@ export const MainHeader: React.FC = () => {
     <header className="main-header">
       <div className="header-content">
         <div className="header-left">
-          <h1 className="header-title">Multiplayer Game</h1>
+          <h1 className="header-title">Word Association Game</h1>
         </div>
         
         <div className="header-right">

@@ -1,8 +1,7 @@
 // API configuration for the game client
 export const API_CONFIG = {
-  baseUrl: import.meta.env.PROD 
-    ? import.meta.env.VITE_API_BASE_URL_PROD 
-    : import.meta.env.VITE_API_BASE_URL_DEV,
+  baseUrl: 'http://localhost:3001/api', // REST API сервер
+  socketUrl: 'http://localhost:3000', // Socket.IO сервер
   endpoints: {
     auth: '/auth',
     game: '/game',

@@ -30,23 +30,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       : null
   );
 
-  useEffect(() => {
-    const cleanup = gameService.addListener(
-      "user:connected",
-      (data: { user: User }) => {
-        setUser(data.user);
-      }
-    );
-
-    if (user) {
-      gameService.setUser(user);
-    }
-
-    return cleanup;
-  }, []);
-
   const login = (user: User) => {
     gameService.setUser(user);
+    setUser(user);
     localStorage.setItem("user", JSON.stringify(user));
   };
 

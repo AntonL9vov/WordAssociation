@@ -34,8 +34,6 @@ export class GameService {
       this.listeners[event].forEach((listener) => listener(data));
     });
 
-    console.log("listeners", this.listeners);
-
     return () => {
       this.listeners[event] = this.listeners[event].filter(
         (l) => l !== listener
@@ -47,7 +45,6 @@ export class GameService {
   }
 
   emit(event: string, data: any) {
-    console.log("emit", event, data);
     this.socketService.emit(event, data);
   }
 

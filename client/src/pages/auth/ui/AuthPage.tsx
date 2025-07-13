@@ -9,7 +9,6 @@ export const AuthPage = () => {
 
   const handleAuthSuccess = (user: User) => {
     login(user);
-
     navigate("/");
   };
 

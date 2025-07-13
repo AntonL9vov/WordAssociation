@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { initPlayerConnectListener, playerConnect } from "../api/socket-hooks";
+import React, { useState } from "react";
+import { playerConnect } from "../api/api";
 import "./style.css";
 import { User } from "@/shared/lib/types";
 
@@ -7,21 +7,10 @@ interface AuthFormProps {
   onAuthSuccess: (user: User) => void;
 }
 
-export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
+export const AuthForm = ({ onAuthSuccess }: AuthFormProps) => {
   const [playerName, setPlayerName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const handleAuthSuccess = (user: User) => {
-    setIsLoading(false);
-    onAuthSuccess(user);
-  };
-
-  useEffect(() => {
-    const cleanup = initPlayerConnectListener(handleAuthSuccess);
-
-    return cleanup;
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,16 +19,18 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
       setError("Please enter your name");
       return;
     }
-
-    playerConnect(playerName);
-
     setIsLoading(true);
     setError("");
+
+    const user = await playerConnect(playerName);
+
+    setIsLoading(false);
+    onAuthSuccess(user);
   };
 
   return (
     <div className="auth-form">
-      <h2 className="auth-title">Welcome to Multiplayer Game</h2>
+      <h2 className="auth-title">Welcome to Word Association Game</h2>
       <p className="auth-subtitle">Enter your name to start playing</p>
 
       <form onSubmit={handleSubmit} className="auth-form-content">
