@@ -4,6 +4,7 @@ import { SocketDocumentation, SocketEventMetadata, EventParameter } from "../typ
 export class DocumentationService {
   private static instance: DocumentationService;
   private eventMetadata: Map<string, SocketEventMetadata> = new Map();
+  private restApiMetadata: Map<string, any> = new Map();
 
   static getInstance(): DocumentationService {
     if (!DocumentationService.instance) {
@@ -21,6 +22,29 @@ export class DocumentationService {
   ): void {
     this.eventMetadata.set(event, {
       event,
+      ...metadata
+    });
+  }
+
+  /**
+   * Регистрирует REST API endpoint
+   */
+  registerRestEndpoint(
+    method: string,
+    path: string,
+    metadata: {
+      summary: string;
+      description?: string;
+      tags: string[];
+      parameters?: any[];
+      requestBody?: any;
+      responses: Record<string, any>;
+    }
+  ): void {
+    const key = `${method.toUpperCase()} ${path}`;
+    this.restApiMetadata.set(key, {
+      method: method.toUpperCase(),
+      path,
       ...metadata
     });
   }
@@ -146,8 +170,8 @@ export class DocumentationService {
 
     return {
       version: '1.0.0',
-      title: 'WebSocket API Documentation',
-      description: 'Real-time multiplayer game WebSocket API',
+      title: 'Multiplayer Game API Documentation',
+      description: 'Real-time multiplayer game API with WebSocket events and REST endpoints',
       events,
       categories
     };
@@ -159,6 +183,7 @@ export class DocumentationService {
   getOpenAPISpec(): any {
     const doc = this.getDocumentation();
     const events = Array.from(this.eventMetadata.values());
+    const restEndpoints = Array.from(this.restApiMetadata.values());
     
     // Группируем события по категориям
     const eventsByCategory = events.reduce((acc, event) => {
@@ -169,7 +194,7 @@ export class DocumentationService {
       return acc;
     }, {} as Record<string, SocketEventMetadata[]>);
 
-    // Создаем пути для каждого события
+    // Создаем пути для WebSocket событий
     const paths: any = {};
     
     Object.entries(eventsByCategory).forEach(([category, categoryEvents]) => {
@@ -178,10 +203,10 @@ export class DocumentationService {
         
         paths[pathKey] = {
           post: {
-            tags: [category],
+            tags: [`WebSocket - ${category}`],
             summary: event.event,
             description: event.description || `WebSocket event: ${event.event}`,
-            operationId: event.event.replace(/:/g, '_'),
+            operationId: `ws_${event.event.replace(/:/g, '_')}`,
             requestBody: event.parameters && event.parameters.length > 0 ? {
               required: true,
               content: {
@@ -247,27 +272,80 @@ export class DocumentationService {
       });
     });
 
+    // Добавляем REST API endpoints
+    restEndpoints.forEach(endpoint => {
+      const pathKey = endpoint.path;
+      const method = endpoint.method.toLowerCase();
+      
+      if (!paths[pathKey]) {
+        paths[pathKey] = {};
+      }
+      
+      paths[pathKey][method] = {
+        tags: endpoint.tags,
+        summary: endpoint.summary,
+        description: endpoint.description || endpoint.summary,
+        operationId: `rest_${method}_${pathKey.replace(/[^a-zA-Z0-9]/g, '_')}`,
+        parameters: endpoint.parameters || [],
+        requestBody: endpoint.requestBody,
+        responses: endpoint.responses
+      };
+    });
+
     return {
       openapi: '3.0.0',
       info: {
         title: doc.title,
         description: doc.description,
-        version: doc.version
+        version: doc.version,
+        contact: {
+          name: 'API Support',
+          email: 'support@example.com'
+        },
+        license: {
+          name: 'MIT',
+          url: 'https://opensource.org/licenses/MIT'
+        }
       },
       servers: [
         {
-          url: 'ws://localhost:3000',
+          url: 'http://localhost:3000',
           description: 'WebSocket server'
+        },
+        {
+          url: 'http://localhost:3001',
+          description: 'REST API server'
         }
       ],
       paths,
       components: {
-        schemas: this.generateSchemas()
+        schemas: this.generateSchemas(),
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT'
+          }
+        }
       },
-      tags: doc.categories.map(category => ({
-        name: category,
-        description: `${category} WebSocket events`
-      }))
+      tags: [
+        {
+          name: 'WebSocket - Users',
+          description: 'WebSocket events for user management'
+        },
+        {
+          name: 'WebSocket - Games',
+          description: 'WebSocket events for game management'
+        },
+        {
+          name: 'REST - Users',
+          description: 'REST API endpoints for user management'
+        },
+        {
+          name: 'REST - Games',
+          description: 'REST API endpoints for game management'
+        }
+      ]
     };
   }
 

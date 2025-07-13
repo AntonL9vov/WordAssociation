@@ -9,13 +9,12 @@ export const userSocketEvents: Record<string, SocketEvents> = {
       "user:connect": {
         event: "user:connect",
         callback: (socket: Socket, userService: UsersService, name: string) => {
-          console.log("connect event received");
-          const user = userService.addUser(name);
-
-          userSocketEvents.connect.emit["user:connected"].callback(
-            socket,
-            user
-          );
+          console.log("user:connect event received - SOCKET IO SKELETON (use REST API instead)");
+          // Скелет для будущего использования
+          // В реальном приложении используйте REST API: POST /api/users
+          socket.emit("user:connect:deprecated", {
+            message: "This endpoint is deprecated. Use REST API: POST /api/users instead"
+          });
         },
       },
     },
@@ -28,6 +27,12 @@ export const userSocketEvents: Record<string, SocketEvents> = {
           });
         },
       },
+      "user:connect:deprecated": {
+        event: "user:connect:deprecated",
+        callback: (socket: Socket, message: any) => {
+          socket.emit(userSocketEvents.connect.emit["user:connect:deprecated"].event, message);
+        },
+      },
     },
   },
   disconnect: {
@@ -35,11 +40,12 @@ export const userSocketEvents: Record<string, SocketEvents> = {
       "user:disconnect": {
         event: "user:disconnect",
         callback: (socket: Socket, userService: UsersService, id: string) => {
-          userService.deleteUser(id);
-          userSocketEvents.disconnect.emit["user:disconnected"].callback(
-            socket,
-            id
-          );
+          console.log("user:disconnect event received - SOCKET IO SKELETON (use REST API instead)");
+          // Скелет для будущего использования
+          // В реальном приложении используйте REST API: DELETE /api/users/:id
+          socket.emit("user:disconnect:deprecated", {
+            message: "This endpoint is deprecated. Use REST API: DELETE /api/users/:id instead"
+          });
         },
       },
     },
@@ -50,6 +56,12 @@ export const userSocketEvents: Record<string, SocketEvents> = {
           socket.emit(userSocketEvents.disconnect.emit["user:disconnected"].event, { id });
         },
       },
+      "user:disconnect:deprecated": {
+        event: "user:disconnect:deprecated",
+        callback: (socket: Socket, message: any) => {
+          socket.emit(userSocketEvents.disconnect.emit["user:disconnect:deprecated"].event, message);
+        },
+      },
     },
   },
   get: {
@@ -57,8 +69,12 @@ export const userSocketEvents: Record<string, SocketEvents> = {
       "user:get": {
         event: "user:get",
         callback: (socket: Socket, userService: UsersService, id: string) => {
-          const user = userService.getUser(id);
-          userSocketEvents.get.emit["user:got"].callback(socket, user);
+          console.log("user:get event received - SOCKET IO SKELETON (use REST API instead)");
+          // Скелет для будущего использования
+          // В реальном приложении используйте REST API: GET /api/users/:id
+          socket.emit("user:get:deprecated", {
+            message: "This endpoint is deprecated. Use REST API: GET /api/users/:id instead"
+          });
         },
       },
     },
@@ -69,6 +85,12 @@ export const userSocketEvents: Record<string, SocketEvents> = {
           socket.emit(userSocketEvents.get.emit["user:got"].event, { user });
         },
       },
+      "user:get:deprecated": {
+        event: "user:get:deprecated",
+        callback: (socket: Socket, message: any) => {
+          socket.emit(userSocketEvents.get.emit["user:get:deprecated"].event, message);
+        },
+      },
     },
   },
   update: {
@@ -76,8 +98,12 @@ export const userSocketEvents: Record<string, SocketEvents> = {
       "user:update": {
         event: "user:update",
         callback: (socket: Socket, userService: UsersService, user: User) => {
-          userService.updateUser(user);
-          userSocketEvents.update.emit["user:updated"].callback(socket, user);
+          console.log("user:update event received - SOCKET IO SKELETON (use REST API instead)");
+          // Скелет для будущего использования
+          // В реальном приложении используйте REST API: PUT /api/users/:id
+          socket.emit("user:update:deprecated", {
+            message: "This endpoint is deprecated. Use REST API: PUT /api/users/:id instead"
+          });
         },
       },
     },
@@ -86,6 +112,12 @@ export const userSocketEvents: Record<string, SocketEvents> = {
         event: "user:updated",
         callback: (socket: Socket, user: User) => {
           socket.emit(userSocketEvents.update.emit["user:updated"].event, { user });
+        },
+      },
+      "user:update:deprecated": {
+        event: "user:update:deprecated",
+        callback: (socket: Socket, message: any) => {
+          socket.emit(userSocketEvents.update.emit["user:update:deprecated"].event, message);
         },
       },
     },

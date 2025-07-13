@@ -22,4 +22,8 @@ export class UsersService {
   deleteUser(id: string): void {
     this.usersStorage.deleteUser(id);
   }
+
+  getAllUsers(): User[] {
+    return this.usersStorage.getAllUsers();
+  }
 }

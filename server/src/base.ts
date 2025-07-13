@@ -7,10 +7,13 @@ import { GamesStorage } from "./storages/gamesStorage";
 import { GameService } from "./services/gameService";
 import { DocumentationService } from "./services/documentationService";
 import { DocumentationMiddleware } from "./middleware/documentationMiddleware";
+import { RestApiDocumentation } from "./services/restApiDocumentation";
 import { userSocketEvents } from "./socket-entities/users-socket/user-socket-events";
 import { gameSocketEvents } from "./socket-entities/game-scoket/game-socket-events";
 import { User } from "./types/users";
 import { Game } from "./types/game";
+import { createApiServer } from "./api";
+import express from 'express';
 
 const initialUsersState: User[] = [
   {
@@ -57,6 +60,9 @@ export class BaseGame {
   private baseSocket: BaseSocket;
   private docService: DocumentationService;
   private docMiddleware: DocumentationMiddleware;
+  private restApiDoc: RestApiDocumentation;
+
+  private apiServer: express.Application;
 
   constructor() {
     this.userStorage = new UsersStorage(initialUsersState);
@@ -70,6 +76,7 @@ export class BaseGame {
     // Инициализация документации
     this.docService = DocumentationService.getInstance();
     this.docMiddleware = new DocumentationMiddleware();
+    this.restApiDoc = new RestApiDocumentation();
     
     // Автоматическое извлечение метаданных событий
     this.setupDocumentation();
@@ -78,19 +85,23 @@ export class BaseGame {
     
     // Добавляем документацию в Express
     this.baseSocket.setupDocumentation(this.docMiddleware);
+
+    // Создаем REST API сервер
+    this.apiServer = createApiServer(this.usersService);
   }
 
   /**
-   * Настраивает автоматическое извлечение документации из событий
+   * Настраивает документацию для всех компонентов
    */
   private setupDocumentation(): void {
-    // Регистрируем события пользователей
+    // Извлекаем метаданные из WebSocket событий
     this.docService.extractFromSocketEvents(userSocketEvents, 'Users');
-    
-    // Регистрируем события игр
     this.docService.extractFromSocketEvents(gameSocketEvents, 'Games');
-    
-    // Добавляем дополнительные метаданные для более детального описания
+
+    // Регистрируем REST API endpoints
+    this.restApiDoc.registerAllEndpoints();
+
+    // Добавляем детальные метаданные
     this.addDetailedMetadata();
   }
 
@@ -100,18 +111,15 @@ export class BaseGame {
   private addDetailedMetadata(): void {
     // Пользовательские события
     this.docService.registerEvent('user:connect', {
-      description: 'Connect a new user to the system',
+      description: 'Connect a user to the system',
       parameters: [
         { name: 'name', type: 'string', description: 'User name', required: true, example: 'John Doe' }
       ],
       response: {
         type: 'object',
-        description: 'User object with ID and name',
+        description: 'Connected user information',
         example: { 
-          user: { 
-            id: 'user-123', 
-            name: 'John Doe' 
-          } 
+          user: { id: 'user-123', name: 'John Doe' }
         }
       },
       category: 'Users',
@@ -119,15 +127,12 @@ export class BaseGame {
     });
 
     this.docService.registerEvent('user:connected', {
-      description: 'Emitted when a user successfully connects',
+      description: 'Emitted when a user connects',
       response: {
         type: 'object',
         description: 'Connected user information',
         example: { 
-          user: { 
-            id: 'user-123', 
-            name: 'John Doe' 
-          } 
+          user: { id: 'user-123', name: 'John Doe' }
         }
       },
       category: 'Users',
@@ -137,12 +142,15 @@ export class BaseGame {
     this.docService.registerEvent('user:disconnect', {
       description: 'Disconnect a user from the system',
       parameters: [
-        { name: 'id', type: 'string', description: 'User ID to disconnect', required: true, example: 'user-123' }
+        { name: 'id', type: 'string', description: 'User ID', required: true, example: 'user-123' }
       ],
       response: {
         type: 'object',
         description: 'Disconnection confirmation',
-        example: { id: 'user-123' }
+        example: { 
+          id: 'user-123',
+          message: 'User disconnected successfully'
+        }
       },
       category: 'Users',
       direction: 'incoming'
@@ -152,8 +160,10 @@ export class BaseGame {
       description: 'Emitted when a user disconnects',
       response: {
         type: 'object',
-        description: 'Disconnected user ID',
-        example: { id: 'user-123' }
+        description: 'Disconnection confirmation',
+        example: { 
+          id: 'user-123'
+        }
       },
       category: 'Users',
       direction: 'outgoing'
@@ -168,10 +178,7 @@ export class BaseGame {
         type: 'object',
         description: 'User information',
         example: { 
-          user: { 
-            id: 'user-123', 
-            name: 'John Doe' 
-          } 
+          user: { id: 'user-123', name: 'John Doe' }
         }
       },
       category: 'Users',
@@ -184,10 +191,7 @@ export class BaseGame {
         type: 'object',
         description: 'User information',
         example: { 
-          user: { 
-            id: 'user-123', 
-            name: 'John Doe' 
-          } 
+          user: { id: 'user-123', name: 'John Doe' }
         }
       },
       category: 'Users',
@@ -203,10 +207,7 @@ export class BaseGame {
         type: 'object',
         description: 'Updated user information',
         example: { 
-          user: { 
-            id: 'user-123', 
-            name: 'John Updated' 
-          } 
+          user: { id: 'user-123', name: 'John Updated' }
         }
       },
       category: 'Users',
@@ -219,10 +220,7 @@ export class BaseGame {
         type: 'object',
         description: 'Updated user information',
         example: { 
-          user: { 
-            id: 'user-123', 
-            name: 'John Updated' 
-          } 
+          user: { id: 'user-123', name: 'John Updated' }
         }
       },
       category: 'Users',
@@ -346,17 +344,18 @@ export class BaseGame {
     });
 
     this.docService.registerEvent('game:join', {
-      description: 'Join an existing game',
+      description: 'Join a game as a player',
       parameters: [
-        { name: 'gameId', type: 'string', description: 'Game ID to join', required: true, example: 'game-123' },
-        { name: 'playerId', type: 'string', description: 'Player ID joining the game', required: true, example: 'user-456' }
+        { name: 'gameId', type: 'string', description: 'Game ID', required: true, example: 'game-123' },
+        { name: 'playerId', type: 'string', description: 'Player ID', required: true, example: 'user-456' }
       ],
       response: {
         type: 'object',
         description: 'Join confirmation',
         example: { 
-          gameId: 'game-123', 
-          playerId: 'user-456' 
+          gameId: 'game-123',
+          playerId: 'user-456',
+          message: 'Player joined successfully'
         }
       },
       category: 'Games',
@@ -369,8 +368,8 @@ export class BaseGame {
         type: 'object',
         description: 'Join confirmation',
         example: { 
-          gameId: 'game-123', 
-          playerId: 'user-456' 
+          gameId: 'game-123',
+          playerId: 'user-456'
         }
       },
       category: 'Games',
@@ -441,21 +440,21 @@ export class BaseGame {
     });
 
     this.docService.registerEvent('game:word', {
-      description: 'Emit a word in the game',
+      description: 'Emit a word in a game',
       parameters: [
         { name: 'gameId', type: 'string', description: 'Game ID', required: true, example: 'game-123' },
         { name: 'playerId', type: 'string', description: 'Player ID', required: true, example: 'user-123' },
-        { name: 'word', type: 'string', description: 'Word to emit', required: true, example: 'world' }
+        { name: 'word', type: 'string', description: 'Word to emit', required: true, example: 'hello' }
       ],
       response: {
         type: 'object',
-        description: 'Emitted word object',
+        description: 'Emitted word information',
         example: { 
-          id: 'word-123', 
-          word: 'world', 
+          id: 'word-123',
+          word: 'hello',
           playerId: 'user-123',
-          playerName: 'John Doe',
-          timestamp: '2023-01-01T00:00:00Z'
+          gameId: 'game-123',
+          createdAt: '2023-01-01T00:00:00Z'
         }
       },
       category: 'Games',
@@ -466,13 +465,13 @@ export class BaseGame {
       description: 'Emitted when a word is successfully emitted',
       response: {
         type: 'object',
-        description: 'Emitted word object',
+        description: 'Emitted word information',
         example: { 
-          id: 'word-123', 
-          word: 'world', 
+          id: 'word-123',
+          word: 'hello',
           playerId: 'user-123',
-          playerName: 'John Doe',
-          timestamp: '2023-01-01T00:00:00Z'
+          gameId: 'game-123',
+          createdAt: '2023-01-01T00:00:00Z'
         }
       },
       category: 'Games',
@@ -485,12 +484,20 @@ export class BaseGame {
         type: 'object',
         description: 'Error information',
         example: { 
-          message: 'Invalid word or game not found',
+          message: 'Invalid word or game not active',
           code: 'WORD_EMISSION_ERROR'
         }
       },
       category: 'Games',
       direction: 'outgoing'
+    });
+  }
+
+  // Добавляем метод для запуска REST API сервера
+  public startApiServer(port: number = 3001): void {
+    this.apiServer.listen(port, () => {
+      console.log(`REST API server is running on port ${port}`);
+      console.log(`API endpoints available at http://localhost:${port}/api`);
     });
   }
 }

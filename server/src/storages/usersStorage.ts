@@ -29,4 +29,8 @@ export class UsersStorage implements IUsersStorage {
   deleteUser(id: string): void {
     this.users = this.users.filter((user) => user.id !== id);
   }
+
+  getAllUsers(): User[] {
+    return this.users;
+  }
 }

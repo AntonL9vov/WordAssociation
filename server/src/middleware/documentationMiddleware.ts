@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { DocumentationService } from "../services/documentationService";
 
 export class DocumentationMiddleware {
@@ -38,14 +38,14 @@ export class DocumentationMiddleware {
    */
   private generateWebSocketHTML(): string {
     const doc = this.docService.getDocumentation();
-    
+
     return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket API Documentation</title>
+    <title>Multiplayer Game API Documentation</title>
     <style>
         * {
             margin: 0;
@@ -61,7 +61,7 @@ export class DocumentationMiddleware {
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -85,9 +85,48 @@ export class DocumentationMiddleware {
             opacity: 0.9;
         }
         
+        .api-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .api-tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: #f8f9fa;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .api-tab.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .api-tab:hover {
+            background: #5a6fd8;
+            color: white;
+        }
+        
+        .api-content {
+            display: none;
+        }
+        
+        .api-content.active {
+            display: block;
+        }
+        
         .categories {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -218,6 +257,53 @@ export class DocumentationMiddleware {
             background: #5a6fd8;
         }
         
+        .rest-endpoints {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .endpoint {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .endpoint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .endpoint-method {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .get { background: #28a745; }
+        .post { background: #007bff; }
+        .put { background: #ffc107; color: #333; }
+        .delete { background: #dc3545; }
+        
+        .endpoint-path {
+            font-weight: bold;
+            color: #333;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+        }
+        
+        .endpoint-description {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -229,6 +315,10 @@ export class DocumentationMiddleware {
             
             .categories {
                 grid-template-columns: 1fr;
+            }
+            
+            .api-tabs {
+                flex-direction: column;
             }
         }
     </style>
@@ -242,17 +332,138 @@ export class DocumentationMiddleware {
             <a href="/docs/swagger" class="swagger-link">View in Swagger UI</a>
         </div>
         
-        <div class="categories">
-            ${this.generateCategoriesHTML(doc)}
+        <div class="api-tabs">
+            <button class="api-tab active" onclick="showTab('websocket')">WebSocket Events</button>
+            <button class="api-tab" onclick="showTab('rest')">REST API</button>
+        </div>
+        
+        <div id="websocket-content" class="api-content active">
+            <div class="categories">
+                ${this.generateCategoriesHTML(doc)}
+            </div>
+        </div>
+        
+        <div id="rest-content" class="api-content">
+            <div class="rest-endpoints">
+                <h2>REST API Endpoints</h2>
+                <p>This API provides both WebSocket events for real-time communication and REST endpoints for traditional HTTP requests.</p>
+                
+                <h3>User Management</h3>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-path">/api/users</span>
+                    </div>
+                    <div class="endpoint-description">Get all users</div>
+                </div>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-path">/api/users/{id}</span>
+                    </div>
+                    <div class="endpoint-description">Get user by ID</div>
+                </div>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method post">POST</span>
+                        <span class="endpoint-path">/api/users</span>
+                    </div>
+                    <div class="endpoint-description">Create a new user</div>
+                </div>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method put">PUT</span>
+                        <span class="endpoint-path">/api/users/{id}</span>
+                    </div>
+                    <div class="endpoint-description">Update user</div>
+                </div>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method delete">DELETE</span>
+                        <span class="endpoint-path">/api/users/{id}</span>
+                    </div>
+                    <div class="endpoint-description">Delete user</div>
+                </div>
+                
+                <h3>Game Management</h3>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-path">/api/games</span>
+                    </div>
+                    <div class="endpoint-description">Get all games</div>
+                </div>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-path">/api/games/{id}</span>
+                    </div>
+                    <div class="endpoint-description">Get game by ID</div>
+                </div>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method post">POST</span>
+                        <span class="endpoint-path">/api/games</span>
+                    </div>
+                    <div class="endpoint-description">Create a new game</div>
+                </div>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method post">POST</span>
+                        <span class="endpoint-path">/api/games/{id}/start</span>
+                    </div>
+                    <div class="endpoint-description">Start a game</div>
+                </div>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method post">POST</span>
+                        <span class="endpoint-path">/api/games/{id}/join</span>
+                    </div>
+                    <div class="endpoint-description">Join a game</div>
+                </div>
+                
+                <h3>System</h3>
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="endpoint-method get">GET</span>
+                        <span class="endpoint-path">/api/health</span>
+                    </div>
+                    <div class="endpoint-description">Health check</div>
+                </div>
+            </div>
         </div>
         
         <div class="footer">
-            <p>Documentation automatically generated from WebSocket events</p>
+            <p>Documentation automatically generated from WebSocket events and REST API endpoints</p>
             <p>JSON API: <a href="/api/docs">/api/docs</a> | OpenAPI: <a href="/api/docs/openapi">/api/docs/openapi</a></p>
         </div>
     </div>
     
     <script>
+        function showTab(tabName) {
+            // Hide all content
+            const contents = document.querySelectorAll('.api-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.api-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected content
+            document.getElementById(tabName + '-content').classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+        
         // Добавляем интерактивность
         document.addEventListener('DOMContentLoaded', function() {
             // Анимация появления категорий
@@ -289,51 +500,88 @@ export class DocumentationMiddleware {
    * Генерирует HTML для категорий событий
    */
   private generateCategoriesHTML(doc: any): string {
-    const eventsByCategory = doc.events.reduce((acc: any, event: any) => {
-      if (!acc[event.category]) {
-        acc[event.category] = [];
-      }
-      acc[event.category].push(event);
-      return acc;
-    }, {});
+    const events = doc.events;
+    const categories = [...new Set(events.map((e: any) => e.category))];
 
-    return Object.entries(eventsByCategory).map(([category, events]: [string, any]) => `
+    return categories
+      .map((category) => {
+        const categoryEvents = events.filter(
+          (e: any) => e.category === category
+        );
+
+        return `
         <div class="category">
-            <h2>${category}</h2>
-            ${events.map((event: any) => `
-                <div class="event">
-                    <div class="event-header">
-                        <span class="event-name">${event.event}</span>
-                        <span class="event-direction ${event.direction}">${event.direction}</span>
+          <h2>${category}</h2>
+          ${categoryEvents
+            .map(
+              (event: any) => `
+            <div class="event">
+              <div class="event-header">
+                <span class="event-name">${event.event}</span>
+                <span class="event-direction ${event.direction}">${
+                event.direction
+              }</span>
+              </div>
+              <div class="event-description">${event.description}</div>
+              ${
+                event.parameters && event.parameters.length > 0
+                  ? `
+                <div class="event-parameters">
+                  <strong>Parameters:</strong>
+                  ${event.parameters
+                    .map(
+                      (param: any) => `
+                    <div class="parameter">
+                      <div class="parameter-name">${param.name}</div>
+                      <div class="parameter-type">Type: ${param.type}</div>
+                      <div class="parameter-description">${
+                        param.description
+                      }</div>
+                      ${
+                        param.example
+                          ? `<div class="example">Example: ${JSON.stringify(
+                              param.example
+                            )}</div>`
+                          : ""
+                      }
                     </div>
-                    <div class="event-description">${event.description || 'No description available'}</div>
-                    ${event.parameters && event.parameters.length > 0 ? `
-                        <div class="event-parameters">
-                            <strong>Parameters:</strong>
-                            ${event.parameters.map((param: any) => `
-                                <div class="parameter">
-                                    <div class="parameter-name">${param.name}</div>
-                                    <div class="parameter-type">Type: ${param.type}</div>
-                                    ${param.description ? `<div class="parameter-description">${param.description}</div>` : ''}
-                                    ${param.example ? `<div class="example">Example: ${JSON.stringify(param.example)}</div>` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    ` : ''}
-                    ${event.response ? `
-                        <div class="event-parameters">
-                            <strong>Response:</strong>
-                            <div class="parameter">
-                                <div class="parameter-type">Type: ${event.response.type}</div>
-                                ${event.response.description ? `<div class="parameter-description">${event.response.description}</div>` : ''}
-                                ${event.response.example ? `<div class="example">Example: ${JSON.stringify(event.response.example)}</div>` : ''}
-                            </div>
-                        </div>
-                    ` : ''}
+                  `
+                    )
+                    .join("")}
                 </div>
-            `).join('')}
+              `
+                  : ""
+              }
+              ${
+                event.response
+                  ? `
+                <div class="event-parameters">
+                  <strong>Response:</strong>
+                  <div class="parameter">
+                    <div class="parameter-type">Type: ${
+                      event.response.type
+                    }</div>
+                    <div class="parameter-description">${
+                      event.response.description
+                    }</div>
+                    <div class="example">Example: ${JSON.stringify(
+                      event.response.example,
+                      null,
+                      2
+                    )}</div>
+                  </div>
+                </div>
+              `
+                  : ""
+              }
+            </div>
+          `
+            )
+            .join("")}
         </div>
-    `).join('');
+      `;
+      })
+      .join("");
   }
 
   /**
@@ -346,7 +594,7 @@ export class DocumentationMiddleware {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket API Documentation - Swagger UI</title>
+    <title>Multiplayer Game API Documentation - Swagger UI</title>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui.css" />
     <style>
         html { box-sizing: border-box; overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
@@ -354,6 +602,7 @@ export class DocumentationMiddleware {
         body { margin:0; background: #fafafa; }
         .swagger-ui .topbar { display: none; }
         .swagger-ui .info .title { color: #667eea; }
+        .swagger-ui .info .description { color: #666; }
     </style>
 </head>
 <body>
@@ -373,7 +622,11 @@ export class DocumentationMiddleware {
                 plugins: [
                     SwaggerUIBundle.plugins.DownloadUrl
                 ],
-                layout: "StandaloneLayout"
+                layout: "StandaloneLayout",
+                docExpansion: "list",
+                filter: true,
+                showExtensions: true,
+                showCommonExtensions: true
             });
         };
     </script>

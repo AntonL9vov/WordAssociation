@@ -11,6 +11,7 @@ export interface UsersStorage {
   addUser(user: Omit<User, "id">): User;
   updateUser(user: User): User;
   deleteUser(id: string): void;
+  getAllUsers(): User[];
 }
 
 export interface UsersService {
