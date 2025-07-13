@@ -45,7 +45,7 @@ export class DocumentationMiddleware {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multiplayer Game API Documentation</title>
+    <title>Word Association Game API Documentation</title>
     <style>
         * {
             margin: 0;
@@ -594,7 +594,7 @@ export class DocumentationMiddleware {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multiplayer Game API Documentation - Swagger UI</title>
+    <title>Word Association Game API Documentation - Swagger UI</title>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui.css" />
     <style>
         html { box-sizing: border-box; overflow: -moz-scrollbars-vertical; overflow-y: scroll; }

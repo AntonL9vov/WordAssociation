@@ -1,4 +1,4 @@
-# Multiplayer Game API Documentation
+# Word Association Game API Documentation
 
 Этот сервер автоматически генерирует документацию для всех WebSocket событий и REST API endpoints.
 

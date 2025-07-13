@@ -1,6 +1,6 @@
 # WebSocket API Examples
 
-Этот файл содержит примеры использования всех WebSocket событий в вашем multiplayer game.
+Этот файл содержит примеры использования всех WebSocket событий в вашем word association game.
 
 ## Подключение к серверу
 

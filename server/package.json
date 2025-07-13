@@ -1,7 +1,7 @@
 {
   "name": "multiplayer-game-server",
   "version": "1.0.0",
-  "description": "Multiplayer game server",
+  "description": "Word Association game server",
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",

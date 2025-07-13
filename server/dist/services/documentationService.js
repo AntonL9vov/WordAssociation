@@ -141,7 +141,7 @@ class DocumentationService {
         return {
             version: '1.0.0',
             title: 'WebSocket API Documentation',
-            description: 'Real-time multiplayer game WebSocket API',
+            description: 'Real-time word association game WebSocket API',
             events,
             categories
         };

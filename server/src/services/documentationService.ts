@@ -170,8 +170,8 @@ export class DocumentationService {
 
     return {
       version: '1.0.0',
-      title: 'Multiplayer Game API Documentation',
-      description: 'Real-time multiplayer game API with WebSocket events and REST endpoints',
+      title: 'Word Association Game API Documentation',
+      description: 'Real-time word association game API with WebSocket events and REST endpoints',
       events,
       categories
     };
