@@ -1,6 +1,6 @@
-# Multiplayer Game
+# Word Association Game
 
-A multiplayer game built with React, TypeScript, Vite, Socket.IO, Express, and Storybook.
+A word association game built with React, TypeScript, Vite, Socket.IO, Express, and Storybook.
 
 ## 🎮 Game Overview
 
@@ -92,7 +92,7 @@ npm run test         # Run unit tests
 ## Features
 
 ### Core Game Features
-- **Real-time multiplayer gameplay** with WebSocket connections
+- **Real-time word association gameplay** with WebSocket connections
 - **Game creation and joining** with unique game IDs
 - **Synchronized word submission** in rounds
 - **Automatic round progression** when all players submit words
