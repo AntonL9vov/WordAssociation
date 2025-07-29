@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/shared/lib/types";
 import { gameService } from "@/shared/api/game-service";
+import { userService } from "../api/user-service";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -30,15 +31,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       : null
   );
 
+  useEffect(() => {
+    if (user) {
+      userService
+        .getUserById(user.id)
+        .then((user) => {
+          setUser(user);
+        })
+        .catch((error) => {
+          setUser(null);
+          localStorage.removeItem("user");
+          console.error(error);
+        });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      gameService.setUser(user);
+    }
+  }, [user]);
+
   const login = (user: User) => {
-    gameService.setUser(user);
     setUser(user);
     localStorage.setItem("user", JSON.stringify(user));
   };
 
   const logout = () => {
     setUser(null);
-    gameService.setUser(null);
     localStorage.removeItem("user");
   };
 

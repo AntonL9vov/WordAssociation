@@ -1,11 +1,11 @@
-import { ApiService } from "./api";
+import { api, ApiService } from "./api";
 import { User } from "@/shared/lib/types";
 
 export class UserService {
   private apiService: ApiService;
 
   constructor() {
-    this.apiService = new ApiService();
+    this.apiService = api;
   }
 
   // Получить всех пользователей
