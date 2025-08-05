@@ -26,6 +26,10 @@ export class GameService implements IGameService {
     return game;
   }
 
+  getGames(): Game[] {
+    return this.gamesStorage.getGames();
+  }
+
   getPlayer(playerId: string): User {
     const player = this.usersService.getUser(playerId);
     if (!player) {
@@ -34,10 +38,22 @@ export class GameService implements IGameService {
     return player;
   }
 
-  isPlayerInGame(gameId: string, playerId: string): boolean {
+  isPlayerInGame(gameId: string, playerId: string): Game | null {
     const game = this.getGame(gameId);
-    return game.players.some((p) => p.id === playerId);
+    const player = game.players.find((p) => p.id === playerId);
+    if (!player) {
+      return null;
+    }
+    return game;
   }
+
+  isPlayerInGameByPlayerId(playerId: string): Game | null {
+    const game = this.gamesStorage.getGames().find((g) => g.players.some((p) => p.id === playerId));
+    if (!game) {
+      return null;
+    }
+    return game;
+  } 
 
   getLastRound(gameId: string): Round {
     const game = this.getGame(gameId);

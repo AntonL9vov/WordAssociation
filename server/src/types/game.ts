@@ -30,6 +30,7 @@ export interface Game {
 
 export interface GamesStorage {
   getGame(gameId: string): Game | undefined;
+  getGames(): Game[];
   createGame(): Game;
   deleteGame(gameId: string): void;
   updateGame(

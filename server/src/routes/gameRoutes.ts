@@ -6,6 +6,7 @@ export function createGameRoutes(gameController: GameController): Router {
 
   router.post('/', (req, res) => gameController.createGame(req, res));
   router.post('/:gameId', (req, res) => gameController.joinGame(req, res));
+  router.post('/is-player-in-game', (req, res) => gameController.isPlayerInGame(req, res));
 
   return router;
 }

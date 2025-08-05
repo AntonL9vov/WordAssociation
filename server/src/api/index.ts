@@ -3,7 +3,7 @@ import cors from "cors";
 import { createUsersRoutes } from "../routes/usersRoutes";
 import { UsersController } from "../controllers/usersController";
 import { UsersService } from "../services/usersService";
-import { createGameRoutes } from "../routes/gameRouets";
+import { createGameRoutes } from "../routes/gameRoutes";
 import { GameController } from "../controllers/gameController";
 import { GameService } from "../services/gameService";
 

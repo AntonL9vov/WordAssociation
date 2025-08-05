@@ -33,4 +33,21 @@ export class GameController {
       });
     }
   }
+
+  async isPlayerInGame(req: Request, res: Response): Promise<void> {
+    try {
+      const { playerId } = req.body;
+      const game = this.gameService.isPlayerInGameByPlayerId(playerId);
+      if (!game) {
+        res.status(404).json({ error: "Player not found in game" });
+        return;
+      }
+      res.status(200).json({ game });
+    } catch (error) {
+      res.status(500).json({
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
 }
