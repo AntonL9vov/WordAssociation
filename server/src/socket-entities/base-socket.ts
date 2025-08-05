@@ -3,17 +3,17 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import { BaseSocket as IBaseSocket } from "./base-socket-type";
-import { DocumentationMiddleware } from "../middleware/documentationMiddleware";
 
 export class BaseSocket {
   private app: express.Application;
   private io: Server;
   private httpServer: http.Server;
-  private port: number = Number(process.env.PORT) || 3000;
+  private port: number;
   private socket: Socket | undefined;
   private sockets: IBaseSocket[] = [];
 
-  constructor(sockets: IBaseSocket[]) {
+  constructor(sockets: IBaseSocket[], port: number) {
+    this.port = port;
     this.app = express();
 
     this.httpServer = http.createServer(this.app);
@@ -34,13 +34,52 @@ export class BaseSocket {
     this.app.use(cors());
     this.app.use(express.json());
 
+    // Serve AsyncAPI documentation
+    this.app.get('/docs', (req, res) => {
+      res.sendFile('asyncapi.html', { root: './public' }, (err) => {
+        if (err) {
+          res.status(404).send(`
+            <h1>AsyncAPI Documentation Not Found</h1>
+            <p>Run <code>npm run asyncapi:generate</code> to generate WebSocket documentation.</p>
+            <p><a href="http://localhost:3001/docs">View HTTP API Documentation</a></p>
+          `);
+        }
+      });
+    });
+
+    // Serve AsyncAPI JSON spec
+    this.app.get('/asyncapi.json', (req, res) => {
+      res.sendFile('asyncapi.json', { root: './public' }, (err) => {
+        if (err) {
+          res.status(404).json({
+            error: 'AsyncAPI specification not found',
+            message: 'Run npm run asyncapi:generate to generate WebSocket documentation'
+          });
+        }
+      });
+    });
+
+    // Health check
+    this.app.get('/health', (req, res) => {
+      res.json({ 
+        status: 'OK', 
+        service: 'WebSocket Server',
+        timestamp: new Date().toISOString(),
+        connections: this.io.engine.clientsCount
+      });
+    });
+
+    // Redirect root to docs
+    this.app.get('/', (req, res) => {
+      res.redirect('/docs');
+    });
+
     this.httpServer.listen(this.port, () => {
       console.log(`🚀 Server is running on port ${this.port}`);
       console.log(`📚 Documentation available at:`);
-      console.log(`   • WebSocket UI: http://localhost:${this.port}/docs`);
-      console.log(`   • Swagger UI: http://localhost:${this.port}/docs/swagger`);
-      console.log(`   • JSON API: http://localhost:${this.port}/api/docs`);
-      console.log(`   • OpenAPI: http://localhost:${this.port}/api/docs/openapi`);
+      console.log(`   • WebSocket API: http://localhost:${this.port}/docs`);
+      console.log(`   • HTTP API: http://localhost:3001/docs`);
+      console.log(`   • AsyncAPI JSON: http://localhost:${this.port}/asyncapi.json`);
       console.log(`🔌 WebSocket server: ws://localhost:${this.port}`);
     });
   }
@@ -59,12 +98,5 @@ export class BaseSocket {
     this.sockets.forEach((socket) => {
       socket.initSocket(this.socket as Socket);
     });
-  }
-
-  /**
-   * Настраивает документацию в Express приложении
-   */
-  setupDocumentation(docMiddleware: DocumentationMiddleware): void {
-    docMiddleware.setupRoutes(this.app);
   }
 }

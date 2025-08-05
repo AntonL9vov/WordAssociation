@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket API Documentation - Word Association Game</title>
+    <style>
+        body { 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #f8f9fa;
+        }
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            padding: 1rem 2rem; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header h1 { margin: 0; font-size: 1.8rem; }
+        .header p { margin: 0.5rem 0 0 0; opacity: 0.9; }
+        .nav { 
+            background: white; 
+            padding: 1rem 2rem; 
+            border-bottom: 1px solid #dee2e6;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .nav a { 
+            margin-right: 2rem; 
+            text-decoration: none; 
+            color: #495057; 
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 0;
+        }
+        .nav a:hover { color: #007bff; }
+        .nav a.active { 
+            color: #007bff; 
+            border-bottom: 2px solid #007bff; 
+            padding-bottom: 0.3rem;
+        }
+        .container { 
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .loading { 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            height: 400px; 
+            font-size: 1.2rem; 
+            color: #6c757d;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+            margin: 1rem 0;
+        }
+        .error h3 { margin-top: 0; }
+        .asyncapi-wrapper {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        #asyncapi-container { 
+            width: 100%; 
+            min-height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔌 WebSocket API Documentation</h1>
+        <p>Real-time communication for Word Association Game</p>
+    </div>
+    
+    <div class="nav">
+        <a href="/docs" class="active">WebSocket Events</a>
+        <a href="http://localhost:3001/docs">HTTP API</a>
+        <a href="http://localhost:3001/">Back to Home</a>
+    </div>
+
+    <div class="container">
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>Loading AsyncAPI documentation...</div>
+        </div>
+        
+        <div class="error" id="error" style="display: none;">
+            <h3>❌ Failed to load documentation</h3>
+            <p id="error-message"></p>
+            <p>Possible solutions:</p>
+            <ul>
+                <li>Make sure the server is running on port 3000</li>
+                <li>Check that asyncapi.json exists and is valid</li>
+                <li>Try refreshing the page</li>
+                <li>Check browser console for errors</li>
+            </ul>
+        </div>
+        
+        <div class="asyncapi-wrapper" style="display: none;" id="asyncapi-wrapper">
+            <div id="asyncapi-container"></div>
+        </div>
+    </div>
+
+    <!-- Используем более простой подход с AsyncAPI Generator -->
+    <script>
+        let asyncApiSpec = null;
+        
+        async function loadAsyncAPI() {
+            try {
+                console.log('🔄 Loading AsyncAPI specification...');
+                
+                // Загружаем спецификацию
+                const response = await fetch('/asyncapi.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                asyncApiSpec = await response.json();
+                console.log('✅ AsyncAPI spec loaded:', asyncApiSpec);
+                
+                // Скрываем загрузку и показываем контейнер
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('asyncapi-wrapper').style.display = 'block';
+                
+                // Создаем простую HTML документацию
+                renderSimpleAsyncAPI(asyncApiSpec);
+                
+            } catch (error) {
+                console.error('❌ Failed to load AsyncAPI spec:', error);
+                showError(error.message);
+            }
+        }
+        
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error-message').textContent = message;
+        }
+        
+        function renderSimpleAsyncAPI(spec) {
+            const container = document.getElementById('asyncapi-container');
+            
+            let html = `
+                <div style="padding: 2rem;">
+                    <div style="border-bottom: 2px solid #667eea; padding-bottom: 1rem; margin-bottom: 2rem;">
+                        <h1 style="color: #333; margin: 0;">${spec.info.title}</h1>
+                        <p style="color: #666; margin: 0.5rem 0; font-size: 1.1rem;">${spec.info.description}</p>
+                        <div style="background: #e9ecef; padding: 0.5rem 1rem; border-radius: 4px; margin-top: 1rem;">
+                            <strong>Version:</strong> ${spec.info.version} | 
+                            <strong>AsyncAPI:</strong> ${spec.asyncapi}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h2 style="color: #333;">🌐 Servers</h2>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+            `;
+            
+            // Серверы
+            for (const [serverName, server] of Object.entries(spec.servers)) {
+                html += `
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #667eea;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #333;">${serverName}</h4>
+                        <p style="margin: 0; color: #666;"><strong>URL:</strong> ${server.protocol}://${server.host}</p>
+                        <p style="margin: 0.25rem 0 0 0; color: #666; font-size: 0.9rem;">${server.description}</p>
+                    </div>
+                `;
+            }
+            
+            html += `
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h2 style="color: #333;">🔌 WebSocket Events</h2>
+                        <div style="display: grid; gap: 1.5rem;">
+            `;
+            
+            // События
+            for (const [channelName, channel] of Object.entries(spec.channels)) {
+                html += `
+                    <div style="background: white; border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;">
+                        <div style="background: #667eea; color: white; padding: 1rem;">
+                            <h3 style="margin: 0; font-size: 1.2rem;">📡 ${channelName}</h3>
+                        </div>
+                        <div style="padding: 1.5rem;">
+                `;
+                
+                if (channel.subscribe) {
+                    html += `
+                        <div style="margin-bottom: 1rem;">
+                            <h4 style="color: #28a745; margin: 0 0 0.5rem 0;">📥 Subscribe (Client → Server)</h4>
+                            <p style="margin: 0; color: #666;">${channel.subscribe.summary || 'Listen for incoming messages'}</p>
+                        </div>
+                    `;
+                }
+                
+                if (channel.publish) {
+                    html += `
+                        <div style="margin-bottom: 1rem;">
+                            <h4 style="color: #dc3545; margin: 0 0 0.5rem 0;">📤 Publish (Server → Client)</h4>
+                            <p style="margin: 0; color: #666;">${channel.publish.summary || 'Send outgoing messages'}</p>
+                        </div>
+                    `;
+                }
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                        <h3 style="color: #333; margin: 0 0 0.5rem 0;">📋 Available Schemas</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+            `;
+            
+            // Схемы
+            for (const schemaName of Object.keys(spec.components.schemas)) {
+                html += `<span style="background: #667eea; color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.9rem;">${schemaName}</span>`;
+            }
+            
+            html += `
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; text-align: center; color: #666; border-top: 1px solid #dee2e6; padding-top: 1rem;">
+                        <p>📄 <a href="/asyncapi.json" target="_blank" style="color: #667eea;">View Raw AsyncAPI Specification</a></p>
+                        <p style="font-size: 0.9rem;">Generated automatically from WebSocket events • Updated: ${new Date().toLocaleString()}</p>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Запускаем загрузку
+        loadAsyncAPI();
+    </script>
+</body>
+</html>

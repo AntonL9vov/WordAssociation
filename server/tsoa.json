@@ -1,0 +1,44 @@
+{
+  "entryFile": "src/index.ts",
+  "tsConfigFilePath": "./tsconfig.json",
+  "noImplicitAdditionalProperties": "silently-remove-extras",
+  "controllerPathGlobs": ["src/controllers/**/*Controller*.ts"],
+  "spec": {
+    "outputDirectory": "public",
+    "specVersion": 3,
+    "name": "Word Association Game API",
+    "description": "Modern REST API for multiplayer word association game with automatic Swagger documentation",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "email": "support@wordgame.com"
+    },
+    "license": "MIT",
+    "servers": [
+      {
+        "url": "http://localhost:3001",
+        "description": "Development server"
+      }
+    ],
+    "securityDefinitions": {},
+    "tags": [
+      {
+        "name": "Users",
+        "description": "User management endpoints"
+      },
+      {
+        "name": "Games", 
+        "description": "Game management endpoints"
+      },
+      {
+        "name": "Health",
+        "description": "System health endpoints"
+      }
+    ]
+  },
+  "routes": {
+    "routesDir": "src/generated",
+    "routesFileName": "routes.ts",
+    "iocModule": "src/ioc.ts"
+  }
+}
