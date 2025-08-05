@@ -4,9 +4,6 @@ import swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "./generated/routes";
 import { UsersService } from "./services/usersService";
 import { GameService } from "./services/gameService";
-import { UsersControllerV2 } from "./controllers/usersController.v2";
-import { GameControllerV2 } from "./controllers/gameController.v2";
-import { HealthController } from "./controllers/healthController";
 import "reflect-metadata";
 
 export function createApiServerV2(
@@ -38,20 +35,6 @@ export function createApiServerV2(
   } catch (error) {
     console.warn("Swagger documentation not available. Run 'npm run swagger:generate' first.");
   }
-
-  // Initialize controllers with services
-  const container = {
-    get: (identifier: string) => {
-      switch (identifier) {
-        case "UsersService":
-          return usersService;
-        case "GameService":
-          return gameService;
-        default:
-          throw new Error(`Service ${identifier} not found`);
-      }
-    }
-  };
 
   // Register auto-generated routes from tsoa
   RegisterRoutes(app);

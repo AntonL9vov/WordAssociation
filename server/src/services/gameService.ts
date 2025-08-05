@@ -48,12 +48,14 @@ export class GameService implements IGameService {
   }
 
   isPlayerInGameByPlayerId(playerId: string): Game | null {
-    const game = this.gamesStorage.getGames().find((g) => g.players.some((p) => p.id === playerId));
+    const game = this.gamesStorage
+      .getGames()
+      .find((g) => g.players.some((p) => p.id === playerId));
     if (!game) {
       return null;
     }
     return game;
-  } 
+  }
 
   getLastRound(gameId: string): Round {
     const game = this.getGame(gameId);
@@ -63,8 +65,12 @@ export class GameService implements IGameService {
     return game.rounds[game.rounds.length - 1];
   }
 
-  startGame(gameId: string, startWord: string): void {
+  startGame(gameId: string, startWord: string): Game {
     const game = this.getGame(gameId);
+
+    if (game.players.length < 2) {
+      throw new Error(`Game ${gameId} has less than 2 players`);
+    }
 
     if (game.isStarted) {
       throw new Error(`Game ${gameId} is already started`);
@@ -76,6 +82,8 @@ export class GameService implements IGameService {
     });
 
     this.addRound(gameId);
+
+    return this.getGame(gameId);
   }
 
   createGame(playerId: string): Game {
@@ -91,6 +99,14 @@ export class GameService implements IGameService {
   addPlayerToGame(gameId: string, playerId: string): Game {
     const game = this.getGame(gameId);
     const player = this.getPlayer(playerId);
+
+    if (game.isStarted) {
+      throw new Error(`Game ${gameId} is already started`);
+    }
+
+    if (game.isFinished) {
+      throw new Error(`Game ${gameId} is finished`);
+    }
 
     if (this.isPlayerInGame(gameId, playerId)) {
       throw new Error(`Player ${playerId} already in game ${gameId}`);
@@ -185,5 +201,10 @@ export class GameService implements IGameService {
     }
     this.addRound(gameId);
     return false;
+  }
+
+  getGamePlayers(gameId: string): User[] {
+    const game = this.getGame(gameId);
+    return game.players;
   }
 }

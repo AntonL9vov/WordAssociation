@@ -6,19 +6,14 @@ import { GameService } from "./services/gameService";
 export const iocContainer: IocContainer = {
   get: <T>(controller: new (...args: any[]) => T): T => {
     // Получаем сервисы из глобального состояния или контекста
-    // В реальном приложении здесь может быть DI контейнер
     const services = getServicesFromContext();
     
-    if (controller.name === "UsersControllerV2") {
+    if (controller.name === "UsersController") {
       return new controller(services.usersService) as T;
     }
     
-    if (controller.name === "GameControllerV2") {
+    if (controller.name === "GameController") {
       return new controller(services.gameService) as T;
-    }
-    
-    if (controller.name === "HealthController") {
-      return new controller() as T;
     }
     
     throw new Error(`Controller ${controller.name} not registered in IoC container`);
