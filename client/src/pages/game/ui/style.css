@@ -1,11 +1,10 @@
 .game-page {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    width: 100%;
+    flex: 1;
+    min-height: 0;
     background-color: var(--bg-secondary);
     color: var(--text-primary);
-    padding: var(--space-md);
     gap: var(--space-md);
 }
 

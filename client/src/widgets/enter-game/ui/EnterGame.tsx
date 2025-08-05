@@ -2,17 +2,25 @@ import "./style.css";
 import { EnterGameForms } from "@/features";
 import { gameService } from "@/shared/api/game-service";
 import { createGame, joinGame } from "../api/api";
+import { useNavigate } from "react-router-dom";
+import { Game } from "@/shared/lib/types";
 
 export const EnterGame = () => {
+  const navigate = useNavigate();
 
-
-  const handleJoinGame = (gameId?: string) => {
+  const handleJoinGame = async (gameId?: string) => {
     const id = gameService.getUser()!.id;
+    let response: Game | null = null;
 
     if (gameId) {
-      joinGame(gameId, id);
+      response = await joinGame(gameId, id);
     } else {
-      createGame(id);
+      response = await createGame(id);
+    }
+
+    if (response) {
+      gameService.setGame(response);
+      navigate("/game");
     }
   };
 

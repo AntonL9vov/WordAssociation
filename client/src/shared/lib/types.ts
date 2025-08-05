@@ -7,17 +7,27 @@ export interface Game {
   id: string;
   players: User[];
   currentRound: number;
-  state: GameState;
-  lastWord: string | null;
+  startWord: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  isStarted: boolean;
+  isFinished: boolean;
+  rounds: Round[];
+}
+
+export interface Round {
+  id: string;
+  words: Word[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-export enum GameState {
-  WAITING_FOR_PLAYERS = "WAITING_FOR_PLAYERS",
-  INITIAL_WORDS = "INITIAL_WORDS",
-  ASSOCIATION_ROUND = "ASSOCIATION_ROUND",
-  GAME_OVER = "GAME_OVER",
+export interface Word {
+  id: string;
+  word: string;
+  playerId: string;
+  playerName: string;
+  timestamp: Date;
 }
 
 export interface GameEvent {

@@ -1,9 +1,8 @@
 import { Button, TextField } from "@mui/material";
-import { useState } from "react";
 import "./style.css";
 
 interface EnterGameFormBaseProps {
-  onJoinGame: (name: string) => void;
+  onJoinGame: () => void;
   buttonLabel: string;
   buttonDisabled?: boolean;
 }
@@ -32,20 +31,18 @@ export const EnterGameForm = ({
   withGameId,
   buttonDisabled,
 }: EnterGameFormProps) => {
-  const [playerName, setPlayerName] = useState("");
-
   const handleJoinGame = () => {
-    onJoinGame(playerName);
+    onJoinGame();
   };
 
   return (
     <div className="enter-game-form">
-      <TextField
+      {/* <TextField
         value={playerName}
         label="Player Name"
         placeholder="Player Name"
         onChange={(e) => setPlayerName(e.target.value)}
-      />
+      /> */}
       {withGameId && (
         <TextField
           label="Game ID"
@@ -55,7 +52,7 @@ export const EnterGameForm = ({
         />
       )}
       <Button
-        disabled={!playerName || buttonDisabled}
+        disabled={!gameId || buttonDisabled}
         variant="contained"
         onClick={() => handleJoinGame()}
       >

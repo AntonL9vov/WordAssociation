@@ -52,6 +52,10 @@ export class GameService {
     return this.game;
   }
 
+  setGame(game: Game | null) {
+    this.game = game;
+  }
+
   getUser(): User | null {
     return this.user;
   }

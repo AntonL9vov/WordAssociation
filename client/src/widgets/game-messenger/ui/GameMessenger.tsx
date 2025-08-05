@@ -9,7 +9,7 @@ export const GameMessenger = () => {
   return (
     <div className="game-messenger">
       <div className="messenger-history-container">
-        <MessengerHistory withMock />
+        <MessengerHistory />
       </div>
       <div className="messenger-input-container">
         <MessengerInput onSend={handleSend} />

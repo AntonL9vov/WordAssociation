@@ -1,7 +1,6 @@
 import { Button } from "@mui/material";
 import "./style.css";
 import { useState } from "react";
-import { CreateGame } from "@/features";
 import { JoinGame } from "@/features";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
@@ -27,7 +26,7 @@ export const EnterGameForms = ({ onJoinGame }: EnterGameFormsProps) => {
       {currentStep === null && (
         <>
           <Button
-            onClick={() => setCurrentStep("create")}
+            onClick={() => handleCreateGame()}
             className="enter-game__button"
             variant="contained"
           >
@@ -53,9 +52,6 @@ export const EnterGameForms = ({ onJoinGame }: EnterGameFormsProps) => {
             <ArrowBackIcon />
           </Button>
           <div className="enter-game__content-form">
-            {currentStep === "create" && (
-              <CreateGame onJoinGame={handleCreateGame} />
-            )}
             {currentStep === "join" && <JoinGame onJoinGame={handleJoinGame} />}
           </div>
         </div>
