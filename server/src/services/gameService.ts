@@ -72,12 +72,12 @@ export class GameService implements IGameService {
       throw new Error(`Game ${gameId} has less than 2 players`);
     }
 
-    if (game.isStarted) {
+    if (game.status === "started") {
       throw new Error(`Game ${gameId} is already started`);
     }
 
     this.gamesStorage.updateGame(game.id, {
-      isStarted: true,
+      status: "started",
       startWord,
     });
 
@@ -100,11 +100,11 @@ export class GameService implements IGameService {
     const game = this.getGame(gameId);
     const player = this.getPlayer(playerId);
 
-    if (game.isStarted) {
+    if (game.status === "started") {
       throw new Error(`Game ${gameId} is already started`);
     }
 
-    if (game.isFinished) {
+    if (game.status === "finished") {
       throw new Error(`Game ${gameId} is finished`);
     }
 
@@ -123,7 +123,7 @@ export class GameService implements IGameService {
     const game = this.getGame(gameId);
     const player = this.getPlayer(playerId);
 
-    if (!game.isStarted || game.isFinished) {
+    if (game.status !== "started") {
       throw new Error(`Game ${gameId} is not started or finished`);
     }
 
@@ -164,7 +164,7 @@ export class GameService implements IGameService {
     const game = this.getGame(gameId);
 
     this.gamesStorage.updateGame(game.id, {
-      isFinished: true,
+      status: "finished",
     });
   }
 

@@ -23,10 +23,11 @@ export interface Game {
   createdAt: Date;
   updatedAt: Date;
   startWord: string;
-  isFinished: boolean; //TODO: remake to new Type where if isStarted is false isFinished can never be true
-  isStarted: boolean;
+  status: GameStatus;
   players: User[];
 }
+
+export type GameStatus = "created" | "started" | "finished";
 
 export interface GamesStorage {
   getGame(gameId: string): Game | undefined;
