@@ -1,15 +1,22 @@
 import "./style.css";
 import { EnterGameForms } from "@/features";
-import { gameService } from "@/shared/api/game-service";
 import { createGame, joinGame } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { Game } from "@/shared/lib/types";
+import { useGameStore } from "@/shared/stores/game-store";
+import { useAuth } from "@/shared/context/AuthContext";
 
 export const EnterGame = () => {
   const navigate = useNavigate();
+  const setGame = useGameStore((state) => state.setGame);
+  const user = useAuth();
 
   const handleJoinGame = async (gameId?: string) => {
-    const id = gameService.getUser()!.id;
+    if (!user.user) {
+      return;
+    }
+
+    const id = user.user.id;
     let response: Game | null = null;
 
     if (gameId) {
@@ -19,7 +26,7 @@ export const EnterGame = () => {
     }
 
     if (response) {
-      gameService.setGame(response);
+      setGame(response);
       navigate("/game");
     }
   };

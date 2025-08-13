@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/shared/lib/types";
-import { gameService } from "@/shared/api/game-service";
 import { userService } from "../api/user-service";
 
 interface AuthContextType {
@@ -46,11 +45,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      gameService.setUser(user);
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     gameService.setUser(user);
+  //   }
+  // }, [user]);
 
   const login = (user: User) => {
     setUser(user);

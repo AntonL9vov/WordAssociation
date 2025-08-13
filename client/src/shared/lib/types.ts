@@ -1,54 +1,11 @@
-export interface User {
-  id: string;
-  name: string;
-}
+import { z } from "zod";
+import { gameSchema, roundSchema, wordSchema } from "../schemas/game";
+import { userSchema } from "../schemas/user";
 
-export interface Game {
-  id: string;
-  players: User[];
-  currentRound: number;
-  startWord: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  isStarted: boolean;
-  isFinished: boolean;
-  rounds: Round[];
-}
+export type User = z.infer<typeof userSchema>;
 
-export interface Round {
-  id: string;
-  words: Word[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+export type Game = z.infer<typeof gameSchema>;
 
-export interface Word {
-  id: string;
-  word: string;
-  playerId: string;
-  playerName: string;
-  timestamp: Date;
-}
+export type Word = z.infer<typeof wordSchema>;
 
-export interface GameEvent {
-  type: GameEventType;
-  data: any;
-  gameId: string;
-}
-
-export enum GameEventType {
-  PLAYER_JOINED = "PLAYER_JOINED",
-  PLAYER_LEFT = "PLAYER_LEFT",
-  WORD_SUBMITTED = "WORD_SUBMITTED",
-  ROUND_STARTED = "ROUND_STARTED",
-  GAME_ENDED = "GAME_ENDED",
-}
-
-export interface GameStats {
-  gameId: string;
-  winner: User | null;
-  rounds: number;
-  initialWords: string[];
-  finalWord: string;
-  duration: number;
-}
+export type Round = z.infer<typeof roundSchema>;

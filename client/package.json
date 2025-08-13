@@ -32,7 +32,9 @@
     "socket.io-client": "^4.7.2",
     "typescript": "^5.0.0",
     "vite": "^4.0.0",
-    "vitest": "^3.2.3"
+    "vitest": "^3.2.3",
+    "zod": "^4.0.17",
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
     "@playwright/test": "^1.53.0",

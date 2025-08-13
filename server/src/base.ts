@@ -31,7 +31,7 @@ const initialGamesState: Record<string, Game> = {
     createdAt: new Date(),
     updatedAt: new Date(),
     startWord: "",
-    isFinished: false,
+    status: "created",
     players: [
       {
         id: "1",
@@ -42,7 +42,6 @@ const initialGamesState: Record<string, Game> = {
         name: "Jane Doe",
       },
     ],
-    isStarted: false,
   },
 };
 

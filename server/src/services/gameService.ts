@@ -112,11 +112,11 @@ export class GameService implements IGameService {
       throw new Error(`Player ${playerId} already in game ${gameId}`);
     }
 
-    this.gamesStorage.updateGame(gameId, {
+    const updatedGame = this.gamesStorage.updateGame(gameId, {
       players: [...game.players, player],
     });
 
-    return game;
+    return updatedGame;
   }
 
   emitWord(gameId: string, w: string, playerId: string): Word {

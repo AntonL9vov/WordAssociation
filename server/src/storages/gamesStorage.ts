@@ -14,15 +14,14 @@ export class GamesStorage implements IGameStorage {
   }
 
   createGame(): Game {
-    const game = {
+    const game: Game = {
       id: uuidv4(),
       rounds: [],
       createdAt: new Date(),
       updatedAt: new Date(),
       startWord: "",
-      isFinished: false,
+      status: "created",
       players: [],
-      isStarted: false,
     };
 
     this.games[game.id] = game;
@@ -39,7 +38,7 @@ export class GamesStorage implements IGameStorage {
 
   updateGame(
     gameId: string,
-    game: Pick<Game, "rounds" | "startWord" | "isFinished" | "players">
+    game: Pick<Game, "rounds" | "startWord" | "status" | "players">
   ): Game {
     this.games[gameId] = {
       ...this.games[gameId],

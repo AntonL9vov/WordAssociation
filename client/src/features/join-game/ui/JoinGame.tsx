@@ -2,14 +2,14 @@ import { EnterGameForm } from "@/entities";
 import { useState } from "react";
 
 export type JoinGameProps = {
-  onJoinGame: (name: string, gameId: string) => void;
+  onJoinGame: (gameId: string) => void;
 };
 
 export const JoinGame = ({ onJoinGame }: JoinGameProps) => {
   const [gameId, setGameId] = useState("");
 
-  const handleJoinGame = (name: string) => {
-    onJoinGame(name, gameId);
+  const handleJoinGame = () => {
+    onJoinGame(gameId);
   };
 
   const handleGameIdChange = (gameId: string) => {

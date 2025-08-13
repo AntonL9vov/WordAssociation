@@ -2,7 +2,7 @@ import { Button, TextField } from "@mui/material";
 import "./style.css";
 
 interface EnterGameFormBaseProps {
-  onJoinGame: () => void;
+  onJoinGame: (gameId: string) => void;
   buttonLabel: string;
   buttonDisabled?: boolean;
 }
@@ -31,18 +31,14 @@ export const EnterGameForm = ({
   withGameId,
   buttonDisabled,
 }: EnterGameFormProps) => {
-  const handleJoinGame = () => {
-    onJoinGame();
+  const handleJoinGame = (gameId: string | undefined) => {
+    if (gameId) {
+      onJoinGame(gameId);
+    }
   };
 
   return (
     <div className="enter-game-form">
-      {/* <TextField
-        value={playerName}
-        label="Player Name"
-        placeholder="Player Name"
-        onChange={(e) => setPlayerName(e.target.value)}
-      /> */}
       {withGameId && (
         <TextField
           label="Game ID"
@@ -54,7 +50,7 @@ export const EnterGameForm = ({
       <Button
         disabled={!gameId || buttonDisabled}
         variant="contained"
-        onClick={() => handleJoinGame()}
+        onClick={() => handleJoinGame(gameId)}
       >
         {buttonLabel}
       </Button>

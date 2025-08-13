@@ -11,6 +11,7 @@ import {
 } from "tsoa";
 import { GameService } from "../services/gameService";
 import { User } from "./users.controller";
+import { GameStatus } from "../types/game";
 
 export interface Game {
   /** @example "game-123" */
@@ -18,9 +19,7 @@ export interface Game {
   rounds: any[];
   players: User[];
   /** @example false */
-  isStarted: boolean;
-  /** @example false */
-  isFinished: boolean;
+  status: GameStatus;
   /** @example "hello" */
   startWord: string;
   /** @example "2023-01-01T00:00:00Z" */
@@ -43,13 +42,11 @@ export class GameController extends Controller {
 
   @Post()
   @SuccessResponse(201, "Game created")
-  public async createGame(
-    @Body() body: CreateGameRequest
-  ): Promise<{ game: Game }> {
+  public async createGame(@Body() body: CreateGameRequest): Promise<Game> {
     try {
       const game = this.gameService.createGame(body.playerId);
       this.setStatus(201);
-      return { game };
+      return { ...game };
     } catch (error) {
       this.setStatus(500);
       throw error;
@@ -60,10 +57,11 @@ export class GameController extends Controller {
   public async joinGame(
     @Path() gameId: string,
     @Body() body: { playerId: string }
-  ): Promise<{ game: Game }> {
+  ): Promise<Game> {
     try {
       const game = this.gameService.addPlayerToGame(gameId, body.playerId);
-      return { game };
+      console.log("game", game);
+      return { ...game };
     } catch (error) {
       this.setStatus(500);
       throw error;
@@ -71,29 +69,37 @@ export class GameController extends Controller {
   }
 
   @Get("/is-player-in-game/{playerId}")
-  public async isPlayerInGame(
-    @Path() playerId: string
-  ): Promise<{ game: Game | null }> {
+  public async isPlayerInGame(@Path() playerId: string): Promise<Game | null> {
     const game = this.gameService.isPlayerInGameByPlayerId(playerId);
     if (!game) {
       this.setStatus(204);
-      return { game: null };
+      return null;
     }
     this.setStatus(200);
-    return { game };
+    return { ...game };
   }
 
   @Post("{gameId}/start")
   public async startGame(
     @Path() gameId: string,
     @Body() body: { startWord: string }
-  ): Promise<{ game: Game }> {
+  ): Promise<Game> {
     try {
       const game = this.gameService.startGame(gameId, body.startWord);
-      return { game };
+      return { ...game };
     } catch (error) {
       this.setStatus(500);
       throw error;
     }
+  }
+
+  @Get("/get-random-word")
+  public async getRandomWord(): Promise<{ word: string }> {
+    const words = [
+      "море","ветер","смысл","луч","игра","связь","мост","шаг","искра","путь",
+      "стихия","облако","снег","тропа","свет","заря","момент","миг","мысль","узор"
+    ];
+    const word = words[Math.floor(Math.random() * words.length)];
+    return { word };
   }
 }
