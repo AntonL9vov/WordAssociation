@@ -3,12 +3,18 @@ import { useAuth } from "@/shared/context/AuthContext";
 import { ThemeToggle } from "@/shared/ui/ThemeToggle";
 import "./style.css";
 import { Typography } from "@mui/material";
+import { deleteUser } from "../api/http";
 
 export const MainHeader: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    if (user?.id) {
+      const response = await deleteUser(user?.id);
+      if (response.status === 204) {
+        logout();
+      }
+    }
   };
 
   return (

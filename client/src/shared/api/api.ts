@@ -1,6 +1,6 @@
 // Base API service for making HTTP requests
 import { API_CONFIG } from "../config/api";
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import type { ZodTypeAny } from "zod";
 
 export class ApiService {
@@ -107,6 +107,11 @@ export class ApiService {
       }
       throw new Error(`Error with ${endpoint} - ${error}`);
     }
+  }
+
+  async delete(endpoint: string, config?: AxiosRequestConfig): Promise<AxiosResponse> {
+    const response = await this.axiosInstance.delete(endpoint, config);
+    return response;
   }
 }
 

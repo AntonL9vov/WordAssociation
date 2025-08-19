@@ -44,13 +44,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
     }
   }, []);
-
-  // useEffect(() => {
-  //   if (user) {
-  //     gameService.setUser(user);
-  //   }
-  // }, [user]);
-
+  
   const login = (user: User) => {
     setUser(user);
     localStorage.setItem("user", JSON.stringify(user));
