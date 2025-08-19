@@ -12,6 +12,8 @@ import {
 import { GameService } from "../services/gameService";
 import { User } from "./users.controller";
 import { GameStatus } from "../types/game";
+import { gameEntity } from "..";
+import { gameSocketEvents } from "../socket-entities/game-scoket/game-socket-events";
 
 export interface Game {
   /** @example "game-123" */
@@ -60,7 +62,17 @@ export class GameController extends Controller {
   ): Promise<Game> {
     try {
       const game = this.gameService.addPlayerToGame(gameId, body.playerId);
-      console.log("game", game);
+      
+      // Notify all players in the game room about the updated game state
+      const room = `game:${game.id}`;
+      const io = gameEntity.baseSocket.getIO();
+      
+      console.log("🎯 About to emit to room:", room, "Players count:", game.players.length);
+      console.log("🎯 Room clients count:", io.sockets.adapter.rooms.get(room)?.size || 0);
+      
+      io.to(room).emit("game:player:joined", game);
+      console.log("📤 Emitted game:player:joined to room:", room);
+      
       return { ...game };
     } catch (error) {
       this.setStatus(500);
@@ -96,8 +108,26 @@ export class GameController extends Controller {
   @Get("/get-random-word")
   public async getRandomWord(): Promise<{ word: string }> {
     const words = [
-      "море","ветер","смысл","луч","игра","связь","мост","шаг","искра","путь",
-      "стихия","облако","снег","тропа","свет","заря","момент","миг","мысль","узор"
+      "море",
+      "ветер",
+      "смысл",
+      "луч",
+      "игра",
+      "связь",
+      "мост",
+      "шаг",
+      "искра",
+      "путь",
+      "стихия",
+      "облако",
+      "снег",
+      "тропа",
+      "свет",
+      "заря",
+      "момент",
+      "миг",
+      "мысль",
+      "узор",
     ];
     const word = words[Math.floor(Math.random() * words.length)];
     return { word };

@@ -9,7 +9,7 @@ export class BaseSocket {
   private io: Server;
   private httpServer: http.Server;
   private port: number;
-  private socket: Socket | undefined;
+  socket: Socket | undefined;
   private sockets: IBaseSocket[] = [];
 
   constructor(sockets: IBaseSocket[], port: number) {
@@ -30,13 +30,18 @@ export class BaseSocket {
     this.initSocket();
   }
 
+  // Get the io instance for emitting to all clients or rooms
+  getIO(): Server {
+    return this.io;
+  }
+
   initServer() {
     this.app.use(cors());
     this.app.use(express.json());
 
     // Serve AsyncAPI documentation
-    this.app.get('/docs', (req, res) => {
-      res.sendFile('asyncapi.html', { root: './public' }, (err) => {
+    this.app.get("/docs", (req, res) => {
+      res.sendFile("asyncapi.html", { root: "./public" }, (err) => {
         if (err) {
           res.status(404).send(`
             <h1>AsyncAPI Documentation Not Found</h1>
@@ -48,30 +53,31 @@ export class BaseSocket {
     });
 
     // Serve AsyncAPI JSON spec
-    this.app.get('/asyncapi.json', (req, res) => {
-      res.sendFile('asyncapi.json', { root: './public' }, (err) => {
+    this.app.get("/asyncapi.json", (req, res) => {
+      res.sendFile("asyncapi.json", { root: "./public" }, (err) => {
         if (err) {
           res.status(404).json({
-            error: 'AsyncAPI specification not found',
-            message: 'Run npm run asyncapi:generate to generate WebSocket documentation'
+            error: "AsyncAPI specification not found",
+            message:
+              "Run npm run asyncapi:generate to generate WebSocket documentation",
           });
         }
       });
     });
 
     // Health check
-    this.app.get('/health', (req, res) => {
-      res.json({ 
-        status: 'OK', 
-        service: 'WebSocket Server',
+    this.app.get("/health", (req, res) => {
+      res.json({
+        status: "OK",
+        service: "WebSocket Server",
         timestamp: new Date().toISOString(),
-        connections: this.io.engine.clientsCount
+        connections: this.io.engine.clientsCount,
       });
     });
 
     // Redirect root to docs
-    this.app.get('/', (req, res) => {
-      res.redirect('/docs');
+    this.app.get("/", (req, res) => {
+      res.redirect("/docs");
     });
 
     this.httpServer.listen(this.port, () => {
@@ -79,24 +85,29 @@ export class BaseSocket {
       console.log(`📚 Documentation available at:`);
       console.log(`   • WebSocket API: http://localhost:${this.port}/docs`);
       console.log(`   • HTTP API: http://localhost:3001/docs`);
-      console.log(`   • AsyncAPI JSON: http://localhost:${this.port}/asyncapi.json`);
+      console.log(
+        `   • AsyncAPI JSON: http://localhost:${this.port}/asyncapi.json`
+      );
       console.log(`🔌 WebSocket server: ws://localhost:${this.port}`);
     });
   }
 
   initSocket() {
     this.io.on("connection", (socket) => {
-      console.log("connection event received");
+      console.log("Socket connection received:", socket.id);
 
+      // Store reference to current socket for compatibility
       this.socket = socket as Socket;
-      this.initSockets();
+      this.socket.join(`game:${socket.handshake.query.gameId as string}`);
+      
+      // Initialize socket handlers for each socket handler
+      this.initSockets(socket);
     });
   }
 
-  initSockets() {
-    if (!this.socket) return;
-    this.sockets.forEach((socket) => {
-      socket.initSocket(this.socket as Socket);
+  initSockets(socket: Socket) {
+    this.sockets.forEach((socketHandler) => {
+      socketHandler.initSocket(socket);
     });
   }
 }

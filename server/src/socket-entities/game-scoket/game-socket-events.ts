@@ -3,45 +3,6 @@ import { SocketEvents } from "../../types/base";
 import { Game, GameService, Word } from "../../types/game";
 
 export const gameSocketEvents: Record<string, SocketEvents> = {
-  create: {
-    handler: {
-      "game:create": {
-        event: "game:create",
-        callback: (
-          socket: Socket,
-          gameService: GameService,
-          playerId: string
-        ) => {
-          try {
-            const game = gameService.createGame(playerId);
-            gameSocketEvents.create.emit["game:created"].callback(socket, game);
-          } catch (error) {
-            gameSocketEvents.create.emit["game:created:error"].callback(
-              socket,
-              error
-            );
-          }
-        },
-      },
-    },
-    emit: {
-      "game:created": {
-        event: "game:created",
-        callback: (socket: Socket, game: Game) => {
-          socket.emit(gameSocketEvents.create.emit["game:created"].event, game);
-        },
-      },
-      "game:created:error": {
-        event: "game:created:error",
-        callback: (socket: Socket, error: Error) => {
-          socket.emit(
-            gameSocketEvents.create.emit["game:created:error"].event,
-            error.message
-          );
-        },
-      },
-    },
-  },
   start: {
     handler: {
       "game:start": {
@@ -69,7 +30,11 @@ export const gameSocketEvents: Record<string, SocketEvents> = {
       "game:started": {
         event: "game:started",
         callback: (socket: Socket, game: Game) => {
-          socket.emit(gameSocketEvents.start.emit["game:started"].event, game);
+          const room = `game:${game.id}`;
+          socket.nsp.to(room).emit(
+            gameSocketEvents.start.emit["game:started"].event,
+            game
+          );
         },
       },
       "game:started:error": {
@@ -79,78 +44,6 @@ export const gameSocketEvents: Record<string, SocketEvents> = {
             gameSocketEvents.start.emit["game:started:error"].event,
             error.message
           );
-        },
-      },
-    },
-  },
-  join: {
-    handler: {
-      "game:join": {
-        event: "game:join",
-        callback: (
-          socket: Socket,
-          gameService: GameService,
-          gameId: string,
-          playerId: string
-        ) => {
-          try {
-            console.log("game:join", gameId, playerId);
-            gameService.addPlayerToGame(gameId, playerId);
-            gameSocketEvents.join.emit["game:joined"].callback(
-              socket,
-              gameId,
-              playerId
-            );
-          } catch (error) {
-            gameSocketEvents.join.emit["game:joined:error"].callback(
-              socket,
-              error
-            );
-          }
-        },
-      },
-    },
-    emit: {
-      "game:joined": {
-        event: "game:joined",
-        callback: (socket: Socket, gameId: string, playerId: string) => {
-          socket.emit(
-            gameSocketEvents.join.emit["game:joined"].event,
-            gameId,
-            playerId
-          );
-        },
-      },
-      "game:joined:error": {
-        event: "game:joined:error",
-        callback: (socket: Socket, error: Error) => {
-          socket.emit(
-            gameSocketEvents.join.emit["game:joined:error"].event,
-            error.message
-          );
-        },
-      },
-    },
-  },
-  get: {
-    handler: {
-      "game:get": {
-        event: "game:get",
-        callback: (
-          socket: Socket,
-          gameService: GameService,
-          gameId: string
-        ) => {
-          const game = gameService.getGame(gameId);
-          gameSocketEvents.get.emit["game:got"].callback(socket, game);
-        },
-      },
-    },
-    emit: {
-      "game:got": {
-        event: "game:got",
-        callback: (socket: Socket, game: Game) => {
-          socket.emit(gameSocketEvents.get.emit["game:got"].event, game);
         },
       },
     },
@@ -170,6 +63,7 @@ export const gameSocketEvents: Record<string, SocketEvents> = {
             const emittedWord = gameService.emitWord(gameId, word, playerId);
             gameSocketEvents.word.emit["game:word:emitted"].callback(
               socket,
+              gameId,
               emittedWord
             );
           } catch (error) {
@@ -184,8 +78,9 @@ export const gameSocketEvents: Record<string, SocketEvents> = {
     emit: {
       "game:word:emitted": {
         event: "game:word:emitted",
-        callback: (socket: Socket, word: Word) => {
-          socket.emit(
+        callback: (socket: Socket, gameId: string, word: Word) => {
+          const room = `game:${gameId}`;
+          socket.nsp.to(room).emit(
             gameSocketEvents.word.emit["game:word:emitted"].event,
             word
           );
@@ -201,5 +96,38 @@ export const gameSocketEvents: Record<string, SocketEvents> = {
         },
       },
     },
+  },
+  joinRoom: {
+    handler: {
+      "game:join:room": {
+        event: "game:join:room",
+        callback: (
+          socket: Socket,
+          gameService: GameService,
+          gameId: string,
+          playerId: string
+        ) => {
+          try {
+            console.log("🔥 Player joining room:", playerId, "to game:", gameId);
+            const room = `game:${gameId}`;
+            socket.join(room);
+            console.log("✅ Player joined room:", room, "Socket ID:", socket.id);
+            
+            // Get current game state and send it back to the client who joined
+            const game = gameService.getGame(gameId);
+            if (!game) {
+              throw new Error("Game not found");
+            }
+            socket.emit("game:room:joined", game);
+            console.log("📤 Sent current game state to joined player:", game.players.length, "players");
+          } catch (error) {
+            console.error("Error joining room:", error);
+            const errorMessage = error instanceof Error ? error.message : "Unknown error";
+            socket.emit("game:room:join:error", errorMessage);
+          }
+        },
+      },
+    },
+    emit: {},
   },
 };

@@ -12,6 +12,8 @@ import { setServices } from "./ioc";
 import { generateAsyncAPIDocumentation } from "./scripts/generate-asyncapi";
 import { shouldGenerateDocumentation } from "./scripts/check-docs";
 import express from "express";
+import { Server, Socket } from "socket.io";
+import http from "http";
 
 const initialUsersState: User[] = [
   {
@@ -54,7 +56,7 @@ export class BaseGame {
   private gameService: GameService;
   private gameSocket: GameSocket;
 
-  // private baseSocket: BaseSocket;
+  baseSocket: BaseSocket;
 
   private apiServer: express.Application;
 
@@ -67,17 +69,17 @@ export class BaseGame {
     this.gameService = new GameService(this.gameStorage, this.usersService);
     this.gameSocket = new GameSocket(this.gameService);
 
-    new BaseSocket([this.userSocket, this.gameSocket], socketPort);
+    this.baseSocket = new BaseSocket([this.userSocket, this.gameSocket], socketPort);
 
     // Генерируем AsyncAPI документацию для WebSocket (только в development)
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== "production") {
       this.generateAsyncAPIDocumentationOnce();
     }
 
     // Инициализируем сервисы для IoC контейнера
     setServices({
       usersService: this.usersService,
-      gameService: this.gameService
+      gameService: this.gameService,
     });
 
     // Создаем REST API сервер с автогенерированной документацией
@@ -95,26 +97,31 @@ export class BaseGame {
 
   // Генерируем AsyncAPI документацию для WebSocket (с защитой от повторных вызовов)
   private static documentationGenerated = false;
-  
+
   private async generateAsyncAPIDocumentationOnce(): Promise<void> {
     // Генерируем только если еще не генерировали в этой сессии
     if (BaseGame.documentationGenerated) {
-      console.log('ℹ️  AsyncAPI documentation already generated in this session');
+      console.log(
+        "ℹ️  AsyncAPI documentation already generated in this session"
+      );
       return;
     }
-    
+
     // Проверяем, нужно ли генерировать документацию
     if (!shouldGenerateDocumentation()) {
-      console.log('ℹ️  Documentation is up to date, skipping generation');
+      console.log("ℹ️  Documentation is up to date, skipping generation");
       BaseGame.documentationGenerated = true;
       return;
     }
-    
+
     try {
       await generateAsyncAPIDocumentation();
       BaseGame.documentationGenerated = true;
     } catch (error) {
-      console.warn('⚠️ Failed to generate AsyncAPI documentation:', error instanceof Error ? error.message : error);
+      console.warn(
+        "⚠️ Failed to generate AsyncAPI documentation:",
+        error instanceof Error ? error.message : error
+      );
     }
   }
 }
