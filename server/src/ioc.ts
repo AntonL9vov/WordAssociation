@@ -9,7 +9,7 @@ export const iocContainer: IocContainer = {
     const services = getServicesFromContext();
     
     if (controller.name === "UsersController") {
-      return new controller(services.usersService) as T;
+      return new controller(services.usersService, services.gameService) as T;
     }
     
     if (controller.name === "GameController") {

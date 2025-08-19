@@ -1,5 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Route, Path, Body, Tags, Response, Example, SuccessResponse } from 'tsoa';
 import { UsersService } from '../services/usersService';
+import { GameService } from '../services/gameService';
+import { gameEntity } from '..';
 
 export interface User {
   /** @example "user-123" */
@@ -23,7 +25,7 @@ export interface ErrorResponse {
 @Route('api/users')
 @Tags('Users')
 export class UsersController extends Controller {
-  constructor(private usersService: UsersService) {
+  constructor(private usersService: UsersService, private gameService: GameService) {
     super();
   }
 
@@ -70,6 +72,11 @@ export class UsersController extends Controller {
   @Delete('{id}')
   public async deleteUser(@Path() id: string): Promise<void> {
     try {
+      const updatedGames = this.gameService.deleteUserFromAllGames(id);
+      const io = gameEntity.baseSocket.getIO();
+      updatedGames.forEach((game) => {
+        io.to(`game:${game.id}`).emit("game:players:update", game);
+      });
       this.usersService.deleteUser(id);
       this.setStatus(204);
     } catch (error) {

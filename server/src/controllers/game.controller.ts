@@ -70,8 +70,8 @@ export class GameController extends Controller {
       console.log("🎯 About to emit to room:", room, "Players count:", game.players.length);
       console.log("🎯 Room clients count:", io.sockets.adapter.rooms.get(room)?.size || 0);
       
-      io.to(room).emit("game:player:joined", game);
-      console.log("📤 Emitted game:player:joined to room:", room);
+      io.to(room).emit("game:players:update", game);
+      console.log("📤 Emitted game:players:update to room:", room);
       
       return { ...game };
     } catch (error) {

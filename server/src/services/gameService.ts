@@ -207,4 +207,19 @@ export class GameService implements IGameService {
     const game = this.getGame(gameId);
     return game.players;
   }
+
+  deleteUserFromAllGames(userId: string): Game[] {
+    const games = this.gamesStorage.getGames();
+    const updatedGames: Game[] = [];
+    games.forEach((game) => {
+      const playersLength = game.players.length;
+      game.players = game.players.filter((player) => player.id !== userId);
+      if (playersLength > game.players.length) {
+        const updatedGame = this.gamesStorage.updateGame(game.id, game);
+        updatedGames.push(updatedGame);
+      }
+    });
+
+    return updatedGames;
+  }
 }
