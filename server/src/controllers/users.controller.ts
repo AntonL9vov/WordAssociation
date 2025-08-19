@@ -66,4 +66,15 @@ export class UsersController extends Controller {
       throw error;
     }
   }
+
+  @Delete('{id}')
+  public async deleteUser(@Path() id: string): Promise<void> {
+    try {
+      this.usersService.deleteUser(id);
+      this.setStatus(204);
+    } catch (error) {
+      this.setStatus(500);
+      throw error;
+    }
+  }
 }
