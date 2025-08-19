@@ -4,7 +4,7 @@ import { useGameStore } from "@/shared/stores/game-store";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { StartGame } from "@/widgets/start-game/ui/StartGame";
-import { onRoomJoined } from "../api/gameListeners";
+import { onRoomPlayersChanged } from "../api/gameListeners";
 import { useSocketStore } from "@/shared/stores/socket-store";
 import { SocketService } from "@/shared/api/socket";
 
@@ -26,9 +26,9 @@ export const GamePage = () => {
     if (!socket) {
       const newSocket = new SocketService(game.id);
       useSocketStore.setState({ socket: newSocket });
-      cleanup = onRoomJoined(setGame, newSocket);
+      cleanup = onRoomPlayersChanged(setGame, newSocket);
     } else {
-      cleanup = onRoomJoined(setGame, socket);
+      cleanup = onRoomPlayersChanged(setGame, socket);
     }
     return () => {
       cleanup();
