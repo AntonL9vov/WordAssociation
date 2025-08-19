@@ -1,16 +1,25 @@
 import { GameRound } from "@/entities/game-round";
 import { useRef, useEffect } from "react";
-import { historyMockLong } from "../mock/history-mock";
 import "./style.css";
+import { useGameStore } from "@/shared/stores/game-store";
+import { onGameRoundFinished } from "../api/listeners";
+import { useSocketStore } from "@/shared/stores/socket-store";
 
-interface MessengerHistoryProps {
-  withMock?: boolean;
-}
-
-export const MessengerHistory = ({
-  withMock = false,
-}: MessengerHistoryProps) => {
+export const MessengerHistory = () => {
   const historyRef = useRef<HTMLDivElement>(null);
+  const socket = useSocketStore((state) => state.socket);
+  const setGame = useGameStore((state) => state.setGame);
+
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+    const cleanup = onGameRoundFinished(setGame, socket);
+
+    return () => {
+      cleanup();
+    };
+  }, [socket]);
 
   useEffect(() => {
     if (historyRef.current) {
@@ -18,7 +27,7 @@ export const MessengerHistory = ({
     }
   }, []);
 
-  const history = withMock ? historyMockLong : [];
+  const history = useGameStore((state) => state.game?.rounds || []);
 
   return (
     <div
@@ -26,8 +35,8 @@ export const MessengerHistory = ({
       ref={historyRef}
       data-testid="messenger-history"
     >
-      {Object.entries(history).map(([round, messages]) => (
-        <GameRound key={round} messages={messages} />
+      {history.map((round) => (
+        <GameRound key={round.id} messages={round.words} />
       ))}
     </div>
   );

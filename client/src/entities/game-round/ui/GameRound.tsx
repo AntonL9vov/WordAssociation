@@ -1,26 +1,36 @@
-import type { RoundMessages } from "@/entities/game-round";
 import { GameMessage } from "@/entities/game-message";
 import { separateMessages } from "@/entities/game-round/utils/separate-messages";
 import "./style.css";
+import { Word } from "@/shared/lib/types";
+import { useAuth } from "@/shared/context/AuthContext";
 
 type GameRoundProps = {
-  messages: RoundMessages;
+  messages: Word[];
 };
 
 export const GameRound = ({ messages }: GameRoundProps) => {
-  const { selfMessages, opponentMessages } = separateMessages(messages);
+  const { user } = useAuth();
+  const { selfMessages, opponentMessages } = separateMessages(
+    messages,
+    user?.id || ""
+  );
+
   return (
-    <div className="game-round" data-testid="game-round">
-      <div className="self-messages">
-        {Object.entries(selfMessages).map(([id, message]) => (
-          <GameMessage key={id} message={message} />
-        ))}
-      </div>
-      <div className="opponent-messages">
-        {Object.entries(opponentMessages).map(([id, message]) => (
-          <GameMessage key={id} message={message} />
-        ))}
-      </div>
-    </div>
+    <>
+      {selfMessages.length + opponentMessages.length > 0 && (
+        <div className="game-round" data-testid="game-round">
+          <div className="self-messages">
+            {selfMessages.map((message) => (
+              <GameMessage key={message.id} message={message} />
+            ))}
+          </div>
+          <div className="opponent-messages">
+            {opponentMessages.map((message) => (
+              <GameMessage key={message.id} message={message} />
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 };

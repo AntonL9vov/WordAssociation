@@ -1,10 +1,10 @@
-import type { Message } from "@/entities/game-message";
+import type { Word } from "@/shared/lib/types";
 import "./style.css";
 
 type GameMessageProps = {
-  message: Message;
+  message: Word;
 };
 
 export const GameMessage = ({ message }: GameMessageProps) => {
-  return <div className="game-message">{message.text}</div>;
+  return <div className="game-message">{message.word}</div>;
 };

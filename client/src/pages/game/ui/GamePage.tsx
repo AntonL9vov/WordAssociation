@@ -4,7 +4,11 @@ import { useGameStore } from "@/shared/stores/game-store";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { StartGame } from "@/widgets/start-game/ui/StartGame";
-import { onRoomPlayersChanged } from "../api/gameListeners";
+import {
+  onGameFinished,
+  onGameStarted,
+  onRoomPlayersChanged,
+} from "../api/gameListeners";
 import { useSocketStore } from "@/shared/stores/socket-store";
 import { SocketService } from "@/shared/api/socket";
 
@@ -17,7 +21,6 @@ export const GamePage = () => {
   const socket = useSocketStore((state) => state.socket);
 
   useEffect(() => {
-    let cleanup: () => void;
     if (!game) {
       navigate("/");
       return;
@@ -26,14 +29,24 @@ export const GamePage = () => {
     if (!socket) {
       const newSocket = new SocketService(game.id);
       useSocketStore.setState({ socket: newSocket });
-      cleanup = onRoomPlayersChanged(setGame, newSocket);
-    } else {
-      cleanup = onRoomPlayersChanged(setGame, socket);
     }
-    return () => {
-      cleanup();
-    };
   }, []);
+
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+
+    const cleanupPlayersChanged = onRoomPlayersChanged(setGame, socket);
+    const cleanupGameStarted = onGameStarted(setGame, socket);
+    const cleanupGameFinished = onGameFinished(setGame, socket);
+
+    return () => {
+      cleanupPlayersChanged();
+      cleanupGameStarted();
+      cleanupGameFinished();
+    };
+  }, [socket]);
 
   useEffect(() => {
     if (!game) {

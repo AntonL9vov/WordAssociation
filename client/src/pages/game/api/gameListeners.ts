@@ -10,9 +10,38 @@ export const onRoomPlayersChanged = (
   };
 
   socket.on("game:players:update", callback);
-  console.log("🎧 Set up listener for: game:players:update");
 
   return () => {
     socket.off("game:players:update", callback);
+  };
+};
+
+export const onGameStarted = (
+  setGame: (game: Game) => void,
+  socket: SocketService
+) => {
+  const callback = (game: Game) => {
+    setGame(game);
+  };
+
+  socket.on("game:start", callback);
+
+  return () => {
+    socket.off("game:start", callback);
+  };
+};
+
+export const onGameFinished = (
+  setGame: (game: Game) => void,
+  socket: SocketService
+) => {
+  const callback = (game: Game) => {
+    setGame(game);
+  };
+
+  socket.on("game:finished", callback);
+
+  return () => {
+    socket.off("game:finished", callback);
   };
 };
