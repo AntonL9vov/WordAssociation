@@ -1,7 +1,6 @@
 import { UsersService } from "./services/usersService";
 import { BaseSocket } from "./socket-entities/base-socket";
 import { UsersStorage } from "./storages/usersStorage";
-import { UsersSocket } from "./socket-entities/users-socket/UsersSocket";
 import { GameSocket } from "./socket-entities/game-scoket/GameSocket";
 import { GamesStorage } from "./storages/gamesStorage";
 import { GameService } from "./services/gameService";
@@ -50,7 +49,6 @@ const initialGamesState: Record<string, Game> = {
 export class BaseGame {
   private userStorage: UsersStorage;
   private usersService: UsersService;
-  private userSocket: UsersSocket;
 
   private gameStorage: GamesStorage;
   private gameService: GameService;
@@ -63,13 +61,12 @@ export class BaseGame {
   constructor(httpPort: number = 3001, socketPort: number = 3000) {
     this.userStorage = new UsersStorage(initialUsersState);
     this.usersService = new UsersService(this.userStorage);
-    this.userSocket = new UsersSocket(this.usersService);
 
     this.gameStorage = new GamesStorage(initialGamesState);
     this.gameService = new GameService(this.gameStorage, this.usersService);
     this.gameSocket = new GameSocket(this.gameService);
 
-    this.baseSocket = new BaseSocket([this.userSocket, this.gameSocket], socketPort);
+    this.baseSocket = new BaseSocket([this.gameSocket], socketPort);
 
     // Генерируем AsyncAPI документацию для WebSocket (только в development)
     if (process.env.NODE_ENV !== "production") {

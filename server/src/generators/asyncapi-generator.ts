@@ -1,6 +1,5 @@
 import { SocketEvents } from "../types/base";
 import { gameSocketEvents } from "../socket-entities/game-scoket/game-socket-events";
-import { userSocketEvents } from "../socket-entities/users-socket/user-socket-events";
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -55,7 +54,6 @@ export class AsyncAPIGenerator {
     events: Record<string, SocketEvents>;
   }> = [
     { name: 'Games', events: gameSocketEvents },
-    { name: 'Users', events: userSocketEvents }
   ];
 
   /**
