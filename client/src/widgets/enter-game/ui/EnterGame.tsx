@@ -27,6 +27,7 @@ export const EnterGame = () => {
 
     if (response) {
       setGame(response);
+  
       navigate("/game");
     }
   };

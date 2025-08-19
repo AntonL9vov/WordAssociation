@@ -97,7 +97,6 @@ export class ApiService {
       ) as AxiosRequestConfig | undefined;
 
       const response = await this.axiosInstance.post(endpoint, data, config);
-      console.log("response", response);
       const responseData = response.data;
       return schema ? schema.parse(responseData) : responseData;
     } catch (error) {
