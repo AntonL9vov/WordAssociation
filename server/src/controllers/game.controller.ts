@@ -98,6 +98,9 @@ export class GameController extends Controller {
   ): Promise<Game> {
     try {
       const game = this.gameService.startGame(gameId, body.startWord);
+      const room = `game:${game.id}`;
+      const io = gameEntity.baseSocket.getIO();
+      io.to(room).emit("game:start", game);
       return { ...game };
     } catch (error) {
       this.setStatus(500);

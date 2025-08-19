@@ -119,7 +119,7 @@ export class GameService implements IGameService {
     return updatedGame;
   }
 
-  emitWord(gameId: string, w: string, playerId: string): Word {
+  emitWord(gameId: string, w: string, playerId: string): Game {
     const game = this.getGame(gameId);
     const player = this.getPlayer(playerId);
 
@@ -144,7 +144,7 @@ export class GameService implements IGameService {
 
     this.checkLastRound(gameId);
 
-    return word;
+    return this.getGame(gameId);
   }
 
   checkIsRoundFinished(gameId: string): boolean {
@@ -155,6 +155,9 @@ export class GameService implements IGameService {
 
   checkIsGameFinished(gameId: string): boolean {
     const lastRound = this.getLastRound(gameId);
+    if (lastRound.words.length < this.getGame(gameId).players.length) {
+      return false;
+    }
     return lastRound.words?.every(
       (word) => word.word === lastRound.words[0].word
     );

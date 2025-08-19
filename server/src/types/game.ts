@@ -44,7 +44,7 @@ export interface GameService {
   getGame(gameId: string): Game | undefined;
   createGame(playerId: string): Game;
   deleteGame(gameId: string): void;
-  emitWord(gameId: string, word: string, playerId: string): Word;
+  emitWord(gameId: string, word: string, playerId: string): Game;
   addPlayerToGame(gameId: string, playerId: string): Game;
   checkIsRoundFinished(gameId: string): boolean;
   checkIsGameFinished(gameId: string): boolean;
