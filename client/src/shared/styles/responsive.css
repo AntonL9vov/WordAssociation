@@ -1,0 +1,260 @@
+/* ===== RESPONSIVE DESIGN SYSTEM ===== */
+
+/* Базовые responsive utilities */
+.container-responsive {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+@media (max-width: 1024px) {
+  .container-responsive {
+    padding: 0 var(--space-md);
+  }
+}
+
+@media (max-width: 768px) {
+  .container-responsive {
+    padding: 0 var(--space-sm);
+  }
+}
+
+/* Grid System */
+.grid-responsive {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+@media (max-width: 768px) {
+  .grid-responsive {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+}
+
+/* Flex utilities */
+.flex-responsive {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+@media (max-width: 768px) {
+  .flex-responsive {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+}
+
+/* Typography responsive */
+.text-responsive-xl {
+  font-size: var(--font-size-4xl);
+  line-height: var(--line-height-tight);
+}
+
+.text-responsive-lg {
+  font-size: var(--font-size-3xl);
+  line-height: var(--line-height-tight);
+}
+
+.text-responsive-md {
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-normal);
+}
+
+.text-responsive-sm {
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-normal);
+}
+
+@media (max-width: 768px) {
+  .text-responsive-xl {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .text-responsive-lg {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .text-responsive-md {
+    font-size: var(--font-size-xl);
+  }
+  
+  .text-responsive-sm {
+    font-size: var(--font-size-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .text-responsive-xl {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .text-responsive-lg {
+    font-size: var(--font-size-xl);
+  }
+  
+  .text-responsive-md {
+    font-size: var(--font-size-lg);
+  }
+  
+  .text-responsive-sm {
+    font-size: var(--font-size-base);
+  }
+}
+
+/* Button responsive */
+.button-responsive {
+  padding: var(--space-sm) var(--space-lg);
+  font-size: var(--font-size-base);
+  min-height: 44px; /* Минимальная высота для touch-friendly интерфейса */
+}
+
+@media (max-width: 768px) {
+  .button-responsive {
+    padding: var(--space-md) var(--space-xl);
+    font-size: var(--font-size-base);
+    min-height: 48px;
+    width: 100%; /* На мобильных кнопки на всю ширину */
+  }
+}
+
+/* Card responsive */
+.card-responsive {
+  padding: var(--space-xl);
+  border-radius: var(--radius-xl);
+}
+
+@media (max-width: 768px) {
+  .card-responsive {
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .card-responsive {
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+  }
+}
+
+/* Touch-friendly styles */
+@media (hover: none) and (pointer: coarse) {
+  /* Устройства с touch интерфейсом */
+  .touch-friendly {
+    min-height: 44px;
+    min-width: 44px;
+    padding: var(--space-sm);
+  }
+  
+  /* Увеличиваем размеры интерактивных элементов */
+  button, 
+  .clickable,
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px;
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  /* Убираем hover эффекты на touch устройствах */
+  .no-touch-hover:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Landscape orientation on mobile */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .landscape-mobile {
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .landscape-mobile .header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .high-dpi {
+    /* Стили для экранов с высокой плотностью пикселей */
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-break-before {
+    page-break-before: always;
+  }
+  
+  .print-break-after {
+    page-break-after: always;
+  }
+}
+
+/* Utilities for hiding/showing on different screen sizes */
+.hide-mobile {
+  display: block;
+}
+
+.show-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+  
+  .show-mobile {
+    display: block !important;
+  }
+}
+
+.hide-desktop {
+  display: none;
+}
+
+.show-desktop {
+  display: block;
+}
+
+@media (min-width: 769px) {
+  .hide-desktop {
+    display: none !important;
+  }
+  
+  .show-desktop {
+    display: block !important;
+  }
+}
+
+/* Safe area для устройств с вырезами */
+.safe-area-padding {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}

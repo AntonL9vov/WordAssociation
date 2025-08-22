@@ -5,4 +5,10 @@
 export { ThemeProvider, useTheme } from './context/ThemeContext';
 export { ThemeToggle } from './ui/ThemeToggle';
 
+// Hooks
+export * from './hooks';
+
+// UI & Animations
+export * from './ui';
+
 export {};
