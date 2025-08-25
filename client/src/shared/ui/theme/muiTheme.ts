@@ -1,12 +1,12 @@
 import { createTheme, Theme } from '@mui/material/styles';
 
-// Функция для получения CSS переменной
-const getCSSVariable = (variable: string): string => {
-  if (typeof window !== 'undefined') {
-    return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
-  }
-  return '';
-};
+// Функция для получения CSS переменной (может пригодиться в будущем)
+// const getCSSVariable = (variable: string): string => {
+//   if (typeof window !== 'undefined') {
+//     return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+//   }
+//   return '';
+// };
 
 // Цвета для светлой темы
 const lightColors = {

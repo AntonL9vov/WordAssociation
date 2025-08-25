@@ -6,3 +6,7 @@ export { EnterGame } from "./enter-game";
 export { MainHeader } from "./main-header";
 export { MainFooter } from "./main-footer";
 export { GameMessenger } from "./game-messenger";
+export { AuthForm } from "./auth-form";
+export { GameResults } from "./game-results";
+export { StartGame } from "./start-game";
+export { LoadingState } from "./loading-state";

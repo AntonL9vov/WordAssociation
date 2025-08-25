@@ -32,13 +32,19 @@ export const MessengerHistory: React.FC = () => {
     };
   }, [socket, setGame]);
 
-  useEffect(() => {
-    if (historyRef.current) {
-      historyRef.current.scrollTop = historyRef.current.scrollHeight;
-    }
-  });
-
   const history = useGameStore((state) => state.game?.rounds || []);
+  
+  useEffect(() => {
+    console.log('historyRef.current', historyRef.current);
+    if (historyRef.current && historyRef.current.scrollHeight > 0) {
+      try {
+        historyRef.current.scrollTop = historyRef.current.scrollHeight;
+      } catch (error) {
+        console.warn('Failed to scroll to bottom:', error);
+      }
+    }
+  }, [history]);
+
 
   return (
     <Box
@@ -184,7 +190,7 @@ export const MessengerHistory: React.FC = () => {
                   }}
                 >
                   <PlayIcon fontSize="small" />
-                  Round {history.length + 1} - Waiting for words...
+                  Round {history.length} - Waiting for words...
                 </Typography>
               </Box>
             </Zoom>

@@ -1,11 +1,9 @@
 import React from "react";
+import { Button, Input, Text } from "@/shared/ui";
 import { 
-  Button, 
-  TextField, 
   Box, 
-  Typography,
-  InputAdornment,
-  Tooltip
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import {
   Games as GameIcon,
@@ -64,51 +62,38 @@ export const EnterGameForm: React.FC<EnterGameFormProps> = ({
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       {withGameId && (
         <Box>
-          <Typography 
+          <Text 
             variant="body2" 
-            sx={{ 
-              mb: 2, 
-              color: 'var(--text-secondary)',
-              fontWeight: 'medium'
-            }}
+            color="secondary"
+            weight="medium"
+            sx={{ mb: 2 }}
           >
             Enter the Game ID shared by your friend to join their game
-          </Typography>
-          <TextField
+          </Text>
+          <Input
             fullWidth
             label="Game ID"
             placeholder="Enter game ID (e.g. abc123)"
             value={gameId}
             onChange={(e) => onGameIdChange(e.target.value.trim())}
             autoFocus
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <GameIcon sx={{ color: 'var(--text-muted)' }} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Tooltip title="Paste from clipboard">
-                    <Button
-                      size="small"
-                      onClick={handlePasteFromClipboard}
-                      sx={{
-                        minWidth: 'auto',
-                        px: 1,
-                        color: 'var(--text-muted)',
-                        '&:hover': {
-                          color: 'var(--primary-600)',
-                          backgroundColor: 'transparent',
-                        },
-                      }}
-                    >
-                      <CopyIcon fontSize="small" />
-                    </Button>
-                  </Tooltip>
-                </InputAdornment>
-              ),
-            }}
+            startIcon={<GameIcon />}
+            endIcon={
+              <Tooltip title="Paste from clipboard">
+                <IconButton
+                  size="small"
+                  onClick={handlePasteFromClipboard}
+                  sx={{
+                    color: 'var(--text-muted)',
+                    '&:hover': {
+                      color: 'var(--primary-600)',
+                    },
+                  }}
+                >
+                  <CopyIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            }
             sx={{
               '& .MuiOutlinedInput-root': {
                 backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -126,41 +111,28 @@ export const EnterGameForm: React.FC<EnterGameFormProps> = ({
       
       <Button
         fullWidth
-        variant="contained"
         size="large"
         disabled={!gameId || buttonDisabled}
         onClick={() => handleJoinGame(gameId)}
         startIcon={<LoginIcon />}
+        gradient
         sx={{
           py: 1.5,
           fontSize: '1.1rem',
-          fontWeight: 'bold',
-          background: 'linear-gradient(135deg, var(--accent-500), var(--accent-600))',
-          '&:hover': {
-            background: 'linear-gradient(135deg, var(--accent-600), var(--accent-700))',
-            transform: 'translateY(-2px)',
-          },
-          '&:disabled': {
-            background: 'var(--neutral-300)',
-            color: 'var(--text-muted)',
-            transform: 'none',
-          },
         }}
       >
         {buttonLabel}
       </Button>
 
       {withGameId && (
-        <Typography 
+        <Text 
           variant="caption" 
-          sx={{ 
-            textAlign: 'center',
-            color: 'var(--text-muted)',
-            mt: 1
-          }}
+          color="muted"
+          align="center"
+          sx={{ mt: 1 }}
         >
           Ask your friend to share their Game ID with you
-        </Typography>
+        </Text>
       )}
     </Box>
   );
