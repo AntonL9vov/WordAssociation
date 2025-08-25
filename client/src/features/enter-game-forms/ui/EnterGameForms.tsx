@@ -4,17 +4,17 @@ import { HomeHeader } from "@/entities/home-header";
 import { GameSelectionActions } from "@/features/game-selection";
 import { Card, Text, Container } from "@/shared/ui";
 import { Box, Fade, IconButton } from "@mui/material";
-import {
-  ArrowBack as ArrowBackIcon,
-} from "@mui/icons-material";
+import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 
-export type CurrentStep = "create" | "join" | null;
+export type CurrentStep = "join" | null;
 
 export type EnterGameFormsProps = {
   onJoinGame: (gameId?: string) => void;
 };
 
-export const EnterGameForms: React.FC<EnterGameFormsProps> = ({ onJoinGame }) => {
+export const EnterGameForms: React.FC<EnterGameFormsProps> = ({
+  onJoinGame,
+}) => {
   const [currentStep, setCurrentStep] = useState<CurrentStep>(null);
 
   const handleCreateGame = () => {
@@ -28,11 +28,11 @@ export const EnterGameForms: React.FC<EnterGameFormsProps> = ({ onJoinGame }) =>
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: 'calc(100vh - 200px)',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "calc(100% - 200px)",
         py: 4,
       }}
     >
@@ -52,14 +52,14 @@ export const EnterGameForms: React.FC<EnterGameFormsProps> = ({ onJoinGame }) =>
         <Fade in timeout={400}>
           <Container maxWidth="sm">
             <Card>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                 <IconButton
                   onClick={() => setCurrentStep(null)}
                   sx={{
                     mr: 2,
-                    backgroundColor: 'var(--bg-tertiary)',
-                    '&:hover': {
-                      backgroundColor: 'var(--bg-secondary)',
+                    backgroundColor: "var(--bg-tertiary)",
+                    "&:hover": {
+                      backgroundColor: "var(--bg-secondary)",
                     },
                   }}
                 >

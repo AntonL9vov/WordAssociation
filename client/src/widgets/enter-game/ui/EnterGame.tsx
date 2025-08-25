@@ -25,11 +25,9 @@ export const EnterGame = () => {
       response = await createGame(id);
     }
 
-    if (response) {
-      setGame(response);
-  
-      navigate("/game");
-    }
+    setGame(response);
+
+    navigate("/game");
   };
 
   return <EnterGameForms onJoinGame={handleJoinGame} />;
