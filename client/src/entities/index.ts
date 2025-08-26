@@ -13,3 +13,6 @@ export { HomeHeader } from "./home-header";
 export { GameHeader } from "./game-header";
 export type { GameHeaderProps } from "./game-header";
 export { GameStatusAlert } from "./game-status-alert";
+export { RoundStatus } from "./round-status";
+export { GameHistoryHeader } from "./game-history-header";
+export { GameRounds } from "./game-rounds";

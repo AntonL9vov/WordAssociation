@@ -1,19 +1,16 @@
 import React, { useRef, useEffect } from "react";
-import { GameRound } from "@/entities/game-round";
 import { useGameStore } from "@/shared/stores/game-store";
 import { onGameRoundFinished } from "../api/listeners";
 import { useSocketStore } from "@/shared/stores/socket-store";
-import {
-  Box,
-  Typography,
-  Fade,
-  Zoom,
-  Divider,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import {
   History as HistoryIcon,
   PlayArrow as PlayIcon,
 } from "@mui/icons-material";
+import { RoundStatus } from "@/entities";
+import { GameRounds } from "@/entities";
+import { GameHistoryHeader } from "@/entities";
+import { EmptyHistory } from "./EmptyHistory";
 
 export const MessengerHistory: React.FC = () => {
   const historyRef = useRef<HTMLDivElement>(null);
@@ -33,18 +30,16 @@ export const MessengerHistory: React.FC = () => {
   }, [socket, setGame]);
 
   const history = useGameStore((state) => state.game?.rounds || []);
-  
+
   useEffect(() => {
-    console.log('historyRef.current', historyRef.current);
     if (historyRef.current && historyRef.current.scrollHeight > 0) {
       try {
         historyRef.current.scrollTop = historyRef.current.scrollHeight;
       } catch (error) {
-        console.warn('Failed to scroll to bottom:', error);
+        console.warn("Failed to scroll to bottom:", error);
       }
     }
   }, [history]);
-
 
   return (
     <Box
@@ -52,148 +47,39 @@ export const MessengerHistory: React.FC = () => {
       data-testid="messenger-history"
       sx={{
         flex: 1,
-        overflowY: 'auto',
+        overflowY: "auto",
         p: 2,
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
         gap: 2,
         minHeight: 0,
-        scrollBehavior: 'smooth',
-        '&::-webkit-scrollbar': {
-          width: '6px',
+        scrollBehavior: "smooth",
+        "&::-webkit-scrollbar": {
+          width: "6px",
         },
-        '&::-webkit-scrollbar-track': {
-          backgroundColor: 'var(--bg-tertiary)',
-          borderRadius: '3px',
+        "&::-webkit-scrollbar-track": {
+          backgroundColor: "var(--bg-tertiary)",
+          borderRadius: "3px",
         },
-        '&::-webkit-scrollbar-thumb': {
-          backgroundColor: 'var(--border-secondary)',
-          borderRadius: '3px',
-          '&:hover': {
-            backgroundColor: 'var(--border-primary)',
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "var(--border-secondary)",
+          borderRadius: "3px",
+          "&:hover": {
+            backgroundColor: "var(--border-primary)",
           },
         },
       }}
     >
       {history.length === 0 ? (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flex: 1,
-            textAlign: 'center',
-            py: 4,
-          }}
-        >
-          <Box
-            sx={{
-              width: 80,
-              height: 80,
-              borderRadius: '50%',
-              backgroundColor: 'var(--bg-tertiary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              mb: 3,
-            }}
-          >
-            {game?.status === "started" ? (
-              <PlayIcon sx={{ fontSize: 40, color: 'var(--text-muted)' }} />
-            ) : (
-              <HistoryIcon sx={{ fontSize: 40, color: 'var(--text-muted)' }} />
-            )}
-          </Box>
-          <Typography
-            variant="h6"
-            sx={{
-              color: 'var(--text-secondary)',
-              fontWeight: 'medium',
-              mb: 1,
-            }}
-          >
-            {game?.status === "started" 
-              ? "Game Started!" 
-              : "No rounds yet"
-            }
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{
-              color: 'var(--text-muted)',
-              maxWidth: 300,
-            }}
-          >
-            {game?.status === "started"
-              ? "Submit your first word to begin the word association chain"
-              : "Game rounds will appear here once the game starts"
-            }
-          </Typography>
-        </Box>
+        <EmptyHistory gameStatus={game?.status} />
       ) : (
         <>
-          {/* Заголовок истории */}
-          <Box sx={{ mb: 2 }}>
-            <Typography
-              variant="body2"
-              sx={{
-                color: 'var(--text-muted)',
-                fontWeight: 'medium',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-              }}
-            >
-              <HistoryIcon fontSize="small" />
-              Game Rounds ({history.length})
-            </Typography>
-            <Divider sx={{ mt: 1 }} />
-          </Box>
+          <GameHistoryHeader roundNumber={history.length} />
 
-          {/* Раунды */}
-          {history.map((round, index) => (
-            <Fade 
-              key={round.id} 
-              in 
-              timeout={300}
-              style={{ transitionDelay: `${index * 50}ms` }}
-            >
-              <Box>
-                <GameRound messages={round.words} roundNumber={index + 1} />
-              </Box>
-            </Fade>
-          ))}
+          <GameRounds history={history} />
 
-          {/* Индикатор текущего раунда */}
           {game?.status === "started" && (
-            <Zoom in timeout={400}>
-              <Box
-                sx={{
-                  p: 2,
-                  backgroundColor: 'var(--primary-50)',
-                  border: '2px dashed var(--primary-300)',
-                  borderRadius: 'var(--radius-lg)',
-                  textAlign: 'center',
-                  mt: 2,
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: 'var(--primary-700)',
-                    fontWeight: 'medium',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 1,
-                  }}
-                >
-                  <PlayIcon fontSize="small" />
-                  Round {history.length} - Waiting for words...
-                </Typography>
-              </Box>
-            </Zoom>
+            <RoundStatus roundNumber={history.length} />
           )}
         </>
       )}

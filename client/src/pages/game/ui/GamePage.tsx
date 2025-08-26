@@ -61,6 +61,9 @@ export const GamePage: React.FC = () => {
           display: 'flex',
           flexDirection: 'column',
           minHeight: 0,
+          height: "100%",
+          overflow: "hidden",
+          gap: 2,
         }}
       >
         <GameHeader

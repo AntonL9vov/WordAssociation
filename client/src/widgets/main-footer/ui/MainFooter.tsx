@@ -18,7 +18,7 @@ export const MainFooter: React.FC = () => {
       sx={{
         backgroundColor: 'var(--bg-elevated)',
         borderTop: '1px solid var(--border-primary)',
-        py: 3,
+        py: 1,
         mt: 'auto',
       }}
     >

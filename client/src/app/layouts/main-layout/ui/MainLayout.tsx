@@ -11,10 +11,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100vh',
-        backgroundColor: 'var(--bg-primary)',
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        backgroundColor: "var(--bg-primary)",
+        maxHeight: "100vh",
+        overflow: "hidden",
       }}
     >
       <MainHeader />
@@ -22,19 +24,23 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         component="main"
         sx={{
           flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: 'var(--bg-secondary)',
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "var(--bg-secondary)",
           minHeight: 0,
+          height: "100%",
+          overflow: "hidden",
         }}
       >
-        <Container 
-          maxWidth="lg" 
-          sx={{ 
+        <Container
+          maxWidth="lg"
+          sx={{
             flex: 1,
             py: 3,
-            display: 'flex',
-            flexDirection: 'column',
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            overflow: "hidden",
           }}
         >
           {children}

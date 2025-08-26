@@ -1,15 +1,15 @@
-import React from 'react';
-import { Card, Text } from '@/shared/ui';
-import { Box, Chip } from '@mui/material';
+import React from "react";
+import { Card, Text } from "@/shared/ui";
+import { Box, Chip } from "@mui/material";
 import {
   PlayArrow as PlayIcon,
   Group as GroupIcon,
   EmojiEvents as TrophyIcon,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 
 export interface GameHeaderProps {
   gameId: string;
-  status: 'created' | 'started' | 'finished';
+  status: "created" | "started" | "finished";
   playersCount: number;
 }
 
@@ -25,28 +25,28 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
           icon: <GroupIcon />,
           label: "Setup",
           color: "primary" as const,
-          description: "Setting up the game"
+          description: "Setting up the game",
         };
       case "started":
         return {
           icon: <PlayIcon />,
           label: "Playing",
           color: "success" as const,
-          description: "Game in progress"
+          description: "Game in progress",
         };
       case "finished":
         return {
           icon: <TrophyIcon />,
           label: "Finished",
           color: "warning" as const,
-          description: "Game completed"
+          description: "Game completed",
         };
       default:
         return {
           icon: <GroupIcon />,
           label: "Unknown",
           color: "default" as const,
-          description: "Unknown status"
+          description: "Unknown status",
         };
     }
   };
@@ -56,59 +56,67 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
   return (
     <Card
       cardVariant="filled"
-      sx={{ 
-        mb: 3,
-        background: 'linear-gradient(135deg, var(--primary-50) 0%, var(--accent-50) 100%)',
-        border: '1px solid var(--border-primary)',
+      sx={{
+        background:
+          "linear-gradient(135deg, var(--primary-50) 0%, var(--accent-50) 100%)",
+        border: "1px solid var(--border-primary)",
+        height: "100%",
+        minHeight: "fit-content",
       }}
     >
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: 2,
-      }}>
-        <Box>
-          <Text 
-            variant="h4" 
-            weight="bold"
-            sx={{ mb: 1 }}
-          >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 2,
+          height: "100%",
+        }}
+      >
+        <Box sx={{ height: "100%" }}>
+          <Text variant="h6" weight="bold">
             Game Room
           </Text>
-          <Text 
-            variant="body1" 
-            color="secondary"
-            sx={{ mb: 2 }}
-          >
-            Game ID: <Text component="span" weight="bold" sx={{ display: 'inline' }}>{gameId}</Text>
+        </Box>
+        <Box>
+          <Text variant="body1" color="secondary">
+            Game ID:{" "}
+            <Text component="span" weight="bold" sx={{ display: "inline" }}>
+              {gameId}
+            </Text>
           </Text>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-            <Chip
-              icon={statusInfo.icon}
-              label={statusInfo.label}
-              color={statusInfo.color}
-              variant="filled"
-              sx={{
-                fontWeight: 'bold',
-                '& .MuiChip-icon': {
-                  fontSize: '18px',
-                },
-              }}
-            />
-            <Chip
-              icon={<GroupIcon />}
-              label={`${playersCount} players`}
-              variant="outlined"
-              sx={{
-                borderColor: 'var(--border-secondary)',
-              }}
-            />
-          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            flexWrap: "wrap",
+          }}
+        >
+          <Chip
+            icon={statusInfo.icon}
+            label={statusInfo.label}
+            color={statusInfo.color}
+            variant="filled"
+            sx={{
+              fontWeight: "bold",
+              "& .MuiChip-icon": {
+                fontSize: "18px",
+              },
+            }}
+          />
+          <Chip
+            icon={<GroupIcon />}
+            label={`${playersCount} players`}
+            variant="outlined"
+            sx={{
+              borderColor: "var(--border-secondary)",
+            }}
+          />
         </Box>
       </Box>
     </Card>
   );
 };
-
