@@ -52,6 +52,8 @@ export interface GameService {
   checkLastRound(gameId: string): boolean;
   addRound(gameId: string): void;
   startGame(gameId: string, startWord: string): void;
+  restartGame(gameId: string): Game;
+  deletePlayerFromGame(gameId: string, playerId: string): Game;
 }
 
 export interface GameHandler extends Omit<Handler, "handler"> {

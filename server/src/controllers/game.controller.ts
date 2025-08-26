@@ -80,6 +80,25 @@ export class GameController extends Controller {
     }
   }
 
+  @Get("{gameId}/restart")
+  public async restartGame(@Path() gameId: string): Promise<Game> {
+    const game = this.gameService.restartGame(gameId);
+    const room = `game:${game.id}`;
+    const io = gameEntity.baseSocket.getIO();
+    io.to(room).emit("game:restart", game);
+    console.log("📤 Emitted game:restart to room:", room);
+    return { ...game };
+  }
+  
+  @Post("{gameId}/leave")
+  public async leaveGame(@Path() gameId: string, @Body() body: { playerId: string }): Promise<Game> {
+    const game = this.gameService.deletePlayerFromGame(gameId, body.playerId);
+    const room = `game:${game.id}`;
+    const io = gameEntity.baseSocket.getIO();
+    io.to(room).emit("game:players:update", game);
+    return { ...game };
+  } 
+
   @Get("/is-player-in-game/{playerId}")
   public async isPlayerInGame(@Path() playerId: string): Promise<Game | null> {
     const game = this.gameService.isPlayerInGameByPlayerId(playerId);

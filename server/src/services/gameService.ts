@@ -211,6 +211,12 @@ export class GameService implements IGameService {
     return game.players;
   }
 
+  deletePlayerFromGame(gameId: string, playerId: string): Game {
+    const game = this.getGame(gameId);
+    game.players = game.players.filter((player) => player.id !== playerId);
+    return this.gamesStorage.updateGame(game.id, game);
+  }
+
   deleteUserFromAllGames(userId: string): Game[] {
     const games = this.gamesStorage.getGames();
     const updatedGames: Game[] = [];
@@ -224,5 +230,15 @@ export class GameService implements IGameService {
     });
 
     return updatedGames;
+  }
+
+  restartGame(gameId: string): Game {
+    const game = this.getGame(gameId);
+    this.gamesStorage.updateGame(game.id, {
+      status: "created",
+      rounds: [],
+      startWord: "",
+    });
+    return this.getGame(gameId);
   }
 }
