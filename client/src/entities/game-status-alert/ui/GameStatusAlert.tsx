@@ -1,31 +1,60 @@
-import React from 'react';
-import { Alert } from '@mui/material';
-import { Text } from '@/shared/ui';
+import React from "react";
+import { Alert, Box, Button } from "@mui/material";
+import { Text } from "@/shared/ui";
 
 interface GameStatusAlertProps {
-  status: 'created' | 'started' | 'finished';
+  status: "created" | "started" | "finished";
+  restartGame: () => void;
 }
 
-export const GameStatusAlert: React.FC<GameStatusAlertProps> = ({ status }) => {
-  if (status !== 'finished') {
+export const GameStatusAlert: React.FC<GameStatusAlertProps> = ({
+  status,
+  restartGame,
+}) => {
+  if (status !== "finished") {
     return null;
   }
 
   return (
-    <Alert 
-      severity="success" 
-      sx={{ 
-        mt: 2,
-        borderRadius: 'var(--radius-lg)',
-        '& .MuiAlert-icon': {
-          fontSize: '24px',
-        },
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: "100%",
+        gap: 2,
       }}
     >
-      <Text variant="body1" weight="medium">
-        🎉 Game completed! Great job everyone!
-      </Text>
-    </Alert>
+      <Alert
+        severity="success"
+        sx={{
+          borderRadius: "var(--radius-lg)",
+          "& .MuiAlert-icon": {
+            fontSize: "24px",
+          },
+          width: "100%",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <Text variant="body1" weight="medium">
+          🎉 Game completed! Great job everyone!
+        </Text>
+      </Alert>
+      <Button
+        sx={{
+          width: "30%",
+          minWidth: "150px",
+          height: "100%",
+        }}
+        variant="contained"
+        color="primary"
+        onClick={restartGame}
+      >
+        Restart Game
+      </Button>
+    </Box>
   );
 };
-

@@ -7,17 +7,15 @@ import { GameHeader } from "@/entities/game-header";
 import { GameStatusAlert } from "@/entities/game-status-alert";
 import { GameContent } from "@/features";
 import { LoadingState } from "@/widgets/loading-state";
-import {
-  onGameFinished,
-  onGameStarted,
-  onRoomPlayersChanged,
-} from "../api/gameListeners";
+import { initGameListeners } from "../api/gameListeners";
 import { Box, Fade } from "@mui/material";
+import { leaveGame, restartGame } from "../api/http";
 
 export const GamePage: React.FC = () => {
   const navigate = useNavigate();
   const game = useGameStore((state) => state.game);
   const setGame = useGameStore((state) => state.setGame);
+  const clearGame = useGameStore((state) => state.clearGame);
   const gameStatus = useGameStore((state) => state.game?.status);
   const socket = useSocketStore((state) => state.socket);
 
@@ -38,16 +36,32 @@ export const GamePage: React.FC = () => {
       return;
     }
 
-    const cleanupPlayersChanged = onRoomPlayersChanged(setGame, socket);
-    const cleanupGameStarted = onGameStarted(setGame, socket);
-    const cleanupGameFinished = onGameFinished(setGame, socket);
+    const cleanup = initGameListeners(setGame, socket);
 
     return () => {
-      cleanupPlayersChanged();
-      cleanupGameStarted();
-      cleanupGameFinished();
+      cleanup();
     };
   }, [socket, setGame]);
+
+  const handleLeave = async () => {
+    if (!game) {
+      return;
+    }
+    const response = await leaveGame(game.id, game.players[0].id);
+    if (response) {
+      clearGame();
+    }
+  };
+
+  const handleRestart = async () => {
+    if (!game) {
+      return;
+    }
+    const response = await restartGame(game.id);
+    if (response) {
+      clearGame();
+    }
+  };
 
   if (!game || !gameStatus) {
     return <LoadingState message="Loading game..." />;
@@ -55,11 +69,11 @@ export const GamePage: React.FC = () => {
 
   return (
     <Fade in timeout={600}>
-      <Box 
-        sx={{ 
+      <Box
+        sx={{
           flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
+          display: "flex",
+          flexDirection: "column",
           minHeight: 0,
           height: "100%",
           overflow: "hidden",
@@ -70,11 +84,12 @@ export const GamePage: React.FC = () => {
           gameId={game.id}
           status={gameStatus}
           playersCount={game.players?.length || 0}
+          onLeave={handleLeave}
         />
 
         <GameContent gameStatus={gameStatus} />
 
-        <GameStatusAlert status={gameStatus} />
+        <GameStatusAlert status={gameStatus} restartGame={handleRestart} />
       </Box>
     </Fade>
   );

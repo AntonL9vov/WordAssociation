@@ -38,17 +38,16 @@ export const GameMessenger: React.FC = () => {
 
       <Divider />
 
-      <Box
-        sx={{
-          p: 2,
-          backgroundColor: "var(--bg-elevated)",
-        }}
-      >
-        <MessengerInput
-          onSend={handleSend}
-          isInputDisabled={game?.status === "finished"}
-        />
-      </Box>
+      {game?.status === "started" && (
+        <Box
+          sx={{
+            p: 2,
+            backgroundColor: "var(--bg-elevated)",
+          }}
+        >
+          <MessengerInput onSend={handleSend} />
+        </Box>
+      )}
     </Paper>
   );
 };

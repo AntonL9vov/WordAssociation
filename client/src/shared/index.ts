@@ -5,6 +5,9 @@
 export { ThemeProvider, useTheme } from "./context/ThemeContext";
 export { ThemeToggle } from "./ui/ThemeToggle";
 
+// API
+export { api } from "./api/api";
+
 // Hooks
 export * from "./hooks";
 

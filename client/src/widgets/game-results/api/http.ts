@@ -1,5 +1,5 @@
-import { api } from "@/shared/api/api";
-import { Game } from "@/shared/lib/types";
+import { api } from "@/shared";
+import { Game } from "@/shared";
 
 export const disconnectPlayer = async (
   gameId: string,

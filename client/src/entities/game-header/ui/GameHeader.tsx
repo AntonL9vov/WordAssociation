@@ -5,18 +5,21 @@ import {
   PlayArrow as PlayIcon,
   Group as GroupIcon,
   EmojiEvents as TrophyIcon,
+  ExitToApp as LeaveIcon,
 } from "@mui/icons-material";
 
 export interface GameHeaderProps {
   gameId: string;
   status: "created" | "started" | "finished";
   playersCount: number;
+  onLeave: () => void;
 }
 
 export const GameHeader: React.FC<GameHeaderProps> = ({
   gameId,
   status,
   playersCount,
+  onLeave,
 }) => {
   const getStatusInfo = () => {
     switch (status) {
@@ -113,6 +116,23 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
             variant="outlined"
             sx={{
               borderColor: "var(--border-secondary)",
+            }}
+          />
+          <Chip
+            icon={<LeaveIcon color="error" />}
+            label="Leave"
+            variant="outlined"
+            sx={{
+              borderColor: "var(--border-error)",
+              cursor: "pointer",
+              color: "var(--text-primary)",
+              backgroundColor: "var(--error-50)",
+              "&:hover": {
+                backgroundColor: "var(--error-100)",
+              },
+            }}
+            onClick={() => {
+              onLeave();
             }}
           />
         </Box>
