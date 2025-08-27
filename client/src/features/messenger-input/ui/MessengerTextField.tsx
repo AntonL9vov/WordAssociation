@@ -25,17 +25,15 @@ export const MessengerTextField = ({
   return (
     <TextField
       inputRef={inputRef}
-      label={isInputDisabled ? "Game finished" : "Type your message or word..."}
+      label={isInputDisabled ? "Waiting for other players" : "Type your message or word..."}
       variant="outlined"
       fullWidth
-      multiline
-      maxRows={3}
       value={message}
       onChange={(e) => setMessage(e.target.value)}
       onKeyDown={handleKeyPress}
       disabled={isInputDisabled}
       placeholder={
-        isInputDisabled ? "Game has ended" : "Enter your word or message"
+        isInputDisabled ? "You have already emitted a word" : "Enter your word or message"
       }
       slotProps={{
         input: {

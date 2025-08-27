@@ -7,7 +7,7 @@ import { GameHeader } from "@/entities/game-header";
 import { GameStatusAlert } from "@/entities/game-status-alert";
 import { GameContent } from "@/features";
 import { LoadingState } from "@/widgets/loading-state";
-import { initGameListeners } from "../api/gameListeners";
+import { initGameListeners, onGameWordEmitted } from "../api/gameListeners";
 import { Box, Fade } from "@mui/material";
 import { leaveGame, restartGame } from "../api/http";
 
@@ -18,6 +18,8 @@ export const GamePage: React.FC = () => {
   const clearGame = useGameStore((state) => state.clearGame);
   const gameStatus = useGameStore((state) => state.game?.status);
   const socket = useSocketStore((state) => state.socket);
+
+  const setPlayersEmittedWords = useGameStore((state) => state.setPlayersEmittedWords);
 
   useEffect(() => {
     if (!game) {
@@ -37,9 +39,11 @@ export const GamePage: React.FC = () => {
     }
 
     const cleanup = initGameListeners(setGame, socket);
+    const cleanupWordEmitted = onGameWordEmitted(setPlayersEmittedWords, socket);
 
     return () => {
       cleanup();
+      cleanupWordEmitted();
     };
   }, [socket, setGame]);
 

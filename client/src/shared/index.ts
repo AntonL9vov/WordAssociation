@@ -17,4 +17,7 @@ export * from "./ui";
 // Types
 export * from "./lib/types";
 
+// Schemas
+export * from "./schemas/game";
+
 export {};

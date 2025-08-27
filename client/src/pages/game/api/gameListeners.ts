@@ -27,6 +27,21 @@ export const initGameListeners = (
   };
 };
 
+export const onGameWordEmitted = (
+  setPlayersEmittedWords: (playersEmittedWords: { [playerId: string]: string }) => void,
+  socket: SocketService
+) => {
+  const callback = (playersEmittedWords: { [playerId: string]: string }) => {
+    setPlayersEmittedWords(playersEmittedWords);
+  };
+
+  socket.on("game:word", callback);
+
+  return () => {
+    socket.off("game:word", callback);
+  };
+};
+
 // export const onRoomPlayersChanged = (
 //   setGame: (game: Game) => void,
 //   socket: SocketService

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { GameMessengerHeader, MessengerHistory } from "@/features";
 import { MessengerInput } from "@/features";
 import { sendMessage } from "../api/hadlers";
@@ -16,8 +16,15 @@ export const GameMessenger: React.FC = () => {
     if (!socket || !game || !user) {
       return;
     }
+    if (game.playersEmittedWords[user.id]) {
+      return;
+    }
     sendMessage(message, game.id, user.id, socket);
   };
+
+  useEffect(() => {
+    console.log(game?.playersEmittedWords);
+  }, [game]);
 
   return (
     <Paper
@@ -45,7 +52,7 @@ export const GameMessenger: React.FC = () => {
             backgroundColor: "var(--bg-elevated)",
           }}
         >
-          <MessengerInput onSend={handleSend} />
+          <MessengerInput onSend={handleSend} disabled={!!game.playersEmittedWords[user?.id ?? ""]} />
         </Box>
       )}
     </Paper>

@@ -31,4 +31,5 @@ export const gameSchema = z.object({
   updatedAt: isoDateString,
   status: z.enum(["created", "started", "finished"]),
   rounds: z.array(roundSchema),
+  playersEmittedWords: z.record(z.string(), z.string()),
 });

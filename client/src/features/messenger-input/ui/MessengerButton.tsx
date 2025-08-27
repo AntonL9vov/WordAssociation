@@ -20,7 +20,7 @@ export const MessengerButton = ({
         minWidth: "auto",
         px: 2,
         py: 1.5,
-        height: "56px", // Соответствует высоте TextField
+        height: "100%",
         background:
           "linear-gradient(135deg, var(--primary-500), var(--primary-600))",
         "&:hover": {

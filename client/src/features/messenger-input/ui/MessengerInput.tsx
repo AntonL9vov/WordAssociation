@@ -6,19 +6,19 @@ import { MessengerButton } from "./MessengerButton";
 
 interface MessengerInputProps {
   onSend: (message: string) => void;
-  isInputDisabled?: boolean;
+  disabled?: boolean;
 }
 
 export const MessengerInput: React.FC<MessengerInputProps> = ({
   onSend,
-  isInputDisabled = false,
+  disabled = false,
 }) => {
   const [message, setMessage] = useState("");
   const [isSendDisabled, setIsSendDisabled] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSend = () => {
-    if (!message.trim() || isInputDisabled) return;
+    if (!message.trim() || disabled) return;
 
     onSend(message.trim());
     setMessage("");
@@ -32,8 +32,8 @@ export const MessengerInput: React.FC<MessengerInputProps> = ({
   };
 
   useEffect(() => {
-    setIsSendDisabled(message.trim() === "" || isInputDisabled);
-  }, [message, isInputDisabled]);
+    setIsSendDisabled(message.trim() === "" || disabled);
+  }, [message, disabled]);
 
   return (
     <Box
@@ -46,7 +46,7 @@ export const MessengerInput: React.FC<MessengerInputProps> = ({
     >
       <MessengerTextField
         inputRef={inputRef}
-        isInputDisabled={isInputDisabled}
+        isInputDisabled={disabled}
         message={message}
         setMessage={setMessage}
         handleKeyPress={handleKeyPress}
