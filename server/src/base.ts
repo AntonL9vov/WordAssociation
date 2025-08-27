@@ -11,8 +11,6 @@ import { setServices } from "./ioc";
 import { generateAsyncAPIDocumentation } from "./scripts/generate-asyncapi";
 import { shouldGenerateDocumentation } from "./scripts/check-docs";
 import express from "express";
-import { Server, Socket } from "socket.io";
-import http from "http";
 
 const initialUsersState: User[] = [
   {
@@ -43,6 +41,7 @@ const initialGamesState: Record<string, Game> = {
         name: "Jane Doe",
       },
     ],
+    playersEmittedWords: {},
   },
 };
 

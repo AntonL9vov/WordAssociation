@@ -60,7 +60,7 @@ export const gameSocketEvents: Record<string, SocketEvents> = {
         ) => {
           try {
             const oldGame = gameService.getGame(gameId);
-            const game = gameService.emitWord(gameId, word, playerId);
+            const { game, playersEmittedWords } = gameService.emitWord(gameId, word, playerId);
             const isGameFinished = gameService.checkIsGameFinished(gameId);
             if (isGameFinished) {
               gameSocketEvents.game.emit["game:finished"].callback(
@@ -78,13 +78,23 @@ export const gameSocketEvents: Record<string, SocketEvents> = {
               );
               return;
             }
+            gameSocketEvents.word.emit["game:word"].callback(socket, gameId, playersEmittedWords);
           } catch (error) {
             console.error("Error emitting word:", error);
           }
         },
       },
     },
-    emit: {},
+    emit: {
+      "game:word": {
+        event: "game:word",
+        callback: (socket: Socket, gameId: string, playersEmittedWords: { [playerId: string]: string }) => {
+          const room = `game:${gameId}`;
+          console.log("🔥 Players emitted words:", playersEmittedWords);
+          socket.nsp.to(room).emit(gameSocketEvents.word.emit["game:word"].event, playersEmittedWords);
+        },
+      },
+    },
   },
   round: {
     handler: {},

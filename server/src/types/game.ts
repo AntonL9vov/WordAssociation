@@ -25,6 +25,9 @@ export interface Game {
   startWord: string;
   status: GameStatus;
   players: User[];
+  playersEmittedWords: {
+    [playerId: string]: string;
+  };
 }
 
 export type GameStatus = "created" | "started" | "finished";
@@ -40,11 +43,18 @@ export interface GamesStorage {
   ): Game;
 }
 
+export interface EmitWordReturn {
+  game: Game;
+  playersEmittedWords: {
+    [playerId: string]: string;
+  };
+}
+
 export interface GameService {
   getGame(gameId: string): Game | undefined;
   createGame(playerId: string): Game;
   deleteGame(gameId: string): void;
-  emitWord(gameId: string, word: string, playerId: string): Game;
+  emitWord(gameId: string, word: string, playerId: string): EmitWordReturn;
   addPlayerToGame(gameId: string, playerId: string): Game;
   checkIsRoundFinished(gameId: string): boolean;
   checkIsGameFinished(gameId: string): boolean;

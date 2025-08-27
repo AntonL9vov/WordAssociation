@@ -4,6 +4,7 @@ import type {
   GameService as IGameService,
   Round,
   Word,
+  EmitWordReturn,
 } from "../types/game";
 import { v4 as uuidv4 } from "uuid";
 import { UsersService } from "./usersService";
@@ -119,12 +120,20 @@ export class GameService implements IGameService {
     return updatedGame;
   }
 
-  emitWord(gameId: string, w: string, playerId: string): Game {
+  emitWord(gameId: string, w: string, playerId: string): EmitWordReturn {
     const game = this.getGame(gameId);
     const player = this.getPlayer(playerId);
 
+    if (game.playersEmittedWords[playerId]) {
+      throw new Error(`Player ${playerId} already emitted word`);
+    }
+
     if (game.status !== "started") {
       throw new Error(`Game ${gameId} is not started or finished`);
+    }
+
+    if (!game.players.find((p) => p.id === playerId)) {
+      throw new Error(`Player ${playerId} is not in game ${gameId}`);
     }
 
     const word = {
@@ -140,11 +149,19 @@ export class GameService implements IGameService {
 
     this.gamesStorage.updateGame(gameId, {
       rounds: game.rounds,
+      playersEmittedWords: {
+        ...game.playersEmittedWords,
+        [playerId]: w,
+      },
     });
 
     this.checkLastRound(gameId);
 
-    return this.getGame(gameId);
+    const updatedGame = this.getGame(gameId);
+    return {
+      game: updatedGame,
+      playersEmittedWords: updatedGame.playersEmittedWords,
+    };
   }
 
   checkIsRoundFinished(gameId: string): boolean {
@@ -189,6 +206,7 @@ export class GameService implements IGameService {
 
     this.gamesStorage.updateGame(game.id, {
       rounds: newRounds,
+      playersEmittedWords: {},
     });
   }
 

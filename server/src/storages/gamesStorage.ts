@@ -22,6 +22,7 @@ export class GamesStorage implements IGameStorage {
       startWord: "",
       status: "created",
       players: [],
+      playersEmittedWords: {},
     };
 
     this.games[game.id] = game;
@@ -38,7 +39,7 @@ export class GamesStorage implements IGameStorage {
 
   updateGame(
     gameId: string,
-    game: Pick<Game, "rounds" | "startWord" | "status" | "players">
+    game: Partial<Omit<Game, "id" | "createdAt" | "updatedAt">>
   ): Game {
     this.games[gameId] = {
       ...this.games[gameId],
