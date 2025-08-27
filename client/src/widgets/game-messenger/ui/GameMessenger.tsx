@@ -41,7 +41,7 @@ export const GameMessenger: React.FC = () => {
     >
       <GameMessengerHeader gameStatus={game?.status} />
 
-      <MessengerHistory />
+      <MessengerHistory startWord={game?.startWord} />
 
       <Divider />
 

@@ -3,16 +3,16 @@ import { useGameStore } from "@/shared/stores/game-store";
 import { onGameRoundFinished } from "../api/listeners";
 import { useSocketStore } from "@/shared/stores/socket-store";
 import { Box, Typography } from "@mui/material";
-import {
-  History as HistoryIcon,
-  PlayArrow as PlayIcon,
-} from "@mui/icons-material";
 import { RoundStatus } from "@/entities";
 import { GameRounds } from "@/entities";
 import { GameHistoryHeader } from "@/entities";
 import { EmptyHistory } from "./EmptyHistory";
 
-export const MessengerHistory: React.FC = () => {
+interface MessengerHistoryProps {
+  startWord: string;
+}
+
+export const MessengerHistory: React.FC<MessengerHistoryProps> = ({ startWord }) => {
   const historyRef = useRef<HTMLDivElement>(null);
   const socket = useSocketStore((state) => state.socket);
   const setGame = useGameStore((state) => state.setGame);
@@ -70,6 +70,12 @@ export const MessengerHistory: React.FC = () => {
         },
       }}
     >
+      {startWord && (
+        <Typography variant="h6" sx={{ textAlign: "center" }}>
+          Start word: {startWord}
+        </Typography>
+      )}
+
       {history.length === 0 ? (
         <EmptyHistory gameStatus={game?.status} />
       ) : (
