@@ -23,7 +23,7 @@ i18n
     debug: false,
 
     interpolation: {
-      escapeValue: false, // React already escapes values
+      escapeValue: false,
     },
 
     detection: {

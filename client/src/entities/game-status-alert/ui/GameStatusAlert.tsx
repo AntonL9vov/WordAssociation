@@ -1,6 +1,7 @@
 import React from "react";
 import { Alert, Box, Button } from "@mui/material";
 import { Text } from "@/shared/ui";
+import { useTranslation } from "react-i18next";
 
 interface GameStatusAlertProps {
   status: "created" | "started" | "finished";
@@ -11,6 +12,8 @@ export const GameStatusAlert: React.FC<GameStatusAlertProps> = ({
   status,
   restartGame,
 }) => {
+  const { t } = useTranslation();
+  
   if (status !== "finished") {
     return null;
   }
@@ -40,7 +43,7 @@ export const GameStatusAlert: React.FC<GameStatusAlertProps> = ({
         }}
       >
         <Text variant="body1" weight="medium">
-          🎉 Game completed! Great job everyone!
+          🎉 {t("game.gameCompleted")}
         </Text>
       </Alert>
       <Button
@@ -53,7 +56,7 @@ export const GameStatusAlert: React.FC<GameStatusAlertProps> = ({
         color="primary"
         onClick={restartGame}
       >
-        Restart Game
+        {t("game.restartGame")}
       </Button>
     </Box>
   );

@@ -61,7 +61,7 @@
         "description": "Setting up the game"
       },
       "playing": {
-        "label": "Playing", 
+        "label": "Playing",
         "description": "Game in progress"
       },
       "finished": {
@@ -72,7 +72,13 @@
         "label": "Unknown",
         "description": "Unknown status"
       }
-    }
+    },
+    "gameCompleted": "Game completed! Great job everyone!",
+    "restartGame": "Restart Game",
+    "startGameError": "Failed to start game",
+    "copyGameId": "Copy Game ID",
+    "copied": "Copied!",
+    "gameSetup": "Game setup"
   },
   "messenger": {
     "title": "Game Chat",
@@ -92,9 +98,9 @@
     "yourWord": "Your word",
     "wordSubmitted": "Words submitted",
     "startWord": "Start word",
-          "send": "Send",
-      "allPlayersChose": "All players chose",
-      "submitted": "submitted"
+    "send": "Send",
+    "allPlayersChose": "All players chose",
+    "submitted": "submitted"
   },
   "common": {
     "loading": "Loading...",
@@ -104,7 +110,7 @@
   },
   "pages": {
     "home": "Home",
-    "game": "Game", 
+    "game": "Game",
     "login": "Login",
     "notFound": "Not Found",
     "pageNotFound": "404 Not Found"

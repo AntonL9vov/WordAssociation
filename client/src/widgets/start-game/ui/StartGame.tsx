@@ -82,7 +82,7 @@ export const StartGame = () => {
       const updated = await startGameApi(game.id, effectiveWord);
       setGame(updated);
     } catch (e: any) {
-      setError(e?.message || "Не удалось начать игру");
+      setError(e?.message || t('game.startGameError'));
     } finally {
       setLoading(false);
     }
@@ -93,7 +93,7 @@ export const StartGame = () => {
       <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
         <Stack spacing={2}>
           <Typography variant="h5" fontWeight={700}>
-            Game setup
+            {t('game.gameSetup')}
           </Typography>
 
           <Stack
@@ -104,7 +104,7 @@ export const StartGame = () => {
           >
             <Stack spacing={0.5}>
               <Typography variant="body2" color="text.secondary">
-                Game ID
+                {t('game.gameId')}
               </Typography>
               <Typography variant="h6" sx={{ wordBreak: "break-all" }}>
                 {game.id}
@@ -112,7 +112,7 @@ export const StartGame = () => {
             </Stack>
 
             <Stack direction="row" spacing={1} alignItems="center">
-              <Tooltip title={copied ? "Скопировано!" : "Скопировать ID"}>
+              <Tooltip title={copied ? t('game.copied') : t('game.copyGameId')}>
                 <span>
                   <IconButton onClick={handleCopyId} disabled={isCopying}>
                     <ContentCopyIcon fontSize="small" />
