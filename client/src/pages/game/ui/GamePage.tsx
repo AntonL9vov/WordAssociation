@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from "react-router-dom";
 import { useGameStore } from "@/shared/stores/game-store";
 import { useSocketStore } from "@/shared/stores/socket-store";
@@ -12,6 +13,7 @@ import { Box, Fade } from "@mui/material";
 import { leaveGame, restartGame } from "../api/http";
 
 export const GamePage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const game = useGameStore((state) => state.game);
   const setGame = useGameStore((state) => state.setGame);
@@ -68,7 +70,7 @@ export const GamePage: React.FC = () => {
   };
 
   if (!game || !gameStatus) {
-    return <LoadingState message="Loading game..." />;
+    return <LoadingState message={t('game.loading')} />;
   }
 
   return (

@@ -1,4 +1,5 @@
 export { ThemeToggle } from './ThemeToggle';
+export { LanguageSwitcher } from './LanguageSwitcher';
 export { MuiThemeProvider } from './theme/MuiThemeProvider';
 export { createMuiTheme, useMuiTheme } from './theme/muiTheme';
 

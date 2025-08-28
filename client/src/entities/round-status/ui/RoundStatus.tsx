@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import { Box, Typography, Zoom } from "@mui/material";
 import { PlayArrow as PlayIcon } from "@mui/icons-material";
 
 export const RoundStatus = ({ roundNumber }: { roundNumber: number }) => {
+  const { t } = useTranslation();
   return (
     <Zoom in timeout={400}>
       <Box
@@ -26,7 +28,8 @@ export const RoundStatus = ({ roundNumber }: { roundNumber: number }) => {
           }}
         >
           <PlayIcon fontSize="small" />
-          Round {roundNumber} - Waiting for words...
+          {t("messenger.round")} {roundNumber} -{" "}
+          {t("messenger.waitingForWords")}
         </Typography>
       </Box>
     </Zoom>

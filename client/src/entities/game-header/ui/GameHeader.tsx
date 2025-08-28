@@ -1,4 +1,6 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
+import { usePluralization } from "@/shared/hooks";
 import { Card, Text } from "@/shared/ui";
 import { Box, Chip } from "@mui/material";
 import {
@@ -21,35 +23,38 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
   playersCount,
   onLeave,
 }) => {
+  const { t } = useTranslation();
+  const { players, formatCount } = usePluralization();
+  
   const getStatusInfo = () => {
     switch (status) {
       case "created":
         return {
           icon: <GroupIcon />,
-          label: "Setup",
+          label: t('game.statuses.setup.label'),
           color: "primary" as const,
-          description: "Setting up the game",
+          description: t('game.statuses.setup.description'),
         };
       case "started":
         return {
           icon: <PlayIcon />,
-          label: "Playing",
+          label: t('game.statuses.playing.label'),
           color: "success" as const,
-          description: "Game in progress",
+          description: t('game.statuses.playing.description'),
         };
       case "finished":
         return {
           icon: <TrophyIcon />,
-          label: "Finished",
+          label: t('game.statuses.finished.label'),
           color: "warning" as const,
-          description: "Game completed",
+          description: t('game.statuses.finished.description'),
         };
       default:
         return {
           icon: <GroupIcon />,
-          label: "Unknown",
+          label: t('game.statuses.unknown.label'),
           color: "default" as const,
-          description: "Unknown status",
+          description: t('game.statuses.unknown.description'),
         };
     }
   };
@@ -79,12 +84,12 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
       >
         <Box sx={{ height: "100%" }}>
           <Text variant="h6" weight="bold">
-            Game Room
+            {t('game.gameRoom')}
           </Text>
         </Box>
         <Box>
           <Text variant="body1" color="secondary">
-            Game ID:{" "}
+            {t('game.gameId')}:{" "}
             <Text component="span" weight="bold" sx={{ display: "inline" }}>
               {gameId}
             </Text>
@@ -112,7 +117,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
           />
           <Chip
             icon={<GroupIcon />}
-            label={`${playersCount} players`}
+            label={formatCount(playersCount, players)}
             variant="outlined"
             sx={{
               borderColor: "var(--border-secondary)",
@@ -120,7 +125,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
           />
           <Chip
             icon={<LeaveIcon color="error" />}
-            label="Leave"
+            label={t('game.leave')}
             variant="outlined"
             sx={{
               borderColor: "var(--border-error)",

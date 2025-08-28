@@ -1,18 +1,19 @@
 import React from 'react';
-import { Text } from '@/shared/ui';
+import { useTranslation } from 'react-i18next';
 import { Box, Chip } from '@mui/material';
 import {
   AutoAwesome as SparkleIcon,
 } from '@mui/icons-material';
 
-const features = [
-  "Real-time multiplayer",
-  "Word association fun", 
-  "Chat with players",
-  "Endless rounds"
-];
-
 export const AuthFormFeatures: React.FC = () => {
+  const { t } = useTranslation();
+  
+  const features = [
+    t('auth.features.realtime'),
+    t('auth.features.wordFun'),
+    t('auth.features.chat'),
+    t('auth.features.endless')
+  ];
   return (
     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, justifyContent: 'center' }}>
       {features.map((feature, index) => (

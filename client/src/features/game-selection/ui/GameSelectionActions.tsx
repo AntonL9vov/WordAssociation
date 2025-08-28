@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { GameActionCard } from '@/entities/game-action-card';
 import { Stack } from '@mui/material';
 import {
@@ -15,6 +16,7 @@ export const GameSelectionActions: React.FC<GameSelectionActionsProps> = ({
   onCreateGame,
   onJoinGame,
 }) => {
+  const { t } = useTranslation();
   return (
     <Stack 
       direction={{ xs: 'column', md: 'row' }} 
@@ -25,19 +27,19 @@ export const GameSelectionActions: React.FC<GameSelectionActionsProps> = ({
       }}
     >
       <GameActionCard
-        title="Create Game"
-        description="Start a new game and invite friends to join your word association adventure"
+        title={t('game.createGame')}
+        description={t('game.createGameDescription')}
         icon={<RocketIcon />}
-        buttonText="Create New Game"
+        buttonText={t('game.createNewGame')}
         colorScheme="primary"
         onClick={onCreateGame}
       />
 
       <GameActionCard
-        title="Join Game"
-        description="Enter a game ID to join an existing game with friends and other players"
+        title={t('game.joinGame')}
+        description={t('game.joinGameDescription')}
         icon={<GroupIcon />}
-        buttonText="Join Existing Game"
+        buttonText={t('game.joinGame')}
         colorScheme="secondary"
         onClick={onJoinGame}
       />

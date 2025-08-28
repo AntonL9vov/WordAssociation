@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   IconButton,
@@ -22,10 +23,11 @@ export const MessengerTextField = ({
   setMessage,
   handleKeyPress,
 }: MessengerTextFieldProps) => {
+  const { t } = useTranslation();
   return (
     <TextField
       inputRef={inputRef}
-      label={isInputDisabled ? "Waiting for other players" : "Type your message or word..."}
+      label={isInputDisabled ? t('messenger.typeMessageDisabled') : t('messenger.typeMessage')}
       variant="outlined"
       fullWidth
       value={message}
@@ -33,14 +35,14 @@ export const MessengerTextField = ({
       onKeyDown={handleKeyPress}
       disabled={isInputDisabled}
       placeholder={
-        isInputDisabled ? "You have already emitted a word" : "Enter your word or message"
+        isInputDisabled ? t('messenger.placeholderDisabled') : t('messenger.placeholderDefault')
       }
       slotProps={{
         input: {
           endAdornment: !isInputDisabled && (
             <InputAdornment position="end">
               <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                <Tooltip title="Add emoji">
+                <Tooltip title={t('messenger.addEmoji')}>
                   <IconButton
                     size="small"
                     sx={{

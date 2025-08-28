@@ -1,0 +1,112 @@
+{
+  "app": {
+    "title": "Ассоциации слов",
+    "subtitle": "Многопользовательская словесная игра",
+    "tagline": "Объединяй умы через слова"
+  },
+  "auth": {
+    "playerNameLabel": "Ваше имя",
+    "playerNamePlaceholder": "Введите имя игрока",
+    "startPlaying": "Начать игру",
+    "connecting": "Подключение...",
+    "enterNameError": "Пожалуйста, введите ваше имя",
+    "connectionError": "Ошибка подключения. Попробуйте еще раз.",
+    "joinWorldwideGame": "Присоединяйтесь к игрокам со всего мира в этой увлекательной словесной игре!",
+    "features": {
+      "realtime": "Мультиплеер в реальном времени",
+      "wordFun": "Увлекательные ассоциации слов",
+      "chat": "Общение с игроками",
+      "endless": "Бесконечные раунды"
+    }
+  },
+  "home": {
+    "title": "Готовы играть?",
+    "subtitle": "Выберите, как хотите начать своё словесное приключение",
+    "description": "Создайте новую игру или присоединитесь к друзьям в существующей"
+  },
+  "game": {
+    "createGame": "Создать игру",
+    "createGameDescription": "Начните новую игру и пригласите друзей присоединиться к вашему приключению с ассоциациями слов",
+    "createNewGame": "Создать новую игру",
+    "joinGame": "Присоединиться к игре",
+    "joinGameDescription": "Введите ID игры, чтобы присоединиться к существующей игре с друзьями и другими игроками",
+    "gameIdLabel": "ID игры",
+    "gameIdPlaceholder": "Введите ID игры (например abc123)",
+    "enterGameIdDescription": "Введите ID игры, которым поделился ваш друг, чтобы присоединиться к его игре",
+    "shareGameIdHint": "Попросите друга поделиться с вами ID игры",
+    "leave": "Покинуть",
+    "loading": "Загрузка игры...",
+
+    "playersLabel": "Игроки",
+    "atLeastTwoPlayers": "Необходимо минимум два игрока",
+    "startGameButton": "Начать игру",
+    "waitForPlayers": "Ожидание других игроков",
+    "shareGameId": "Поделитесь ID игры с друзьями",
+    "randomWordError": "Не удалось получить случайное слово",
+    "matchFound": "Совпадение найдено!",
+    "gameRound": "Игровой раунд",
+    "gameRounds": "Игровые раунды",
+    "gameRoom": "Игровая комната",
+    "gameId": "ID игры",
+    "startGame": {
+      "randomStartWord": "Случайное стартовое слово",
+      "startWord": "Стартовое слово",
+      "startWordPlaceholder": "Введите стартовое слово",
+      "randomWord": "Случайное слово",
+      "regenerate": "Обновить"
+    },
+    "statuses": {
+      "setup": {
+        "label": "Настройка",
+        "description": "Настройка игры"
+      },
+      "playing": {
+        "label": "Игра",
+        "description": "Игра в процессе"
+      },
+      "finished": {
+        "label": "Завершена",
+        "description": "Игра завершена"
+      },
+      "unknown": {
+        "label": "Неизвестно",
+        "description": "Неизвестный статус"
+      }
+    }
+  },
+  "messenger": {
+    "title": "Игровой чат",
+    "subtitle": "Отправляйте слова и общайтесь с игроками",
+    "typeMessage": "Введите ваше сообщение или слово...",
+    "typeMessageDisabled": "Ожидание других игроков",
+    "placeholderDefault": "Введите ваше слово или сообщение",
+    "placeholderDisabled": "Вы уже отправили слово",
+    "addEmoji": "Добавить эмодзи",
+    "gameStarted": "Игра началась!",
+    "noRoundsYet": "Раундов пока нет",
+    "submitFirstWord": "Отправьте первое слово, чтобы начать цепочку ассоциаций",
+    "roundsWillAppear": "Раунды игры появятся здесь после начала игры",
+    "round": "Раунд",
+    "waitingForWords": "Ожидание слов...",
+    "otherPlayers": "Другие игроки",
+    "yourWord": "Ваше слово",
+    "wordSubmitted": "Слов отправлено",
+    "startWord": "Стартовое слово",
+          "send": "Отправить",
+      "allPlayersChose": "Все игроки выбрали",
+      "submitted": "отправлено"
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "pasteFromClipboard": "Вставить из буфера обмена",
+    "viewOnGitHub": "Посмотреть на GitHub",
+    "logout": "Выйти"
+  },
+  "pages": {
+    "home": "Главная",
+    "game": "Игра",
+    "login": "Вход",
+    "notFound": "Не найдено",
+    "pageNotFound": "404 Страница не найдена"
+  }
+}

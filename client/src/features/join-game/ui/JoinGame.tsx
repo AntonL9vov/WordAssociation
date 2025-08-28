@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { EnterGameForm } from "@/entities";
 import { useState } from "react";
 
@@ -6,6 +7,7 @@ export type JoinGameProps = {
 };
 
 export const JoinGame = ({ onJoinGame }: JoinGameProps) => {
+  const { t } = useTranslation();
   const [gameId, setGameId] = useState("");
 
   const handleJoinGame = () => {
@@ -23,7 +25,7 @@ export const JoinGame = ({ onJoinGame }: JoinGameProps) => {
         onJoinGame={handleJoinGame}
         onGameIdChange={handleGameIdChange}
         gameId={gameId}
-        buttonLabel="Join game"
+        buttonLabel={t('game.joinGame')}
         buttonDisabled={!gameId}
       />
     </div>

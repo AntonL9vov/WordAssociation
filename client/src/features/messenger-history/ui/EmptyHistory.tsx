@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Box, Typography } from "@mui/material";
 import { PlayArrow as PlayIcon } from "@mui/icons-material";
 import { History as HistoryIcon } from "@mui/icons-material";
@@ -8,6 +9,7 @@ interface EmptyHistoryProps {
 }
 
 export const EmptyHistory = ({ gameStatus }: EmptyHistoryProps) => {
+  const { t } = useTranslation();
   return (
     <Box
       sx={{
@@ -46,7 +48,7 @@ export const EmptyHistory = ({ gameStatus }: EmptyHistoryProps) => {
           mb: 1,
         }}
       >
-        {gameStatus === "started" ? "Game Started!" : "No rounds yet"}
+{gameStatus === "started" ? t('messenger.gameStarted') : t('messenger.noRoundsYet')}
       </Typography>
       <Typography
         variant="body2"
@@ -55,9 +57,9 @@ export const EmptyHistory = ({ gameStatus }: EmptyHistoryProps) => {
           maxWidth: 300,
         }}
       >
-        {gameStatus === "started"
-          ? "Submit your first word to begin the word association chain"
-          : "Game rounds will appear here once the game starts"}
+{gameStatus === "started"
+          ? t('messenger.submitFirstWord')
+          : t('messenger.roundsWillAppear')}
       </Typography>
     </Box>
   );

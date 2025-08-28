@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Input, Button } from '@/shared/ui';
 import { Box, Alert } from '@mui/material';
 import {
@@ -21,6 +22,7 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
   onPlayerNameChange,
   onSubmit,
 }) => {
+  const { t } = useTranslation();
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !isLoading && playerName.trim()) {
       onSubmit();
@@ -31,8 +33,8 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Input
         fullWidth
-        label="Your Name"
-        placeholder="Enter your player name"
+        label={t('auth.playerNameLabel')}
+        placeholder={t('auth.playerNamePlaceholder')}
         value={playerName}
         onChange={(e) => onPlayerNameChange(e.target.value)}
         disabled={isLoading}
@@ -73,7 +75,7 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
           fontWeight: 'bold',
         }}
       >
-        {isLoading ? "Connecting..." : "Start Playing"}
+        {isLoading ? t('auth.connecting') : t('auth.startPlaying')}
       </Button>
     </Box>
   );

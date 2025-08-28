@@ -13,3 +13,5 @@ export {
   useEscapeKey,
   useAriaDescribedBy,
 } from './useAccessibility';
+
+export { usePluralization } from './usePluralization';

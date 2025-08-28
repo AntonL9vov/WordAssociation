@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import { Button, Input, Text } from "@/shared/ui";
 import { 
   Box, 
@@ -41,6 +42,7 @@ export const EnterGameForm: React.FC<EnterGameFormProps> = ({
   withGameId,
   buttonDisabled,
 }) => {
+  const { t } = useTranslation();
   const handleJoinGame = (gameId: string | undefined) => {
     if (gameId) {
       onJoinGame(gameId);
@@ -68,18 +70,18 @@ export const EnterGameForm: React.FC<EnterGameFormProps> = ({
             weight="medium"
             sx={{ mb: 2 }}
           >
-            Enter the Game ID shared by your friend to join their game
+{t('game.enterGameIdDescription')}
           </Text>
           <Input
             fullWidth
-            label="Game ID"
-            placeholder="Enter game ID (e.g. abc123)"
+            label={t('game.gameIdLabel')}
+            placeholder={t('game.gameIdPlaceholder')}
             value={gameId}
             onChange={(e) => onGameIdChange(e.target.value.trim())}
             autoFocus
             startIcon={<GameIcon />}
             endIcon={
-              <Tooltip title="Paste from clipboard">
+              <Tooltip title={t('common.pasteFromClipboard')}>
                 <IconButton
                   size="small"
                   onClick={handlePasteFromClipboard}
@@ -131,7 +133,7 @@ export const EnterGameForm: React.FC<EnterGameFormProps> = ({
           align="center"
           sx={{ mt: 1 }}
         >
-          Ask your friend to share their Game ID with you
+{t('game.shareGameIdHint')}
         </Text>
       )}
     </Box>

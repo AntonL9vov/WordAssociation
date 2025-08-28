@@ -7,6 +7,7 @@ import { RoundStatus } from "@/entities";
 import { GameRounds } from "@/entities";
 import { GameHistoryHeader } from "@/entities";
 import { EmptyHistory } from "./EmptyHistory";
+import { useTranslation } from "react-i18next";
 
 interface MessengerHistoryProps {
   startWord: string;
@@ -17,6 +18,8 @@ export const MessengerHistory: React.FC<MessengerHistoryProps> = ({ startWord })
   const socket = useSocketStore((state) => state.socket);
   const setGame = useGameStore((state) => state.setGame);
   const game = useGameStore((state) => state.game);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!socket) {
@@ -72,7 +75,7 @@ export const MessengerHistory: React.FC<MessengerHistoryProps> = ({ startWord })
     >
       {startWord && (
         <Typography variant="h6" sx={{ textAlign: "center" }}>
-          Start word: {startWord}
+          {t('messenger.startWord')}: {startWord}
         </Typography>
       )}
 

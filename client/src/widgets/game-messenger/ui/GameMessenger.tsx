@@ -22,10 +22,6 @@ export const GameMessenger: React.FC = () => {
     sendMessage(message, game.id, user.id, socket);
   };
 
-  useEffect(() => {
-    console.log(game?.playersEmittedWords);
-  }, [game]);
-
   return (
     <Paper
       elevation={0}
@@ -41,7 +37,7 @@ export const GameMessenger: React.FC = () => {
     >
       <GameMessengerHeader gameStatus={game?.status} />
 
-      <MessengerHistory startWord={game?.startWord} />
+      <MessengerHistory startWord={game?.startWord!} />
 
       <Divider />
 

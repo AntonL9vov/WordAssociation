@@ -1,6 +1,7 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import { useAuth } from "@/shared/context/AuthContext";
-import { ThemeToggle } from "@/shared/ui/ThemeToggle";
+import { ThemeToggle, LanguageSwitcher } from "@/shared/ui";
 import { deleteUser } from "../api/http";
 import {
   AppBar,
@@ -19,6 +20,7 @@ import {
 } from "@mui/icons-material";
 
 export const MainHeader: React.FC = () => {
+  const { t } = useTranslation();
   const { isAuthenticated, user, logout } = useAuth();
 
   const handleLogout = async () => {
@@ -64,7 +66,7 @@ export const MainHeader: React.FC = () => {
                   fontSize: { xs: '1.25rem', sm: '1.5rem' },
                 }}
               >
-                Word Association
+                {t('app.title')}
               </Typography>
               <Typography
                 variant="body2"
@@ -73,7 +75,7 @@ export const MainHeader: React.FC = () => {
                   display: { xs: 'none', sm: 'block' },
                 }}
               >
-                Multiplayer Word Game
+                {t('app.subtitle')}
               </Typography>
             </Box>
           </Box>
@@ -109,11 +111,12 @@ export const MainHeader: React.FC = () => {
                   }}
                 >
                   <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                    Logout
+                    {t('common.logout')}
                   </Box>
                 </Button>
               </>
             )}
+            <LanguageSwitcher size="small" />
             <ThemeToggle />
           </Box>
         </Toolbar>

@@ -1,8 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui';
 import { Box } from '@mui/material';
 
 export const HomeHeader: React.FC = () => {
+  const { t } = useTranslation();
+  
   return (
     <Box sx={{ textAlign: 'center', mb: 6 }}>
       <Text
@@ -11,7 +14,7 @@ export const HomeHeader: React.FC = () => {
         gradient
         sx={{ mb: 2 }}
       >
-        Ready to Play?
+        {t('home.title')}
       </Text>
       <Text
         variant="h6"
@@ -19,13 +22,13 @@ export const HomeHeader: React.FC = () => {
         weight="medium"
         sx={{ mb: 1 }}
       >
-        Choose how you want to start your word adventure
+        {t('home.subtitle')}
       </Text>
       <Text
         variant="body1"
         color="muted"
       >
-        Create a new game or join friends in an existing one
+        {t('home.description')}
       </Text>
     </Box>
   );

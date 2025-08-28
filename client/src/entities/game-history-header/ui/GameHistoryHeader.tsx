@@ -1,12 +1,13 @@
+import { useTranslation } from 'react-i18next';
 import { Box, Divider, Typography } from "@mui/material";
 import { History as HistoryIcon } from "@mui/icons-material";
-import { Round } from "@/shared";
 
 interface GameHistoryHeaderProps {
   roundNumber: number;
 }
 
 export const GameHistoryHeader = ({ roundNumber }: GameHistoryHeaderProps) => {
+  const { t } = useTranslation();
   return (
     <Box sx={{ mb: 2 }}>
       <Typography
@@ -20,7 +21,7 @@ export const GameHistoryHeader = ({ roundNumber }: GameHistoryHeaderProps) => {
         }}
       >
         <HistoryIcon fontSize="small" />
-        Game Rounds ({roundNumber})
+{t('game.gameRounds')} ({roundNumber})
       </Typography>
       <Divider sx={{ mt: 1 }} />
     </Box>

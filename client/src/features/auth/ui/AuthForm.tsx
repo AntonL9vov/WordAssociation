@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthFormFields, AuthFormFeatures } from '@/entities/auth-form';
 import { Text } from '@/shared/ui';
 import { Box } from '@mui/material';
@@ -10,13 +11,14 @@ interface AuthFormProps {
 }
 
 export const AuthForm: React.FC<AuthFormProps> = ({ onSubmit, onSuccess }) => {
+  const { t } = useTranslation();
   const [playerName, setPlayerName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleSubmit = async () => {
     if (!playerName.trim()) {
-      setError("Please enter your name");
+      setError(t('auth.enterNameError'));
       return;
     }
 
@@ -27,7 +29,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSubmit, onSuccess }) => {
       const user = await onSubmit(playerName.trim());
       onSuccess(user);
     } catch (err) {
-      setError("Failed to connect. Please try again.");
+      setError(t('auth.connectionError'));
       setIsLoading(false);
     }
   };
@@ -51,7 +53,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSubmit, onSuccess }) => {
       {/* Дополнительная информация */}
       <Box sx={{ textAlign: 'center', mt: 4 }}>
         <Text variant="body2" color="muted">
-          Join players from around the world in this fun word game!
+{t('auth.joinWorldwideGame')}
         </Text>
       </Box>
     </>

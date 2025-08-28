@@ -1,5 +1,6 @@
 import { Box, Button } from "@mui/material";
 import { Send as SendIcon } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 interface MessengerButtonProps {
   handleSend: () => void;
@@ -10,6 +11,7 @@ export const MessengerButton = ({
   handleSend,
   isSendDisabled,
 }: MessengerButtonProps) => {
+  const { t } = useTranslation();
   return (
     <Button
       variant="contained"
@@ -45,7 +47,9 @@ export const MessengerButton = ({
         },
       }}
     >
-      <Box sx={{ display: { xs: "none", sm: "block" } }}>Send</Box>
+      <Box sx={{ display: { xs: "none", sm: "block" } }}>
+        {t("messenger.send")}
+      </Box>
     </Button>
   );
 };

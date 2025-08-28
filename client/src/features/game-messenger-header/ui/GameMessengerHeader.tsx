@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Box, Stack, Typography } from "@mui/material";
 import { Chat as ChatIcon } from "@mui/icons-material";
 import { Game } from "@/shared";
@@ -9,6 +10,7 @@ export const GameMessengerHeader = ({
 }: {
   gameStatus?: GameStatus;
 }) => {
+  const { t } = useTranslation();
   return (
     <Box
       sx={{
@@ -26,7 +28,7 @@ export const GameMessengerHeader = ({
             color: "var(--text-primary)",
           }}
         >
-          Game Chat
+          {t("messenger.title")}
         </Typography>
         {gameStatus === "started" && (
           <Typography
@@ -37,7 +39,7 @@ export const GameMessengerHeader = ({
               fontStyle: "italic",
             }}
           >
-            Submit your words and chat with players
+            {t("messenger.subtitle")}
           </Typography>
         )}
       </Stack>

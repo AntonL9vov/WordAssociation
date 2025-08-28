@@ -1,8 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text } from '@/shared/ui';
 import { Box } from '@mui/material';
 
 export const AuthHeader: React.FC = () => {
+  const { t } = useTranslation();
+  
   return (
     <Box sx={{ textAlign: 'center', mb: 4 }}>
       <Text
@@ -11,7 +14,7 @@ export const AuthHeader: React.FC = () => {
         gradient
         sx={{ mb: 1 }}
       >
-        Word Association
+        {t('app.title')}
       </Text>
       <Text
         variant="h6"
@@ -19,7 +22,7 @@ export const AuthHeader: React.FC = () => {
         weight="medium"
         sx={{ mb: 3 }}
       >
-        Connect minds through words
+        {t('app.tagline')}
       </Text>
     </Box>
   );

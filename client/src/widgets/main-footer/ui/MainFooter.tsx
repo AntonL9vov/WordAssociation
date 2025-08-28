@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from 'react-i18next';
 import { 
   Box, 
   Container, 
@@ -12,6 +13,7 @@ import {
 } from "@mui/icons-material";
 
 export const MainFooter: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <Box
       component="footer"
@@ -62,7 +64,7 @@ export const MainFooter: React.FC = () => {
             >
               Open Source
             </Typography>
-            <Tooltip title="View on GitHub">
+            <Tooltip title={t('common.viewOnGitHub')}>
               <IconButton
                 size="small"
                 sx={{

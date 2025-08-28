@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from 'react-i18next';
+import { usePluralization } from "@/shared/hooks";
 import {
   Box,
   Paper,
@@ -20,6 +22,8 @@ import { useGameStore } from "@/shared/stores/game-store";
 import { getRandomWord, startGame as startGameApi } from "../api/api";
 
 export const StartGame = () => {
+  const { t } = useTranslation();
+  const { players, formatCount } = usePluralization();
   const game = useGameStore((s) => s.game);
   const setGame = useGameStore((s) => s.setGame);
 
@@ -53,7 +57,7 @@ export const StartGame = () => {
       const w = await getRandomWord();
       setRandomWord(w);
     } catch (e: any) {
-      setError(e?.message || "Не удалось получить случайное слово");
+      setError(e?.message || t('game.randomWordError'));
     }
   };
 
@@ -127,11 +131,11 @@ export const StartGame = () => {
             justifyContent="space-between"
           >
             <Typography color="text.secondary">
-              Players: <b>{playersCount}</b>
+              {t('game.playersLabel')}: <b>{formatCount(playersCount, players)}</b>
             </Typography>
             {!canStartByPlayers && (
               <Typography variant="body2" color="warning.main">
-                At least two players needed
+{t('game.atLeastTwoPlayers')}
               </Typography>
             )}
           </Stack>
@@ -144,13 +148,13 @@ export const StartGame = () => {
                   onChange={(e) => setIsRandom(e.target.checked)}
                 />
               }
-              label="Random start word"
+              label={t('game.startGame.randomStartWord')}
             />
 
             {!isRandom ? (
               <TextField
-                label="Start word"
-                placeholder="Enter start word"
+                label={t('game.startGame.startWord')}
+                placeholder={t('game.startGame.startWordPlaceholder')}
                 value={startWord}
                 onChange={(e) => setStartWord(e.target.value)}
                 fullWidth
@@ -158,12 +162,12 @@ export const StartGame = () => {
             ) : (
               <Stack direction="row" spacing={1} alignItems="center">
                 <TextField
-                  label="Random word"
+                  label={t('game.startGame.randomWord')}
                   value={randomWord}
                   InputProps={{ readOnly: true }}
                   fullWidth
                 />
-                <Tooltip title="Regenerate">
+                <Tooltip title={t('game.startGame.regenerate')}>
                   <span>
                     <IconButton onClick={regenerateRandomWord}>
                       <RefreshIcon />
@@ -183,17 +187,17 @@ export const StartGame = () => {
               onClick={handleStartGame}
               disabled={!canStart}
             >
-              Start game
+{t('game.startGameButton')}
             </Button>
             {!canStartByPlayers && (
               <Button variant="outlined" disabled>
-                Wait for other players
+{t('game.waitForPlayers')}
               </Button>
             )}
           </Stack>
 
           <Typography variant="body2" color="text.secondary">
-            Share game ID with your friend
+{t('game.shareGameId')}
           </Typography>
         </Stack>
       </Paper>
