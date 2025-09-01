@@ -1,11 +1,7 @@
 import React from "react";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { Button, Input, Text } from "@/shared/ui";
-import { 
-  Box, 
-  Tooltip,
-  IconButton,
-} from "@mui/material";
+import { Box, Tooltip, IconButton } from "@mui/material";
 import {
   Games as GameIcon,
   Login as LoginIcon,
@@ -56,39 +52,39 @@ export const EnterGameForm: React.FC<EnterGameFormProps> = ({
         onGameIdChange(text.trim());
       }
     } catch (err) {
-      console.log('Failed to read clipboard');
+      console.log("Failed to read clipboard");
     }
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
       {withGameId && (
         <Box>
-          <Text 
-            variant="body2" 
+          <Text
+            variant="body2"
             color="secondary"
             weight="medium"
             sx={{ mb: 2 }}
           >
-{t('game.enterGameIdDescription')}
+            {t("game.enterGameIdDescription")}
           </Text>
           <Input
             fullWidth
-            label={t('game.gameIdLabel')}
-            placeholder={t('game.gameIdPlaceholder')}
+            label={t("game.gameIdLabel")}
+            placeholder={t("game.gameIdPlaceholder")}
             value={gameId}
             onChange={(e) => onGameIdChange(e.target.value.trim())}
             autoFocus
             startIcon={<GameIcon />}
             endIcon={
-              <Tooltip title={t('common.pasteFromClipboard')}>
+              <Tooltip title={t("common.pasteFromClipboard")}>
                 <IconButton
                   size="small"
                   onClick={handlePasteFromClipboard}
                   sx={{
-                    color: 'var(--text-muted)',
-                    '&:hover': {
-                      color: 'var(--primary-600)',
+                    color: "var(--text-muted)",
+                    "&:hover": {
+                      color: "var(--primary-600)",
                     },
                   }}
                 >
@@ -97,20 +93,20 @@ export const EnterGameForm: React.FC<EnterGameFormProps> = ({
               </Tooltip>
             }
             sx={{
-              '& .MuiOutlinedInput-root': {
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              "& .MuiOutlinedInput-root": {
+                backgroundColor: "var(--bg-elevated)",
+                "&:hover": {
+                  backgroundColor: "var(--bg-primary)",
                 },
-                '&.Mui-focused': {
-                  backgroundColor: 'rgba(255, 255, 255, 1)',
+                "&.Mui-focused": {
+                  backgroundColor: "var(--bg-primary)",
                 },
               },
             }}
           />
         </Box>
       )}
-      
+
       <Button
         fullWidth
         size="large"
@@ -120,20 +116,15 @@ export const EnterGameForm: React.FC<EnterGameFormProps> = ({
         gradient
         sx={{
           py: 1.5,
-          fontSize: '1.1rem',
+          fontSize: "1.1rem",
         }}
       >
         {buttonLabel}
       </Button>
 
       {withGameId && (
-        <Text 
-          variant="caption" 
-          color="muted"
-          align="center"
-          sx={{ mt: 1 }}
-        >
-{t('game.shareGameIdHint')}
+        <Text variant="caption" color="muted" align="center" sx={{ mt: 1 }}>
+          {t("game.shareGameIdHint")}
         </Text>
       )}
     </Box>

@@ -126,6 +126,38 @@
   --border-error: #f87171;
   --border-success: #4ade80;
 
+  /* Dark Theme Accent Colors */
+  --accent-50: #0c1c0c;
+  --accent-100: #162d16;
+  --accent-200: #1e4d1e;
+  --accent-300: #256625;
+  --accent-400: #2d7f2d;
+  --accent-500: #22c55e;
+  --accent-600: #4ade80;
+  --accent-700: #86efac;
+  --accent-800: #bbf7d0;
+  --accent-900: #dcfce7;
+
+  /* Dark Theme Error Colors */
+  --error-50: #1c0c0c;
+  --error-100: #2d1616;
+  --error-200: #4d1e1e;
+  --error-300: #662525;
+  --error-400: #7f2d2d;
+  --error-500: #ef4444;
+  --error-600: #f87171;
+  --error-700: #fca5a5;
+
+  /* Dark Theme Success Colors */
+  --success-50: #0c1c0c;
+  --success-100: #162d16;
+  --success-200: #1e4d1e;
+  --success-300: #256625;
+  --success-400: #2d7f2d;
+  --success-500: #22c55e;
+  --success-600: #4ade80;
+  --success-700: #86efac;
+
   /* Dark Theme Shadow Colors */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);

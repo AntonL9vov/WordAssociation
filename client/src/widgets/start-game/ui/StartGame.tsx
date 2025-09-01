@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { usePluralization } from "@/shared/hooks";
 import {
   Box,
@@ -20,6 +20,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import { useGameStore } from "@/shared/stores/game-store";
 import { getRandomWord, startGame as startGameApi } from "../api/api";
+import { Input } from "@/shared";
 
 export const StartGame = () => {
   const { t } = useTranslation();
@@ -57,7 +58,7 @@ export const StartGame = () => {
       const w = await getRandomWord();
       setRandomWord(w);
     } catch (e: any) {
-      setError(e?.message || t('game.randomWordError'));
+      setError(e?.message || t("game.randomWordError"));
     }
   };
 
@@ -82,7 +83,7 @@ export const StartGame = () => {
       const updated = await startGameApi(game.id, effectiveWord);
       setGame(updated);
     } catch (e: any) {
-      setError(e?.message || t('game.startGameError'));
+      setError(e?.message || t("game.startGameError"));
     } finally {
       setLoading(false);
     }
@@ -93,7 +94,7 @@ export const StartGame = () => {
       <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
         <Stack spacing={2}>
           <Typography variant="h5" fontWeight={700}>
-            {t('game.gameSetup')}
+            {t("game.gameSetup")}
           </Typography>
 
           <Stack
@@ -104,7 +105,7 @@ export const StartGame = () => {
           >
             <Stack spacing={0.5}>
               <Typography variant="body2" color="text.secondary">
-                {t('game.gameId')}
+                {t("game.gameId")}
               </Typography>
               <Typography variant="h6" sx={{ wordBreak: "break-all" }}>
                 {game.id}
@@ -112,7 +113,7 @@ export const StartGame = () => {
             </Stack>
 
             <Stack direction="row" spacing={1} alignItems="center">
-              <Tooltip title={copied ? t('game.copied') : t('game.copyGameId')}>
+              <Tooltip title={copied ? t("game.copied") : t("game.copyGameId")}>
                 <span>
                   <IconButton onClick={handleCopyId} disabled={isCopying}>
                     <ContentCopyIcon fontSize="small" />
@@ -131,11 +132,12 @@ export const StartGame = () => {
             justifyContent="space-between"
           >
             <Typography color="text.secondary">
-              {t('game.playersLabel')}: <b>{formatCount(playersCount, players)}</b>
+              {t("game.playersLabel")}:{" "}
+              <b>{formatCount(playersCount, players)}</b>
             </Typography>
             {!canStartByPlayers && (
               <Typography variant="body2" color="warning.main">
-{t('game.atLeastTwoPlayers')}
+                {t("game.atLeastTwoPlayers")}
               </Typography>
             )}
           </Stack>
@@ -148,26 +150,26 @@ export const StartGame = () => {
                   onChange={(e) => setIsRandom(e.target.checked)}
                 />
               }
-              label={t('game.startGame.randomStartWord')}
+              label={t("game.startGame.randomStartWord")}
             />
 
             {!isRandom ? (
-              <TextField
-                label={t('game.startGame.startWord')}
-                placeholder={t('game.startGame.startWordPlaceholder')}
+              <Input
+                label={t("game.startGame.startWord")}
+                placeholder={t("game.startGame.startWordPlaceholder")}
                 value={startWord}
                 onChange={(e) => setStartWord(e.target.value)}
                 fullWidth
               />
             ) : (
               <Stack direction="row" spacing={1} alignItems="center">
-                <TextField
-                  label={t('game.startGame.randomWord')}
+                <Input
+                  label={t("game.startGame.randomWord")}
                   value={randomWord}
                   InputProps={{ readOnly: true }}
                   fullWidth
                 />
-                <Tooltip title={t('game.startGame.regenerate')}>
+                <Tooltip title={t("game.startGame.regenerate")}>
                   <span>
                     <IconButton onClick={regenerateRandomWord}>
                       <RefreshIcon />
@@ -187,17 +189,17 @@ export const StartGame = () => {
               onClick={handleStartGame}
               disabled={!canStart}
             >
-{t('game.startGameButton')}
+              {t("game.startGameButton")}
             </Button>
             {!canStartByPlayers && (
               <Button variant="outlined" disabled>
-{t('game.waitForPlayers')}
+                {t("game.waitForPlayers")}
               </Button>
             )}
           </Stack>
 
           <Typography variant="body2" color="text.secondary">
-{t('game.shareGameId')}
+            {t("game.shareGameId")}
           </Typography>
         </Stack>
       </Paper>

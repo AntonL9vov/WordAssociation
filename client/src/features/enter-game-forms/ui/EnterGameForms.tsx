@@ -5,6 +5,7 @@ import { GameSelectionActions } from "@/features/game-selection";
 import { Card, Text, Container } from "@/shared/ui";
 import { Box, Fade, IconButton } from "@mui/material";
 import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 export type CurrentStep = "join" | null;
 
@@ -16,6 +17,8 @@ export const EnterGameForms: React.FC<EnterGameFormsProps> = ({
   onJoinGame,
 }) => {
   const [currentStep, setCurrentStep] = useState<CurrentStep>(null);
+
+  const { t } = useTranslation();
 
   const handleCreateGame = () => {
     onJoinGame();
@@ -66,7 +69,7 @@ export const EnterGameForms: React.FC<EnterGameFormsProps> = ({
                   <ArrowBackIcon />
                 </IconButton>
                 <Text variant="h5" weight="bold">
-                  Join Game
+                  {t("game.joinGame")}
                 </Text>
               </Box>
               <JoinGame onJoinGame={handleJoinGame} />

@@ -40,10 +40,10 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
         disabled={isLoading}
         autoFocus
         startIcon={<PersonIcon sx={{ color: 'var(--text-muted)' }} />}
-        onKeyPress={handleKeyPress}
+        onKeyDown={handleKeyPress}
         sx={{
           '& .MuiOutlinedInput-root': {
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            backgroundColor: 'var(--bg-elevated)',
           },
         }}
       />
@@ -74,6 +74,7 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
           fontSize: '1.1rem',
           fontWeight: 'bold',
         }}
+        variant="contained"
       >
         {isLoading ? t('auth.connecting') : t('auth.startPlaying')}
       </Button>

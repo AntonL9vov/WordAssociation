@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Container } from '@/shared/ui';
-import { Box, Fade } from '@mui/material';
+import { Box, Fade, useTheme } from '@mui/material';
 import {
   SportsCricket as GameIcon,
 } from '@mui/icons-material';
@@ -10,11 +10,16 @@ interface AuthFormCardProps {
 }
 
 export const AuthFormCard: React.FC<AuthFormCardProps> = ({ children }) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  
   return (
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, var(--primary-50) 0%, var(--secondary-50) 50%, var(--accent-50) 100%)',
+        background: isDark 
+          ? 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-tertiary) 100%)'
+          : 'linear-gradient(135deg, var(--primary-50) 0%, var(--secondary-50) 50%, var(--accent-50) 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -27,7 +32,10 @@ export const AuthFormCard: React.FC<AuthFormCardProps> = ({ children }) => {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'radial-gradient(circle at 30% 40%, rgba(14, 165, 233, 0.1) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(34, 197, 94, 0.1) 0%, transparent 50%)',
+          background: isDark
+            ? 'radial-gradient(circle at 30% 40%, var(--primary-600) 0%, transparent 70%), radial-gradient(circle at 70% 80%, var(--accent-600) 0%, transparent 70%)'
+            : 'radial-gradient(circle at 30% 40%, var(--primary-200) 0%, transparent 70%), radial-gradient(circle at 70% 80%, var(--accent-200) 0%, transparent 70%)',
+          opacity: isDark ? 0.03 : 0.1,
           pointerEvents: 'none',
         },
       }}
@@ -35,13 +43,14 @@ export const AuthFormCard: React.FC<AuthFormCardProps> = ({ children }) => {
       <Container maxWidth="sm">
         <Fade in timeout={800}>
           <Card
-            variant="elevated"
+            variant="elevation"
             radius="xl"
             padding="none"
             sx={{
               backdropFilter: 'blur(20px)',
-              background: 'rgba(255, 255, 255, 0.95)',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.1)',
+              background: 'var(--bg-elevated)',
+              border: '1px solid var(--border-primary)',
+              boxShadow: 'var(--shadow-xl)',
               overflow: 'visible',
               position: 'relative',
             }}
@@ -60,7 +69,9 @@ export const AuthFormCard: React.FC<AuthFormCardProps> = ({ children }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 10px 25px rgba(14, 165, 233, 0.3)',
+                boxShadow: isDark 
+                  ? '0 10px 25px rgba(14, 165, 233, 0.1)' 
+                  : '0 10px 25px rgba(14, 165, 233, 0.3)',
               }}
             >
               <GameIcon sx={{ fontSize: 40, color: 'white' }} />

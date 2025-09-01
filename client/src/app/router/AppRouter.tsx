@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { routesConfig, RouteConfig } from "./config";
 import { MainLayout, AuthLayout } from "../layouts";
 import { useAuth } from "@/shared/context/AuthContext";

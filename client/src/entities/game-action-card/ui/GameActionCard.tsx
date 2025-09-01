@@ -44,7 +44,7 @@ export const GameActionCard: React.FC<GameActionCardProps> = ({
 
   return (
     <Card
-      variant="elevated"
+      variant="elevation"
       clickable
       hover
       sx={{

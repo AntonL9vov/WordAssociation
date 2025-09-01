@@ -9,16 +9,12 @@ import { GameHistoryHeader } from "@/entities";
 import { EmptyHistory } from "./EmptyHistory";
 import { useTranslation } from "react-i18next";
 
-interface MessengerHistoryProps {
-  startWord: string;
-}
-
-export const MessengerHistory: React.FC<MessengerHistoryProps> = ({ startWord }) => {
+export const MessengerHistory = () => {
   const historyRef = useRef<HTMLDivElement>(null);
   const socket = useSocketStore((state) => state.socket);
   const setGame = useGameStore((state) => state.setGame);
   const game = useGameStore((state) => state.game);
-
+  const startWord = useGameStore((state) => state.game?.startWord);
   const { t } = useTranslation();
 
   useEffect(() => {

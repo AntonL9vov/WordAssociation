@@ -69,7 +69,7 @@ export const MessengerTextField = ({
           "&:hover": {
             backgroundColor: isInputDisabled
               ? "var(--bg-secondary)"
-              : "rgba(255, 255, 255, 0.9)",
+              : "var(--bg-elevated)",
           },
           "&.Mui-focused": {
             backgroundColor: isInputDisabled
@@ -81,6 +81,23 @@ export const MessengerTextField = ({
           color: isInputDisabled
             ? "var(--text-muted)"
             : "var(--text-secondary)",
+          backgroundColor: isInputDisabled
+            ? "var(--bg-secondary)"
+            : "var(--bg-primary)",
+          paddingLeft: "var(--space-xs)",
+          paddingRight: "var(--space-xs)",
+          "&.Mui-focused": {
+            backgroundColor: isInputDisabled
+              ? "var(--bg-secondary)"
+              : "var(--bg-primary)",
+          },
+          "&.MuiInputLabel-shrink": {
+            backgroundColor: isInputDisabled
+              ? "var(--bg-secondary)"
+              : "var(--bg-primary)",
+            paddingLeft: "var(--space-xs)",
+            paddingRight: "var(--space-xs)",
+          },
         },
       }}
     />

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { GameMessengerHeader, MessengerHistory } from "@/features";
 import { MessengerInput } from "@/features";
 import { sendMessage } from "../api/hadlers";
@@ -37,7 +37,7 @@ export const GameMessenger: React.FC = () => {
     >
       <GameMessengerHeader gameStatus={game?.status} />
 
-      <MessengerHistory startWord={game?.startWord!} />
+      <MessengerHistory />
 
       <Divider />
 
@@ -48,7 +48,10 @@ export const GameMessenger: React.FC = () => {
             backgroundColor: "var(--bg-elevated)",
           }}
         >
-          <MessengerInput onSend={handleSend} disabled={!!game.playersEmittedWords[user?.id ?? ""]} />
+          <MessengerInput
+            onSend={handleSend}
+            disabled={!!game.playersEmittedWords[user?.id ?? ""]}
+          />
         </Box>
       )}
     </Paper>

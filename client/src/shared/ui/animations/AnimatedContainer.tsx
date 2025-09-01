@@ -51,7 +51,7 @@ export const AnimatedContainer: React.FC<AnimatedContainerProps> = ({
     switch (animation) {
       case 'slide':
         return (
-          <Slide {...commonProps} {...getSlideDirection(direction)}>
+          <Slide {...commonProps} direction={getSlideDirection(direction).direction}>
             <Box sx={sx}>{children}</Box>
           </Slide>
         );

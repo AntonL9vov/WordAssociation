@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Box } from "@mui/material";
-import { Send as SendIcon } from "@mui/icons-material";
+import { Box } from "@mui/material";
 import { MessengerTextField } from "./MessengerTextField";
 import { MessengerButton } from "./MessengerButton";
 

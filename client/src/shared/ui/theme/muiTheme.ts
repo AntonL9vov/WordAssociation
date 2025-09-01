@@ -1,3 +1,4 @@
+import React from 'react';
 import { createTheme, Theme } from '@mui/material/styles';
 
 // Функция для получения CSS переменной (может пригодиться в будущем)
@@ -335,8 +336,17 @@ export const createMuiTheme = (): Theme => {
             '& .MuiInputLabel-root': {
               color: 'var(--text-secondary)',
               fontWeight: 'var(--font-weight-medium)',
+              backgroundColor: 'var(--bg-primary)',
+              paddingLeft: 'var(--space-xs)',
+              paddingRight: 'var(--space-xs)',
               '&.Mui-focused': {
                 color: 'var(--primary-600)',
+                backgroundColor: 'var(--bg-primary)',
+              },
+              '&.MuiInputLabel-shrink': {
+                backgroundColor: 'var(--bg-primary)',
+                paddingLeft: 'var(--space-xs)',
+                paddingRight: 'var(--space-xs)',
               },
             },
             '& .MuiOutlinedInput-input': {
@@ -387,10 +397,6 @@ export const createMuiTheme = (): Theme => {
             borderRadius: 'var(--radius-full)',
             fontWeight: 'var(--font-weight-medium)',
             fontSize: 'var(--font-size-sm)',
-          },
-          filled: {
-            backgroundColor: 'var(--accent-100)',
-            color: 'var(--accent-700)',
           },
         },
       },
@@ -496,5 +502,3 @@ export const useMuiTheme = () => {
   
   return theme;
 };
-
-import React from 'react';

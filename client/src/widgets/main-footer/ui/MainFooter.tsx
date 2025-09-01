@@ -42,15 +42,7 @@ export const MainFooter: React.FC = () => {
               textAlign: { xs: 'center', sm: 'left' },
             }}
           >
-            © 2025 Word Association Game. Made with{' '}
-            <FavoriteIcon 
-              sx={{ 
-                fontSize: '1rem', 
-                color: 'var(--error-500)',
-                verticalAlign: 'middle' 
-              }} 
-            />{' '}
-            for multiplayer fun
+            © 2025 Word Association Game
           </Typography>
 
           {/* Ссылки и иконки */}

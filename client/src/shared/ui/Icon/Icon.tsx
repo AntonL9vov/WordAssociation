@@ -1,7 +1,7 @@
 import React from 'react';
 import { SvgIcon, SvgIconProps } from '@mui/material';
 
-export interface IconProps extends SvgIconProps {
+export interface IconProps extends Omit<SvgIconProps, 'color'> {
   name?: string;
   size?: 'small' | 'medium' | 'large' | 'xl';
   color?: 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info' | 'muted' | 'inherit';

@@ -59,11 +59,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({
         '& .MuiInputLabel-root': {
           color: 'var(--text-secondary)',
           fontWeight: 'var(--font-weight-medium)',
+          backgroundColor: 'var(--bg-primary)',
+          paddingLeft: 'var(--space-xs)',
+          paddingRight: 'var(--space-xs)',
           '&.Mui-focused': {
             color: 'var(--primary-600)',
+            backgroundColor: 'var(--bg-primary)',
           },
           '&.Mui-error': {
             color: 'var(--error-600)',
+            backgroundColor: 'var(--bg-primary)',
+          },
+          '&.MuiInputLabel-shrink': {
+            backgroundColor: 'var(--bg-primary)',
+            paddingLeft: 'var(--space-xs)',
+            paddingRight: 'var(--space-xs)',
           },
         },
         '& .MuiOutlinedInput-input': {

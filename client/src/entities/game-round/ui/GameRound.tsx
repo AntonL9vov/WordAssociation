@@ -14,30 +14,26 @@ import {
 type GameRoundProps = {
   messages: Word[];
   roundNumber?: number;
+  isTheLastRound?: boolean;
 };
 
 export const GameRound: React.FC<GameRoundProps> = ({
   messages,
   roundNumber,
+  isTheLastRound = false,
 }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { words, formatCount } = usePluralization();
+
+  if (messages.length === 0) {
+    return null;
+  }
+
   const { selfMessages, opponentMessages } = separateMessages(
     messages,
     user?.id || ""
   );
-
-  if (selfMessages.length + opponentMessages.length === 0) {
-    return null;
-  }
-
-  // Проверяем, завершился ли раунд (все слова одинаковые)
-  const isRoundComplete =
-    messages.length > 1 &&
-    messages.every(
-      (msg) => msg.word.toLowerCase() === messages[0].word.toLowerCase()
-    );
 
   return (
     <Paper
@@ -46,16 +42,16 @@ export const GameRound: React.FC<GameRoundProps> = ({
       sx={{
         p: 3,
         borderRadius: "var(--radius-xl)",
-        border: isRoundComplete
-          ? "2px solid var(--success-300)"
+        border: isTheLastRound
+          ? "2px solid var(--success-400)"
           : "1px solid var(--border-primary)",
-        backgroundColor: isRoundComplete
-          ? "var(--success-50)"
+        backgroundColor: isTheLastRound
+          ? "var(--success-100)"
           : "var(--bg-elevated)",
         transition: "all var(--transition-normal)",
         position: "relative",
         overflow: "hidden",
-        "&::before": isRoundComplete
+        "&::before": isTheLastRound
           ? {
               content: '""',
               position: "absolute",
@@ -63,13 +59,11 @@ export const GameRound: React.FC<GameRoundProps> = ({
               left: 0,
               right: 0,
               height: 4,
-              background:
-                "linear-gradient(135deg, var(--success-500), var(--success-600))",
+              background: "var(--success-600)",
             }
           : {},
       }}
     >
-      {/* Заголовок раунда */}
       <Box sx={{ mb: 3 }}>
         <Stack
           direction="row"
@@ -81,7 +75,7 @@ export const GameRound: React.FC<GameRoundProps> = ({
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <RoundIcon
               sx={{
-                color: isRoundComplete
+                color: isTheLastRound
                   ? "var(--success-600)"
                   : "var(--primary-600)",
                 fontSize: 20,
@@ -91,8 +85,8 @@ export const GameRound: React.FC<GameRoundProps> = ({
               variant="h6"
               sx={{
                 fontWeight: "bold",
-                color: isRoundComplete
-                  ? "var(--success-700)"
+                color: isTheLastRound
+                  ? "var(--success-600)"
                   : "var(--text-primary)",
               }}
             >
@@ -102,7 +96,7 @@ export const GameRound: React.FC<GameRoundProps> = ({
             </Typography>
           </Box>
 
-          {isRoundComplete && (
+          {isTheLastRound && (
             <Chip
               icon={<CheckIcon />}
               label={t("game.matchFound")}
@@ -126,17 +120,18 @@ export const GameRound: React.FC<GameRoundProps> = ({
             mt: 0.5,
           }}
         >
-                     {isRoundComplete
-             ? `${t("messenger.allPlayersChose")}: "${messages[0].word}"`
-             : `${formatCount(Math.max(2, Math.min(100, messages.length)), words)} ${t("messenger.submitted")}`}
+          {isTheLastRound
+            ? `${t("messenger.allPlayersChose")}: "${messages[0].word}"`
+            : `${formatCount(
+                Math.max(2, Math.min(100, messages.length)),
+                words
+              )} ${t("messenger.submitted")}`}
         </Typography>
       </Box>
 
       <Divider sx={{ mb: 3 }} />
 
-      {/* Сообщения */}
       <Stack spacing={2}>
-        {/* Собственные сообщения */}
         {selfMessages.length > 0 && (
           <Box>
             <Typography
@@ -148,6 +143,7 @@ export const GameRound: React.FC<GameRoundProps> = ({
                 fontSize: "0.75rem",
                 textTransform: "uppercase",
                 letterSpacing: "0.5px",
+                textAlign: "right",
               }}
             >
               {t("messenger.yourWord")}
@@ -164,7 +160,6 @@ export const GameRound: React.FC<GameRoundProps> = ({
           </Box>
         )}
 
-        {/* Сообщения оппонентов */}
         {opponentMessages.length > 0 && (
           <Box>
             <Typography

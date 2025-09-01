@@ -65,8 +65,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
     <Card
       cardVariant="filled"
       sx={{
-        background:
-          "linear-gradient(135deg, var(--primary-50) 0%, var(--accent-50) 100%)",
+        background: "var(--bg-elevated)",
         border: "1px solid var(--border-primary)",
         height: "100%",
         minHeight: "fit-content",
@@ -108,33 +107,19 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
             label={statusInfo.label}
             color={statusInfo.color}
             variant="filled"
-            sx={{
-              fontWeight: "bold",
-              "& .MuiChip-icon": {
-                fontSize: "18px",
-              },
-            }}
           />
           <Chip
             icon={<GroupIcon />}
             label={formatCount(playersCount, players)}
             variant="outlined"
-            sx={{
-              borderColor: "var(--border-secondary)",
-            }}
           />
           <Chip
             icon={<LeaveIcon color="error" />}
             label={t('game.leave')}
-            variant="outlined"
+            variant="filled"
+            color="error"
             sx={{
-              borderColor: "var(--border-error)",
               cursor: "pointer",
-              color: "var(--text-primary)",
-              backgroundColor: "var(--error-50)",
-              "&:hover": {
-                backgroundColor: "var(--error-100)",
-              },
             }}
             onClick={() => {
               onLeave();
