@@ -6,5 +6,9 @@ export const sendMessage = (
   playerId: string,
   socket: SocketService
 ) => {
-  socket.emit("game:word", gameId, playerId, message);
+  if (socket.connected) {
+    socket.emit("game:word", gameId, playerId, message);
+  } else {
+    console.warn('⚠️ Socket not connected, unable to send message');
+  }
 };

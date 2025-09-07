@@ -6,10 +6,8 @@ import { Word } from "@/shared/lib/types";
 import { useAuth } from "@/shared/context/AuthContext";
 import { usePluralization } from "@/shared/hooks";
 import { Box, Paper, Typography, Chip, Stack, Divider } from "@mui/material";
-import {
-  PlayCircle as RoundIcon,
-  Check as CheckIcon,
-} from "@mui/icons-material";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import CheckIcon from "@mui/icons-material/Check";
 
 type GameRoundProps = {
   messages: Word[];
@@ -73,7 +71,7 @@ export const GameRound: React.FC<GameRoundProps> = ({
           gap={1}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <RoundIcon
+            <PlayCircleIcon
               sx={{
                 color: isTheLastRound
                   ? "var(--success-600)"

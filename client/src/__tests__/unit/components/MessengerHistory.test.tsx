@@ -5,7 +5,7 @@ import { MessengerHistory } from '@/features/messenger-history';
 
 describe('MessengerHistory', () => {
   it('renders game history', () => {
-    render(<MessengerHistory withMock />);
+    render(<MessengerHistory />);
     
     // Проверяем, что компонент отрендерился
     expect(screen.getByTestId('messenger-history')).toBeInTheDocument();

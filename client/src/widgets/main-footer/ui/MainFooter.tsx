@@ -8,8 +8,7 @@ import {
   Tooltip 
 } from "@mui/material";
 import { 
-  GitHub as GitHubIcon,
-  Favorite as FavoriteIcon 
+  GitHub as GitHubIcon
 } from "@mui/icons-material";
 
 export const MainFooter: React.FC = () => {

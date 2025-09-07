@@ -1,3 +1,3 @@
-import { RoundMessages } from "@/entities/game-round";
+import { Word } from "@/shared/lib/types";
 
-export type GameHistory = Record<number, RoundMessages>;
+export type GameHistory = Record<number, Word[]>;

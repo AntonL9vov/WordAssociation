@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { useGameStore } from "@/shared/stores/game-store";
 import { onGameRoundFinished } from "../api/listeners";
 import { useSocketStore } from "@/shared/stores/socket-store";

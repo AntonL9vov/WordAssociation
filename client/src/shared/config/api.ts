@@ -1,7 +1,7 @@
 // API configuration for the game client
 export const API_CONFIG = {
-  baseUrl: 'http://localhost:3001/api', // REST API сервер
-  socketUrl: 'http://localhost:3000', // Socket.IO сервер
+  baseUrl: 'http://localhost:3000/api', // REST API server (unified with socket)
+  socketUrl: 'http://localhost:3000', // Socket.IO server (unified)
   endpoints: {
     auth: '/auth',
     game: '/game',

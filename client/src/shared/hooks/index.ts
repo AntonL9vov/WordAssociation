@@ -15,3 +15,4 @@ export {
 } from './useAccessibility';
 
 export { usePluralization } from './usePluralization';
+export { useSocket } from './useSocket';

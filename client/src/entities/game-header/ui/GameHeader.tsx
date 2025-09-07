@@ -3,12 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { usePluralization } from "@/shared/hooks";
 import { Card, Text } from "@/shared/ui";
 import { Box, Chip } from "@mui/material";
-import {
-  PlayArrow as PlayIcon,
-  Group as GroupIcon,
-  EmojiEvents as TrophyIcon,
-  ExitToApp as LeaveIcon,
-} from "@mui/icons-material";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import GroupIcon from "@mui/icons-material/Group";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 
 export interface GameHeaderProps {
   gameId: string;
@@ -37,14 +35,14 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
         };
       case "started":
         return {
-          icon: <PlayIcon />,
+          icon: <PlayArrowIcon />,
           label: t('game.statuses.playing.label'),
           color: "success" as const,
           description: t('game.statuses.playing.description'),
         };
       case "finished":
         return {
-          icon: <TrophyIcon />,
+          icon: <EmojiEventsIcon />,
           label: t('game.statuses.finished.label'),
           color: "warning" as const,
           description: t('game.statuses.finished.description'),
@@ -114,7 +112,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
             variant="outlined"
           />
           <Chip
-            icon={<LeaveIcon color="error" />}
+            icon={<ExitToAppIcon color="error" />}
             label={t('game.leave')}
             variant="filled"
             color="error"

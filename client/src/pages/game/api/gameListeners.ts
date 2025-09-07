@@ -2,8 +2,8 @@ import { Game } from "@/shared/lib/types";
 import { SocketService } from "@/shared/api/socket";
 
 const GAME_EVENTS = {
-  PLAYERS_UPDATE: "game:players:update",
-  GAME_START: "game:start",
+  PLAYERS_UPDATE: "game:players:updated", // Updated event name
+  GAME_START: "game:started", // Updated event name
   GAME_FINISHED: "game:finished",
   GAME_RESTART: "game:restart",
 };
@@ -41,63 +41,3 @@ export const onGameWordEmitted = (
     socket.off("game:word", callback);
   };
 };
-
-// export const onRoomPlayersChanged = (
-//   setGame: (game: Game) => void,
-//   socket: SocketService
-// ) => {
-//   const callback = (game: Game) => {
-//     setGame(game);
-//   };
-
-//   socket.on("game:players:update", callback);
-
-//   return () => {
-//     socket.off("game:players:update", callback);
-//   };
-// };
-
-// export const onGameStarted = (
-//   setGame: (game: Game) => void,
-//   socket: SocketService
-// ) => {
-//   const callback = (game: Game) => {
-//     setGame(game);
-//   };
-
-//   socket.on("game:start", callback);
-
-//   return () => {
-//     socket.off("game:start", callback);
-//   };
-// };
-
-// export const onGameFinished = (
-//   setGame: (game: Game) => void,
-//   socket: SocketService
-// ) => {
-//   const callback = (game: Game) => {
-//     setGame(game);
-//   };
-
-//   socket.on("game:finished", callback);
-
-//   return () => {
-//     socket.off("game:finished", callback);
-//   };
-// };
-
-// export const onGameLeft = (
-//   setGame: (game: Game) => void,
-//   socket: SocketService
-// ) => {
-//   const callback = (game: Game) => {
-//     setGame(game);
-//   };
-
-//   socket.on("game:left", callback);
-
-//   return () => {
-//     socket.off("game:left", callback);
-//   };
-// };

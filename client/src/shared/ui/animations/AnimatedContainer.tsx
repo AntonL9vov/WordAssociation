@@ -15,18 +15,18 @@ interface AnimatedContainerProps {
   sx?: object;
 }
 
-const getSlideDirection = (direction: SlideDirection) => {
+const getSlideDirection = (direction: SlideDirection): 'up' | 'down' | 'left' | 'right' => {
   switch (direction) {
     case 'up':
-      return { direction: 'up' };
+      return 'up';
     case 'down':
-      return { direction: 'down' };
+      return 'down';
     case 'left':
-      return { direction: 'left' };
+      return 'left';
     case 'right':
-      return { direction: 'right' };
+      return 'right';
     default:
-      return { direction: 'up' };
+      return 'up';
   }
 };
 
@@ -51,7 +51,7 @@ export const AnimatedContainer: React.FC<AnimatedContainerProps> = ({
     switch (animation) {
       case 'slide':
         return (
-          <Slide {...commonProps} direction={getSlideDirection(direction).direction}>
+          <Slide {...commonProps} direction={getSlideDirection(direction)}>
             <Box sx={sx}>{children}</Box>
           </Slide>
         );

@@ -2,8 +2,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from "react-router-dom";
 import { useGameStore } from "@/shared/stores/game-store";
-import { useSocketStore } from "@/shared/stores/socket-store";
-import { SocketService } from "@/shared/api/socket";
+import { useSocket } from "@/shared/hooks/useSocket";
 import { GameHeader } from "@/entities/game-header";
 import { GameStatusAlert } from "@/entities/game-status-alert";
 import { GameContent } from "@/features";
@@ -19,35 +18,32 @@ export const GamePage: React.FC = () => {
   const setGame = useGameStore((state) => state.setGame);
   const clearGame = useGameStore((state) => state.clearGame);
   const gameStatus = useGameStore((state) => state.game?.status);
-  const socket = useSocketStore((state) => state.socket);
-
   const setPlayersEmittedWords = useGameStore((state) => state.setPlayersEmittedWords);
+  
+  // Use the new socket hook
+  const { socket, isConnected } = useSocket(game?.id);
 
+  // Redirect if no game
   useEffect(() => {
     if (!game) {
       navigate("/");
-      return;
     }
+  }, [game, navigate]);
 
-    if (!socket) {
-      const newSocket = new SocketService(game.id);
-      useSocketStore.setState({ socket: newSocket });
-    }
-  }, [game, socket, navigate]);
-
+  // Set up socket listeners when socket is connected
   useEffect(() => {
-    if (!socket) {
+    if (!socket || !isConnected || !game) {
       return;
     }
 
-    const cleanup = initGameListeners(setGame, socket);
-    const cleanupWordEmitted = onGameWordEmitted(setPlayersEmittedWords, socket);
+    const cleanup1 = initGameListeners(setGame, socket);
+    const cleanup2 = onGameWordEmitted(setPlayersEmittedWords, socket);
 
     return () => {
-      cleanup();
-      cleanupWordEmitted();
+      cleanup1();
+      cleanup2();
     };
-  }, [socket, setGame]);
+  }, [socket, isConnected, game?.id, setGame, setPlayersEmittedWords]);
 
   const handleLeave = async () => {
     if (!game) {

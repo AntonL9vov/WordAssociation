@@ -24,35 +24,56 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(
-    localStorage.getItem("user")
-      ? JSON.parse(localStorage.getItem("user")!)
-      : null
-  );
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Failed to parse user from localStorage:", error);
+      localStorage.removeItem("user");
+      return null;
+    }
+  });
 
   useEffect(() => {
     if (user) {
       userService
         .getUserById(user.id)
-        .then((user) => {
-          setUser(user);
+        .then((updatedUser) => {
+          setUser(updatedUser);
         })
         .catch((error) => {
           setUser(null);
-          localStorage.removeItem("user");
-          console.error(error);
+          try {
+            localStorage.removeItem("user");
+          } catch (storageError) {
+            console.error("Failed to remove user from localStorage:", storageError);
+          }
+          console.error("Failed to fetch user:", error);
         });
     }
-  }, []);
+  }, [user?.id]);
   
   const login = (user: User) => {
+    if (!user) {
+      console.error("Cannot login with null or undefined user");
+      return;
+    }
     setUser(user);
-    localStorage.setItem("user", JSON.stringify(user));
+    try {
+      localStorage.setItem("user", JSON.stringify(user));
+    } catch (error) {
+      console.error("Failed to save user to localStorage:", error);
+    }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("user");
+    try {
+      localStorage.removeItem("user");
+    } catch (error) {
+      console.error("Failed to remove user from localStorage:", error);
+    }
   };
 
   const value: AuthContextType = {

@@ -8,5 +8,5 @@ export const useSocketStore = create<SocketStore>((set) => ({
 
 interface SocketStore {
   socket: SocketService | null;
-  setSocket: (socket: SocketService) => void;
+  setSocket: (socket: SocketService | null) => void;
 }
