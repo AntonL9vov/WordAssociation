@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Route, Path, Body, Tags, Response, Example, SuccessResponse } from 'tsoa';
 import { UsersService } from '../services/usersService';
 import { GameService } from '../services/gameService';
-import { gameEntity } from '..';
 
 export interface User {
   /** @example "user-123" */
@@ -33,7 +32,7 @@ export class UsersController extends Controller {
   @Response<ErrorResponse>(500, 'Internal server error')
   public async getAllUsers(): Promise<{ users: User[] }> {
     try {
-      const users = this.usersService.getAllUsers();
+      const users = await this.usersService.getAllUsers();
       return { users };
     } catch (error) {
       this.setStatus(500);
@@ -45,7 +44,7 @@ export class UsersController extends Controller {
   @Response<ErrorResponse>(404, 'User not found')
   public async getUserById(@Path() id: string): Promise<{ user: User }> {
     try {
-      const user = this.usersService.getUser(id);
+      const user = await this.usersService.getUser(id);
       if (!user) {
         this.setStatus(404);
         throw new Error(`User with ID ${id} not found`);
@@ -60,7 +59,7 @@ export class UsersController extends Controller {
   @SuccessResponse(201, 'Created')
   public async createUser(@Body() body: CreateUserRequest): Promise<{ user: User }> {
     try {
-      const user = this.usersService.addUser(body.name);
+      const user = await this.usersService.addUser(body.name);
       this.setStatus(201);
       return { user };
     } catch (error) {
@@ -72,12 +71,15 @@ export class UsersController extends Controller {
   @Delete('{id}')
   public async deleteUser(@Path() id: string): Promise<void> {
     try {
-      const updatedGames = this.gameService.deleteUserFromAllGames(id);
-      const io = gameEntity.baseSocket.getIO();
-      updatedGames.forEach((game) => {
-        io.to(`game:${game.id}`).emit("game:players:update", game);
-      });
-      this.usersService.deleteUser(id);
+      const updatedGames = await this.gameService.deleteUserFromAllGames(id);
+      
+      // TODO: Get socket instance from DI instead of global reference
+      // const io = gameEntity.baseSocket.getIO();
+      // updatedGames.forEach((game) => {
+      //   io.to(`game:${game.id}`).emit("game:players:update", game);
+      // });
+      
+      await this.usersService.deleteUser(id);
       this.setStatus(204);
     } catch (error) {
       this.setStatus(500);

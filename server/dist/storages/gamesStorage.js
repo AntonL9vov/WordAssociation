@@ -6,30 +6,30 @@ class GamesStorage {
     constructor(initialState = {}) {
         this.games = initialState;
     }
-    getGame(gameId) {
+    async getGame(gameId) {
         return this.games[gameId];
     }
-    createGame() {
+    async createGame() {
         const game = {
             id: (0, uuid_1.v4)(),
             rounds: [],
             createdAt: new Date(),
             updatedAt: new Date(),
             startWord: "",
-            isFinished: false,
+            status: "created",
             players: [],
-            isStarted: false,
+            playersEmittedWords: {},
         };
         this.games[game.id] = game;
         return game;
     }
-    deleteGame(gameId) {
+    async deleteGame(gameId) {
         delete this.games[gameId];
     }
-    getGames() {
+    async getGames() {
         return Object.values(this.games);
     }
-    updateGame(gameId, game) {
+    async updateGame(gameId, game) {
         this.games[gameId] = {
             ...this.games[gameId],
             ...game,

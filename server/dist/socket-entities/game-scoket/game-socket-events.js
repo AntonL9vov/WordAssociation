@@ -2,44 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.gameSocketEvents = void 0;
 exports.gameSocketEvents = {
-    create: {
-        handler: {
-            "game:create": {
-                event: "game:create",
-                callback: (socket, gameService, playerId) => {
-                    try {
-                        const game = gameService.createGame(playerId);
-                        exports.gameSocketEvents.create.emit["game:created"].callback(socket, game);
-                    }
-                    catch (error) {
-                        exports.gameSocketEvents.create.emit["game:created:error"].callback(socket, error);
-                    }
-                },
-            },
-        },
-        emit: {
-            "game:created": {
-                event: "game:created",
-                callback: (socket, game) => {
-                    socket.emit(exports.gameSocketEvents.create.emit["game:created"].event, game);
-                },
-            },
-            "game:created:error": {
-                event: "game:created:error",
-                callback: (socket, error) => {
-                    socket.emit(exports.gameSocketEvents.create.emit["game:created:error"].event, error.message);
-                },
-            },
-        },
-    },
     start: {
         handler: {
             "game:start": {
                 event: "game:start",
-                callback: (socket, gameService, gameId, startWord) => {
+                callback: async (socket, gameService, gameId, startWord) => {
                     try {
-                        gameService.startGame(gameId, startWord);
-                        const game = gameService.getGame(gameId);
+                        await gameService.startGame(gameId, startWord);
+                        const game = await gameService.getGame(gameId);
                         exports.gameSocketEvents.start.emit["game:started"].callback(socket, game);
                     }
                     catch (error) {
@@ -52,7 +22,10 @@ exports.gameSocketEvents = {
             "game:started": {
                 event: "game:started",
                 callback: (socket, game) => {
-                    socket.emit(exports.gameSocketEvents.start.emit["game:started"].event, game);
+                    const room = `game:${game.id}`;
+                    socket.nsp
+                        .to(room)
+                        .emit(exports.gameSocketEvents.start.emit["game:started"].event, game);
                 },
             },
             "game:started:error": {
@@ -63,82 +36,108 @@ exports.gameSocketEvents = {
             },
         },
     },
-    join: {
-        handler: {
-            "game:join": {
-                event: "game:join",
-                callback: (socket, gameService, gameId, playerId) => {
-                    try {
-                        console.log("game:join", gameId, playerId);
-                        gameService.addPlayerToGame(gameId, playerId);
-                        exports.gameSocketEvents.join.emit["game:joined"].callback(socket, gameId, playerId);
-                    }
-                    catch (error) {
-                        exports.gameSocketEvents.join.emit["game:joined:error"].callback(socket, error);
-                    }
-                },
-            },
-        },
-        emit: {
-            "game:joined": {
-                event: "game:joined",
-                callback: (socket, gameId, playerId) => {
-                    socket.emit(exports.gameSocketEvents.join.emit["game:joined"].event, gameId, playerId);
-                },
-            },
-            "game:joined:error": {
-                event: "game:joined:error",
-                callback: (socket, error) => {
-                    socket.emit(exports.gameSocketEvents.join.emit["game:joined:error"].event, error.message);
-                },
-            },
-        },
-    },
-    get: {
-        handler: {
-            "game:get": {
-                event: "game:get",
-                callback: (socket, gameService, gameId) => {
-                    const game = gameService.getGame(gameId);
-                    exports.gameSocketEvents.get.emit["game:got"].callback(socket, game);
-                },
-            },
-        },
-        emit: {
-            "game:got": {
-                event: "game:got",
-                callback: (socket, game) => {
-                    socket.emit(exports.gameSocketEvents.get.emit["game:got"].event, game);
-                },
-            },
-        },
-    },
     word: {
         handler: {
             "game:word": {
                 event: "game:word",
-                callback: (socket, gameService, gameId, playerId, word) => {
+                callback: async (socket, gameService, gameId, playerId, word) => {
                     try {
-                        const emittedWord = gameService.emitWord(gameId, word, playerId);
-                        exports.gameSocketEvents.word.emit["game:word:emitted"].callback(socket, emittedWord);
+                        const oldGame = await gameService.getGame(gameId);
+                        const { game, playersEmittedWords } = await gameService.emitWord(gameId, word, playerId);
+                        const isGameFinished = await gameService.checkIsGameFinished(gameId);
+                        if (isGameFinished) {
+                            exports.gameSocketEvents.game.emit["game:finished"].callback(socket, game);
+                            return;
+                        }
+                        const isRoundFinished = oldGame?.rounds.length === game.rounds.length - 1;
+                        if (isRoundFinished) {
+                            exports.gameSocketEvents.round.emit["game:round:finished"].callback(socket, game);
+                            return;
+                        }
+                        exports.gameSocketEvents.word.emit["game:word"].callback(socket, gameId, playersEmittedWords);
                     }
                     catch (error) {
-                        exports.gameSocketEvents.word.emit["game:word:emitted:error"].callback(socket, error);
+                        console.error("Error emitting word:", error);
                     }
                 },
             },
         },
         emit: {
-            "game:word:emitted": {
-                event: "game:word:emitted",
-                callback: (socket, word) => {
-                    socket.emit(exports.gameSocketEvents.word.emit["game:word:emitted"].event, word);
+            "game:word": {
+                event: "game:word",
+                callback: (socket, gameId, playersEmittedWords) => {
+                    const room = `game:${gameId}`;
+                    console.log("🔥 Players emitted words:", playersEmittedWords);
+                    socket.nsp.to(room).emit(exports.gameSocketEvents.word.emit["game:word"].event, playersEmittedWords);
                 },
             },
-            "game:word:emitted:error": {
-                event: "game:word:emitted:error",
-                callback: (socket, error) => {
-                    socket.emit(exports.gameSocketEvents.word.emit["game:word:emitted:error"].event, error.message);
+        },
+    },
+    round: {
+        handler: {},
+        emit: {
+            "game:round:finished": {
+                event: "game:round:finished",
+                callback: (socket, game) => {
+                    const room = `game:${game.id}`;
+                    socket.nsp
+                        .to(room)
+                        .emit(exports.gameSocketEvents.round.emit["game:round:finished"].event, game);
+                },
+            },
+        },
+    },
+    game: {
+        handler: {},
+        emit: {
+            "game:finished": {
+                event: "game:finished",
+                callback: (socket, game) => {
+                    const room = `game:${game.id}`;
+                    socket.nsp
+                        .to(room)
+                        .emit(exports.gameSocketEvents.game.emit["game:finished"].event, game);
+                },
+            },
+        },
+    },
+    joinRoom: {
+        handler: {
+            "game:join:room": {
+                event: "game:join:room",
+                callback: async (socket, gameService, gameId, playerId) => {
+                    try {
+                        console.log("🔥 Player joining room:", playerId, "to game:", gameId);
+                        const room = `game:${gameId}`;
+                        socket.join(room);
+                        console.log("✅ Player joined room:", room, "Socket ID:", socket.id);
+                        // Get current game state and send it back to the client who joined
+                        const game = await gameService.getGame(gameId);
+                        if (!game) {
+                            throw new Error("Game not found");
+                        }
+                        socket.emit("game:room:joined", game);
+                        console.log("📤 Sent current game state to joined player:", game.players.length, "players");
+                        // Notify all other players in the room about the updated game state
+                        socket.to(room).emit("game:players:updated", game);
+                        console.log("📤 Broadcasted game update to room:", room, "with", game.players.length, "players");
+                    }
+                    catch (error) {
+                        console.error("Error joining room:", error);
+                        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+                        socket.emit("game:room:join:error", errorMessage);
+                    }
+                },
+            },
+        },
+        emit: {
+            "game:players:updated": {
+                event: "game:players:updated",
+                callback: (socket, game) => {
+                    const room = `game:${game.id}`;
+                    socket.nsp
+                        .to(room)
+                        .emit(exports.gameSocketEvents.joinRoom.emit["game:players:updated"].event, game);
                 },
             },
         },

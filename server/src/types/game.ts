@@ -33,14 +33,14 @@ export interface Game {
 export type GameStatus = "created" | "started" | "finished";
 
 export interface GamesStorage {
-  getGame(gameId: string): Game | undefined;
-  getGames(): Game[];
-  createGame(): Game;
-  deleteGame(gameId: string): void;
+  getGame(gameId: string): Promise<Game | undefined>;
+  getGames(): Promise<Game[]>;
+  createGame(): Promise<Game>;
+  deleteGame(gameId: string): Promise<void>;
   updateGame(
     gameId: string,
     game: Partial<Omit<Game, "id" | "createdAt" | "updatedAt">>
-  ): Game;
+  ): Promise<Game>;
 }
 
 export interface EmitWordReturn {
@@ -51,19 +51,19 @@ export interface EmitWordReturn {
 }
 
 export interface GameService {
-  getGame(gameId: string): Game | undefined;
-  createGame(playerId: string): Game;
-  deleteGame(gameId: string): void;
-  emitWord(gameId: string, word: string, playerId: string): EmitWordReturn;
-  addPlayerToGame(gameId: string, playerId: string): Game;
-  checkIsRoundFinished(gameId: string): boolean;
-  checkIsGameFinished(gameId: string): boolean;
-  finishGame(gameId: string): void;
-  checkLastRound(gameId: string): boolean;
-  addRound(gameId: string): void;
-  startGame(gameId: string, startWord: string): void;
-  restartGame(gameId: string): Game;
-  deletePlayerFromGame(gameId: string, playerId: string): Game;
+  getGame(gameId: string): Promise<Game | undefined>;
+  createGame(playerId: string): Promise<Game>;
+  deleteGame(gameId: string): Promise<void>;
+  emitWord(gameId: string, word: string, playerId: string): Promise<EmitWordReturn>;
+  addPlayerToGame(gameId: string, playerId: string): Promise<Game>;
+  checkIsRoundFinished(gameId: string): Promise<boolean>;
+  checkIsGameFinished(gameId: string): Promise<boolean>;
+  finishGame(gameId: string): Promise<void>;
+  checkLastRound(gameId: string): Promise<boolean>;
+  addRound(gameId: string): Promise<void>;
+  startGame(gameId: string, startWord: string): Promise<Game>;
+  restartGame(gameId: string): Promise<Game>;
+  deletePlayerFromGame(gameId: string, playerId: string): Promise<Game>;
 }
 
 export interface GameHandler extends Omit<Handler, "handler"> {

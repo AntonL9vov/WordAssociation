@@ -5,17 +5,20 @@ class UsersService {
     constructor(usersStorage) {
         this.usersStorage = usersStorage;
     }
-    getUser(id) {
-        return this.usersStorage.getUser(id);
+    async getUser(id) {
+        return await this.usersStorage.getUser(id);
     }
-    addUser(name) {
-        return this.usersStorage.addUser({ name });
+    async addUser(name) {
+        return await this.usersStorage.addUser({ name });
     }
-    updateUser(user) {
-        return this.usersStorage.updateUser(user);
+    async updateUser(user) {
+        return await this.usersStorage.updateUser(user);
     }
-    deleteUser(id) {
-        this.usersStorage.deleteUser(id);
+    async deleteUser(id) {
+        await this.usersStorage.deleteUser(id);
+    }
+    async getAllUsers() {
+        return await this.usersStorage.getAllUsers();
     }
 }
 exports.UsersService = UsersService;

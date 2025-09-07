@@ -19,28 +19,28 @@ export class GameService implements IGameService {
     this.usersService = usersService;
   }
 
-  getGame(gameId: string): Game {
-    const game = this.gamesStorage.getGame(gameId);
+  async getGame(gameId: string): Promise<Game> {
+    const game = await this.gamesStorage.getGame(gameId);
     if (!game) {
       throw new Error(`Game ${gameId} not found`);
     }
     return game;
   }
 
-  getGames(): Game[] {
-    return this.gamesStorage.getGames();
+  async getGames(): Promise<Game[]> {
+    return await this.gamesStorage.getGames();
   }
 
-  getPlayer(playerId: string): User {
-    const player = this.usersService.getUser(playerId);
+  async getPlayer(playerId: string): Promise<User> {
+    const player = await this.usersService.getUser(playerId);
     if (!player) {
       throw new Error(`Player ${playerId} not found`);
     }
     return player;
   }
 
-  isPlayerInGame(gameId: string, playerId: string): Game | null {
-    const game = this.getGame(gameId);
+  async isPlayerInGame(gameId: string, playerId: string): Promise<Game | null> {
+    const game = await this.getGame(gameId);
     const player = game.players.find((p) => p.id === playerId);
     if (!player) {
       return null;
@@ -48,26 +48,25 @@ export class GameService implements IGameService {
     return game;
   }
 
-  isPlayerInGameByPlayerId(playerId: string): Game | null {
-    const game = this.gamesStorage
-      .getGames()
-      .find((g) => g.players.some((p) => p.id === playerId));
+  async isPlayerInGameByPlayerId(playerId: string): Promise<Game | null> {
+    const games = await this.gamesStorage.getGames();
+    const game = games.find((g) => g.players.some((p) => p.id === playerId));
     if (!game) {
       return null;
     }
     return game;
   }
 
-  getLastRound(gameId: string): Round {
-    const game = this.getGame(gameId);
+  async getLastRound(gameId: string): Promise<Round> {
+    const game = await this.getGame(gameId);
     if (!game.rounds.length) {
       throw new Error(`Game ${gameId} has no rounds`);
     }
     return game.rounds[game.rounds.length - 1];
   }
 
-  startGame(gameId: string, startWord: string): Game {
-    const game = this.getGame(gameId);
+  async startGame(gameId: string, startWord: string): Promise<Game> {
+    const game = await this.getGame(gameId);
 
     if (game.players.length < 2) {
       throw new Error(`Game ${gameId} has less than 2 players`);
@@ -77,29 +76,30 @@ export class GameService implements IGameService {
       throw new Error(`Game ${gameId} is already started`);
     }
 
-    this.gamesStorage.updateGame(game.id, {
+    await this.gamesStorage.updateGame(game.id, {
       status: "started",
       startWord,
     });
 
-    this.addRound(gameId);
+    await this.addRound(gameId);
 
-    return this.getGame(gameId);
+    return await this.getGame(gameId);
   }
 
-  createGame(playerId: string): Game {
-    const game = this.gamesStorage.createGame();
-    this.addPlayerToGame(game.id, playerId);
-    return this.gamesStorage.getGame(game.id) ?? game;
+  async createGame(playerId: string): Promise<Game> {
+    const game = await this.gamesStorage.createGame();
+    await this.addPlayerToGame(game.id, playerId);
+    const updatedGame = await this.gamesStorage.getGame(game.id);
+    return updatedGame ?? game;
   }
 
-  deleteGame(gameId: string): void {
-    this.gamesStorage.deleteGame(gameId);
+  async deleteGame(gameId: string): Promise<void> {
+    await this.gamesStorage.deleteGame(gameId);
   }
 
-  addPlayerToGame(gameId: string, playerId: string): Game {
-    const game = this.getGame(gameId);
-    const player = this.getPlayer(playerId);
+  async addPlayerToGame(gameId: string, playerId: string): Promise<Game> {
+    const game = await this.getGame(gameId);
+    const player = await this.getPlayer(playerId);
 
     if (game.status === "started") {
       throw new Error(`Game ${gameId} is already started`);
@@ -109,20 +109,20 @@ export class GameService implements IGameService {
       throw new Error(`Game ${gameId} is finished`);
     }
 
-    if (this.isPlayerInGame(gameId, playerId)) {
+    if (await this.isPlayerInGame(gameId, playerId)) {
       throw new Error(`Player ${playerId} already in game ${gameId}`);
     }
 
-    const updatedGame = this.gamesStorage.updateGame(gameId, {
+    const updatedGame = await this.gamesStorage.updateGame(gameId, {
       players: [...game.players, player],
     });
 
     return updatedGame;
   }
 
-  emitWord(gameId: string, w: string, playerId: string): EmitWordReturn {
-    const game = this.getGame(gameId);
-    const player = this.getPlayer(playerId);
+  async emitWord(gameId: string, w: string, playerId: string): Promise<EmitWordReturn> {
+    const game = await this.getGame(gameId);
+    const player = await this.getPlayer(playerId);
 
     if (game.playersEmittedWords[playerId]) {
       throw new Error(`Player ${playerId} already emitted word`);
@@ -144,35 +144,44 @@ export class GameService implements IGameService {
       timestamp: new Date(),
     };
 
-    const lastRound = this.getLastRound(gameId);
-    lastRound.words?.push(word);
+    const lastRound = await this.getLastRound(gameId);
+    
+    // Check if gamesStorage has specific addWordToRound method (PostgreSQL implementation)
+    if ('addWordToRound' in this.gamesStorage && typeof this.gamesStorage.addWordToRound === 'function') {
+      await (this.gamesStorage as any).addWordToRound(lastRound.id, word);
+    } else {
+      // Fallback for in-memory storage
+      lastRound.words?.push(word);
+    }
 
-    this.gamesStorage.updateGame(gameId, {
-      rounds: game.rounds,
+    await this.gamesStorage.updateGame(gameId, {
       playersEmittedWords: {
         ...game.playersEmittedWords,
         [playerId]: w,
       },
     });
 
-    this.checkLastRound(gameId);
+    await this.checkLastRound(gameId);
 
-    const updatedGame = this.getGame(gameId);
+    const updatedGame = await this.getGame(gameId);
     return {
       game: updatedGame,
       playersEmittedWords: updatedGame.playersEmittedWords,
     };
   }
 
-  checkIsRoundFinished(gameId: string): boolean {
-    const lastRound = this.getLastRound(gameId);
+  async checkIsRoundFinished(gameId: string): Promise<boolean> {
+    const lastRound = await this.getLastRound(gameId);
+    const game = await this.getGame(gameId);
 
-    return lastRound.words?.length === this.getGame(gameId).players.length;
+    return lastRound.words?.length === game.players.length;
   }
 
-  checkIsGameFinished(gameId: string): boolean {
-    const lastRound = this.getLastRound(gameId);
-    if (lastRound.words.length < this.getGame(gameId).players.length) {
+  async checkIsGameFinished(gameId: string): Promise<boolean> {
+    const lastRound = await this.getLastRound(gameId);
+    const game = await this.getGame(gameId);
+    
+    if (lastRound.words.length < game.players.length) {
       return false;
     }
     return lastRound.words?.every(
@@ -180,16 +189,23 @@ export class GameService implements IGameService {
     );
   }
 
-  finishGame(gameId: string): void {
-    const game = this.getGame(gameId);
+  async finishGame(gameId: string): Promise<void> {
+    const game = await this.getGame(gameId);
 
-    this.gamesStorage.updateGame(game.id, {
+    await this.gamesStorage.updateGame(game.id, {
       status: "finished",
     });
   }
 
-  addRound(gameId: string): void {
-    const game = this.getGame(gameId);
+  async addRound(gameId: string): Promise<void> {
+    // Check if gamesStorage has specific addRound method (PostgreSQL implementation)
+    if ('addRound' in this.gamesStorage && typeof this.gamesStorage.addRound === 'function') {
+      await (this.gamesStorage as any).addRound(gameId, true); // Clear submissions for new round
+      return;
+    }
+
+    // Fallback for in-memory storage
+    const game = await this.getGame(gameId);
 
     const newRounds = [];
 
@@ -204,59 +220,61 @@ export class GameService implements IGameService {
       updatedAt: new Date(),
     });
 
-    this.gamesStorage.updateGame(game.id, {
+    await this.gamesStorage.updateGame(game.id, {
       rounds: newRounds,
       playersEmittedWords: {},
     });
   }
 
-  checkLastRound(gameId: string): boolean {
-    const isRoundFinished = this.checkIsRoundFinished(gameId);
+  async checkLastRound(gameId: string): Promise<boolean> {
+    const isRoundFinished = await this.checkIsRoundFinished(gameId);
     if (!isRoundFinished) {
       return false;
     }
-    const isGameFinished = this.checkIsGameFinished(gameId);
+    const isGameFinished = await this.checkIsGameFinished(gameId);
     if (isGameFinished) {
-      this.finishGame(gameId);
+      await this.finishGame(gameId);
       return true;
     }
-    this.addRound(gameId);
+    await this.addRound(gameId);
     return false;
   }
 
-  getGamePlayers(gameId: string): User[] {
-    const game = this.getGame(gameId);
+  async getGamePlayers(gameId: string): Promise<User[]> {
+    const game = await this.getGame(gameId);
     return game.players;
   }
 
-  deletePlayerFromGame(gameId: string, playerId: string): Game {
-    const game = this.getGame(gameId);
+  async deletePlayerFromGame(gameId: string, playerId: string): Promise<Game> {
+    const game = await this.getGame(gameId);
     game.players = game.players.filter((player) => player.id !== playerId);
-    return this.gamesStorage.updateGame(game.id, game);
+    return await this.gamesStorage.updateGame(game.id, game);
   }
 
-  deleteUserFromAllGames(userId: string): Game[] {
-    const games = this.gamesStorage.getGames();
+  async deleteUserFromAllGames(userId: string): Promise<Game[]> {
+    const games = await this.gamesStorage.getGames();
     const updatedGames: Game[] = [];
-    games.forEach((game) => {
+    
+    for (const game of games) {
       const playersLength = game.players.length;
       game.players = game.players.filter((player) => player.id !== userId);
       if (playersLength > game.players.length) {
-        const updatedGame = this.gamesStorage.updateGame(game.id, game);
+        const updatedGame = await this.gamesStorage.updateGame(game.id, game);
         updatedGames.push(updatedGame);
       }
-    });
+    }
 
     return updatedGames;
   }
 
-  restartGame(gameId: string): Game {
-    const game = this.getGame(gameId);
-    this.gamesStorage.updateGame(game.id, {
+  async restartGame(gameId: string): Promise<Game> {
+    const game = await this.getGame(gameId);
+    await this.gamesStorage.updateGame(game.id, {
       status: "created",
       rounds: [],
       startWord: "",
+      playersEmittedWords: {}, // Reset players emitted words on restart
     });
-    return this.getGame(gameId);
+    return await this.getGame(gameId);
   }
 }

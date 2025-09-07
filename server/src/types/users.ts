@@ -7,18 +7,18 @@ export interface User {
 }
 
 export interface UsersStorage {
-  getUser(id: string): User | undefined;
-  addUser(user: Omit<User, "id">): User;
-  updateUser(user: User): User;
-  deleteUser(id: string): void;
-  getAllUsers(): User[];
+  getUser(id: string): Promise<User | undefined>;
+  addUser(user: Omit<User, "id">): Promise<User>;
+  updateUser(user: User): Promise<User>;
+  deleteUser(id: string): Promise<void>;
+  getAllUsers(): Promise<User[]>;
 }
 
 export interface UsersService {
-  getUser(id: string): User | undefined;
-  addUser(name: string): User;
-  updateUser(user: User): User;
-  deleteUser(id: string): void;
+  getUser(id: string): Promise<User | undefined>;
+  addUser(name: string): Promise<User>;
+  updateUser(user: User): Promise<User>;
+  deleteUser(id: string): Promise<void>;
 }
 
 export interface UserHandler extends Omit<Handler, "handler"> {

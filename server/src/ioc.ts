@@ -1,6 +1,7 @@
 import { IocContainer } from "@tsoa/runtime";
 import { UsersService } from "./services/usersService";
 import { GameService } from "./services/gameService";
+import { SocketEmitterService } from "./services/socketEmitterService";
 
 // IoC контейнер для tsoa
 export const iocContainer: IocContainer = {
@@ -13,7 +14,7 @@ export const iocContainer: IocContainer = {
     }
     
     if (controller.name === "GameController") {
-      return new controller(services.gameService) as T;
+      return new controller(services.gameService, services.socketEmitterService) as T;
     }
     
     throw new Error(`Controller ${controller.name} not registered in IoC container`);
@@ -24,9 +25,14 @@ export const iocContainer: IocContainer = {
 let globalServices: {
   usersService: UsersService;
   gameService: GameService;
+  socketEmitterService: SocketEmitterService;
 } | null = null;
 
-export function setServices(services: { usersService: UsersService; gameService: GameService }) {
+export function setServices(services: { 
+  usersService: UsersService; 
+  gameService: GameService; 
+  socketEmitterService: SocketEmitterService;
+}) {
   globalServices = services;
 }
 

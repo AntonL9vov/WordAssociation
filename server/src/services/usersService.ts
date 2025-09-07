@@ -7,23 +7,23 @@ export class UsersService {
     this.usersStorage = usersStorage;
   }
 
-  getUser(id: string): User | undefined {
-    return this.usersStorage.getUser(id);
+  async getUser(id: string): Promise<User | undefined> {
+    return await this.usersStorage.getUser(id);
   }
 
-  addUser(name: string): User {
-    return this.usersStorage.addUser({ name });
+  async addUser(name: string): Promise<User> {
+    return await this.usersStorage.addUser({ name });
   }
 
-  updateUser(user: User): User {
-    return this.usersStorage.updateUser(user);
+  async updateUser(user: User): Promise<User> {
+    return await this.usersStorage.updateUser(user);
   }
 
-  deleteUser(id: string): void {
-    this.usersStorage.deleteUser(id);
+  async deleteUser(id: string): Promise<void> {
+    await this.usersStorage.deleteUser(id);
   }
 
-  getAllUsers(): User[] {
-    return this.usersStorage.getAllUsers();
+  async getAllUsers(): Promise<User[]> {
+    return await this.usersStorage.getAllUsers();
   }
 }

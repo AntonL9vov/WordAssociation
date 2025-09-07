@@ -9,11 +9,11 @@ export class GamesStorage implements IGameStorage {
     this.games = initialState;
   }
 
-  getGame(gameId: string): Game | undefined {
+  async getGame(gameId: string): Promise<Game | undefined> {
     return this.games[gameId];
   }
 
-  createGame(): Game {
+  async createGame(): Promise<Game> {
     const game: Game = {
       id: uuidv4(),
       rounds: [],
@@ -29,18 +29,18 @@ export class GamesStorage implements IGameStorage {
     return game;
   }
 
-  deleteGame(gameId: string): void {
+  async deleteGame(gameId: string): Promise<void> {
     delete this.games[gameId];
   }
 
-  getGames(): Game[] {
+  async getGames(): Promise<Game[]> {
     return Object.values(this.games);
   }
 
-  updateGame(
+  async updateGame(
     gameId: string,
     game: Partial<Omit<Game, "id" | "createdAt" | "updatedAt">>
-  ): Game {
+  ): Promise<Game> {
     this.games[gameId] = {
       ...this.games[gameId],
       ...game,

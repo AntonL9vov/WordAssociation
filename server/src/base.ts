@@ -1,16 +1,19 @@
 import { UsersService } from "./services/usersService";
 import { BaseSocket } from "./socket-entities/base-socket";
-import { UsersStorage } from "./storages/usersStorage";
 import { GameSocket } from "./socket-entities/game-scoket/GameSocket";
-import { GamesStorage } from "./storages/gamesStorage";
 import { GameService } from "./services/gameService";
+import { SocketEmitterService } from "./services/socketEmitterService";
 import { User } from "./types/users";
 import { Game } from "./types/game";
 import { createApiServerV2 } from "./app";
 import { setServices } from "./ioc";
 import { generateAsyncAPIDocumentation } from "./scripts/generate-asyncapi";
 import { shouldGenerateDocumentation } from "./scripts/check-docs";
+import { createServices } from "./services/init";
+import { MigrationRunner } from "./migrations/runner";
+import { getStorageConfig } from "./config/storage";
 import express from "express";
+import http from "http";
 
 const initialUsersState: User[] = [
   {
@@ -46,56 +49,92 @@ const initialGamesState: Record<string, Game> = {
 };
 
 export class BaseGame {
-  private userStorage: UsersStorage;
-  private usersService: UsersService;
+  private usersService!: UsersService;
+  private gameService!: GameService;
+  private socketEmitterService!: SocketEmitterService;
+  private gameSocket!: GameSocket;
+  private baseSocket!: BaseSocket;
+  private apiServer!: express.Application;
+  private httpServer!: http.Server;
+  private isInitialized = false;
 
-  private gameStorage: GamesStorage;
-  private gameService: GameService;
-  private gameSocket: GameSocket;
+  constructor(private port: number = 3000) {
+    // Empty constructor - actual initialization happens in init()
+    // Both HTTP and Socket.IO will run on the same port
+  }
 
-  baseSocket: BaseSocket;
-
-  private apiServer: express.Application;
-
-  constructor(httpPort: number = 3001, socketPort: number = 3000) {
-    this.userStorage = new UsersStorage(initialUsersState);
-    this.usersService = new UsersService(this.userStorage);
-
-    this.gameStorage = new GamesStorage(initialGamesState);
-    this.gameService = new GameService(this.gameStorage, this.usersService);
-    this.gameSocket = new GameSocket(this.gameService);
-
-    this.baseSocket = new BaseSocket([this.gameSocket], socketPort);
-
-    // Генерируем AsyncAPI документацию для WebSocket (только в development)
-    if (process.env.NODE_ENV !== "production") {
-      this.generateAsyncAPIDocumentationOnce();
+  async init(): Promise<void> {
+    if (this.isInitialized) {
+      return;
     }
 
-    // Инициализируем сервисы для IoC контейнера
-    setServices({
-      usersService: this.usersService,
-      gameService: this.gameService,
-    });
+    try {
+      // Run database migrations if using PostgreSQL
+      const storageConfig = getStorageConfig();
+      if (storageConfig.type === 'postgres') {
+        console.log('Running database migrations...');
+        const migrationRunner = new MigrationRunner();
+        await migrationRunner.runMigrations();
+      }
 
-    // Создаем REST API сервер с автогенерированной документацией
-    this.apiServer = createApiServerV2(this.usersService, this.gameService);
+      // Initialize services
+      const services = await createServices();
+      this.usersService = services.usersService;
+      this.gameService = services.gamesService;
 
-    this.startApiServer(httpPort);
+      // Initialize socket emitter service
+      this.socketEmitterService = new SocketEmitterService();
+
+      // Create REST API server with auto-generated documentation
+      this.apiServer = createApiServerV2(this.usersService, this.gameService);
+      
+      // Create HTTP server
+      this.httpServer = http.createServer(this.apiServer);
+
+      // Initialize socket handling with the same HTTP server
+      this.gameSocket = new GameSocket(this.gameService);
+      this.baseSocket = new BaseSocket([this.gameSocket], this.httpServer);
+      
+      // Connect socket emitter service to the socket.io instance
+      this.socketEmitterService.setSocketInstance(this.baseSocket.getIO());
+
+      // Generate AsyncAPI documentation (only in development)
+      if (process.env.NODE_ENV !== "production") {
+        await this.generateAsyncAPIDocumentationOnce();
+      }
+
+      // Initialize services for IoC container
+      setServices({
+        usersService: this.usersService,
+        gameService: this.gameService,
+        socketEmitterService: this.socketEmitterService,
+      });
+
+      // Start unified server
+      this.startServer();
+
+      this.isInitialized = true;
+      console.log('✅ Game server initialized successfully');
+    } catch (error) {
+      console.error('❌ Failed to initialize game server:', error);
+      throw error;
+    }
   }
 
-  // Добавляем метод для запуска REST API сервера
-  public startApiServer(port: number): void {
-    this.apiServer.listen(port, () => {
-      console.log(`REST API server is running on port ${port}`);
+  // Start the unified HTTP/Socket server
+  public startServer(): void {
+    this.httpServer.listen(this.port, () => {
+      console.log(`🚀 Server is running on port ${this.port}`);
+      console.log(`📚 HTTP API documentation: http://localhost:${this.port}/docs`);
+      console.log(`🔌 WebSocket endpoint: ws://localhost:${this.port}`);
     });
   }
 
-  // Генерируем AsyncAPI документацию для WebSocket (с защитой от повторных вызовов)
+  // Generate AsyncAPI documentation for WebSocket (with protection against repeated calls)
   private static documentationGenerated = false;
 
   private async generateAsyncAPIDocumentationOnce(): Promise<void> {
-    // Генерируем только если еще не генерировали в этой сессии
+    // Generate only if not already generated in this session
     if (BaseGame.documentationGenerated) {
       console.log(
         "ℹ️  AsyncAPI documentation already generated in this session"
@@ -103,7 +142,7 @@ export class BaseGame {
       return;
     }
 
-    // Проверяем, нужно ли генерировать документацию
+    // Check if documentation generation is needed
     if (!shouldGenerateDocumentation()) {
       console.log("ℹ️  Documentation is up to date, skipping generation");
       BaseGame.documentationGenerated = true;

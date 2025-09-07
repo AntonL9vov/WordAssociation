@@ -10,10 +10,9 @@ import {
   Get,
 } from "tsoa";
 import { GameService } from "../services/gameService";
+import { SocketEmitterService } from "../services/socketEmitterService";
 import { User } from "./users.controller";
 import { GameStatus } from "../types/game";
-import { gameEntity } from "..";
-import { gameSocketEvents } from "../socket-entities/game-scoket/game-socket-events";
 
 export interface Game {
   /** @example "game-123" */
@@ -38,7 +37,10 @@ export interface CreateGameRequest {
 @Route("api/games")
 @Tags("Games")
 export class GameController extends Controller {
-  constructor(private gameService: GameService) {
+  constructor(
+    private gameService: GameService,
+    private socketEmitterService: SocketEmitterService
+  ) {
     super();
   }
 
@@ -46,7 +48,7 @@ export class GameController extends Controller {
   @SuccessResponse(201, "Game created")
   public async createGame(@Body() body: CreateGameRequest): Promise<Game> {
     try {
-      const game = this.gameService.createGame(body.playerId);
+      const game = await this.gameService.createGame(body.playerId);
       this.setStatus(201);
       return { ...game };
     } catch (error) {
@@ -61,17 +63,10 @@ export class GameController extends Controller {
     @Body() body: { playerId: string }
   ): Promise<Game> {
     try {
-      const game = this.gameService.addPlayerToGame(gameId, body.playerId);
+      const game = await this.gameService.addPlayerToGame(gameId, body.playerId);
       
       // Notify all players in the game room about the updated game state
-      const room = `game:${game.id}`;
-      const io = gameEntity.baseSocket.getIO();
-      
-      console.log("🎯 About to emit to room:", room, "Players count:", game.players.length);
-      console.log("🎯 Room clients count:", io.sockets.adapter.rooms.get(room)?.size || 0);
-      
-      io.to(room).emit("game:players:update", game);
-      console.log("📤 Emitted game:players:update to room:", room);
+      this.socketEmitterService.emitPlayersUpdated(game);
       
       return { ...game };
     } catch (error) {
@@ -82,26 +77,27 @@ export class GameController extends Controller {
 
   @Get("{gameId}/restart")
   public async restartGame(@Path() gameId: string): Promise<Game> {
-    const game = this.gameService.restartGame(gameId);
-    const room = `game:${game.id}`;
-    const io = gameEntity.baseSocket.getIO();
-    io.to(room).emit("game:restart", game);
-    console.log("📤 Emitted game:restart to room:", room);
+    const game = await this.gameService.restartGame(gameId);
+    
+    // Emit restart event through socket
+    this.socketEmitterService.emitGameRestarted(game);
+    
     return { ...game };
   }
   
   @Post("{gameId}/leave")
   public async leaveGame(@Path() gameId: string, @Body() body: { playerId: string }): Promise<Game> {
-    const game = this.gameService.deletePlayerFromGame(gameId, body.playerId);
-    const room = `game:${game.id}`;
-    const io = gameEntity.baseSocket.getIO();
-    io.to(room).emit("game:players:update", game);
+    const game = await this.gameService.deletePlayerFromGame(gameId, body.playerId);
+    
+    // Emit players update event through socket
+    this.socketEmitterService.emitPlayersUpdated(game);
+    
     return { ...game };
   } 
 
   @Get("/is-player-in-game/{playerId}")
   public async isPlayerInGame(@Path() playerId: string): Promise<Game | null> {
-    const game = this.gameService.isPlayerInGameByPlayerId(playerId);
+    const game = await this.gameService.isPlayerInGameByPlayerId(playerId);
     if (!game) {
       this.setStatus(204);
       return null;
@@ -116,10 +112,11 @@ export class GameController extends Controller {
     @Body() body: { startWord: string }
   ): Promise<Game> {
     try {
-      const game = this.gameService.startGame(gameId, body.startWord);
-      const room = `game:${game.id}`;
-      const io = gameEntity.baseSocket.getIO();
-      io.to(room).emit("game:start", game);
+      const game = await this.gameService.startGame(gameId, body.startWord);
+      
+      // Emit game start event through socket
+      this.socketEmitterService.emitGameStarted(game);
+      
       return { ...game };
     } catch (error) {
       this.setStatus(500);
