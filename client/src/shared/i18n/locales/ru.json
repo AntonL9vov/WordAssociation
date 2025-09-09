@@ -27,7 +27,7 @@
   "game": {
     "createGame": "Создать игру",
     "createGameDescription": "Начните новую игру и пригласите друзей присоединиться к вашему приключению с ассоциациями слов",
-    "createNewGame": "Создать новую игру",
+    "createNewGame": "Создать игру",
     "joinGame": "Присоединиться",
     "joinGameDescription": "Введите ID игры, чтобы присоединиться к существующей игре с друзьями и другими игроками",
     "gameIdLabel": "ID игры",
@@ -106,7 +106,9 @@
     "loading": "Загрузка...",
     "pasteFromClipboard": "Вставить из буфера обмена",
     "viewOnGitHub": "Посмотреть на GitHub",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "theme": "Тема",
+    "language": "Язык"
   },
   "pages": {
     "home": "Главная",

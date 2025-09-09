@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useBreakpoints } from '@/shared/hooks/useBreakpoints';
 import { GameActionCard } from '@/entities/game-action-card';
 import { Stack } from '@mui/material';
 import {
@@ -17,13 +18,18 @@ export const GameSelectionActions: React.FC<GameSelectionActionsProps> = ({
   onJoinGame,
 }) => {
   const { t } = useTranslation();
+  const { isMobile } = useBreakpoints();
+  
   return (
     <Stack 
       direction={{ xs: 'column', md: 'row' }} 
-      spacing={3}
+      spacing={isMobile ? 1.5 : 3}
       sx={{ 
         alignItems: 'stretch',
         justifyContent: 'center',
+        width: '100%',
+        maxWidth: isMobile ? '100%' : '800px',
+        mx: 'auto',
       }}
     >
       <GameActionCard

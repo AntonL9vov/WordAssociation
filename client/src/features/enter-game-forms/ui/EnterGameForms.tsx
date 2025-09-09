@@ -2,10 +2,15 @@ import React, { useState } from "react";
 import { JoinGame } from "@/features";
 import { HomeHeader } from "@/entities/home-header";
 import { GameSelectionActions } from "@/features/game-selection";
+import { useBreakpoints } from "@/shared/hooks/useBreakpoints";
 import { Card, Text, Container } from "@/shared/ui";
-import { Box, Fade, IconButton } from "@mui/material";
-import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
+import { Fade } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { MobileHeader } from "./MobileHeader";
+import { ResponsiveContainer } from "./ResponsiveContainer";
+
+export { MobileHeader } from "./MobileHeader";
+export { ResponsiveContainer } from "./ResponsiveContainer";
 
 export type CurrentStep = "join" | null;
 
@@ -17,7 +22,7 @@ export const EnterGameForms: React.FC<EnterGameFormsProps> = ({
   onJoinGame,
 }) => {
   const [currentStep, setCurrentStep] = useState<CurrentStep>(null);
-
+  const { isMobile } = useBreakpoints();
   const { t } = useTranslation();
 
   const handleCreateGame = () => {
@@ -29,20 +34,11 @@ export const EnterGameForms: React.FC<EnterGameFormsProps> = ({
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "calc(100% - 200px)",
-        py: 4,
-      }}
-    >
+    <ResponsiveContainer isMobile={isMobile}>
       {currentStep === null && (
         <Fade in timeout={600}>
-          <Container maxWidth="md">
-            <HomeHeader />
+          <Container maxWidth={isMobile ? "sm" : "md"} sx={{ width: "100%", maxWidth: isMobile ? "90%" : "100%" }}>
+            {!isMobile && <HomeHeader />}
             <GameSelectionActions
               onCreateGame={handleCreateGame}
               onJoinGame={() => setCurrentStep("join")}
@@ -53,30 +49,17 @@ export const EnterGameForms: React.FC<EnterGameFormsProps> = ({
 
       {currentStep === "join" && (
         <Fade in timeout={400}>
-          <Container maxWidth="sm">
+          <Container maxWidth="xs" sx={{ width: "100%", maxWidth: isMobile ? "95%" : "100%" }}>
             <Card>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                <IconButton
-                  onClick={() => setCurrentStep(null)}
-                  sx={{
-                    mr: 2,
-                    backgroundColor: "var(--bg-tertiary)",
-                    "&:hover": {
-                      backgroundColor: "var(--bg-secondary)",
-                    },
-                  }}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
-                <Text variant="h5" weight="bold">
-                  {t("game.joinGame")}
-                </Text>
-              </Box>
+              <MobileHeader 
+                title={t("game.joinGame")}
+                onBack={() => setCurrentStep(null)}
+              />
               <JoinGame onJoinGame={handleJoinGame} />
             </Card>
           </Container>
         </Fade>
       )}
-    </Box>
+    </ResponsiveContainer>
   );
 };

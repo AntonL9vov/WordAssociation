@@ -1,15 +1,52 @@
-import React from 'react';
-import { Card, Text, Button } from '@/shared/ui';
-import { Box } from '@mui/material';
+import React from "react";
+import { Card, Text, Button } from "@/shared/ui";
+import { useBreakpoints } from "@/shared/hooks/useBreakpoints";
+import { Box } from "@mui/material";
 
 export interface GameActionCardProps {
   title: string;
   description: string;
   icon: React.ReactNode;
   buttonText: string;
-  colorScheme: 'primary' | 'secondary';
+  colorScheme: "primary" | "secondary";
   onClick: () => void;
 }
+
+// Separated styles for mobile optimization
+const desktopCardStyles = {
+  card: {
+    flex: 1,
+    maxWidth: { xs: "100%" },
+    p: 3,
+  },
+  icon: {
+    width: 72,
+    height: 72,
+  },
+  button: {
+    py: 1,
+    px: 3,
+    fontSize: "1rem",
+  },
+};
+
+const mobileCardStyles = {
+  card: {
+    flex: 1,
+    maxWidth: "100%",
+    p: 2, // Reduced padding
+  },
+  icon: {
+    width: 48, // Smaller icon
+    height: 48,
+  },
+  button: {
+    py: 1.2,
+    px: 2,
+    fontSize: "0.9rem",
+    minHeight: 44, // Ensure touch-friendly size but smaller
+  },
+};
 
 export const GameActionCard: React.FC<GameActionCardProps> = ({
   title,
@@ -19,23 +56,31 @@ export const GameActionCard: React.FC<GameActionCardProps> = ({
   colorScheme,
   onClick,
 }) => {
+  const { isMobile } = useBreakpoints();
+  const styles = isMobile ? mobileCardStyles : desktopCardStyles;
   const getColorScheme = () => {
     switch (colorScheme) {
-      case 'primary':
+      case "primary":
         return {
-          topBorder: 'linear-gradient(135deg, var(--primary-500), var(--primary-600))',
-          iconBg: 'linear-gradient(135deg, var(--primary-100), var(--primary-200))',
-          iconColor: 'var(--primary-600)',
-          buttonBg: 'linear-gradient(135deg, var(--primary-500), var(--primary-600))',
-          hoverShadow: 'rgba(14, 165, 233, 0.15)',
+          topBorder:
+            "linear-gradient(135deg, var(--primary-500), var(--primary-600))",
+          iconBg:
+            "linear-gradient(135deg, var(--primary-100), var(--primary-200))",
+          iconColor: "var(--primary-600)",
+          buttonBg:
+            "linear-gradient(135deg, var(--primary-500), var(--primary-600))",
+          hoverShadow: "rgba(14, 165, 233, 0.15)",
         };
-      case 'secondary':
+      case "secondary":
         return {
-          topBorder: 'linear-gradient(135deg, var(--accent-500), var(--accent-600))',
-          iconBg: 'linear-gradient(135deg, var(--accent-100), var(--accent-200))',
-          iconColor: 'var(--accent-600)',
-          buttonBg: 'linear-gradient(135deg, var(--accent-500), var(--accent-600))',
-          hoverShadow: 'rgba(34, 197, 94, 0.15)',
+          topBorder:
+            "linear-gradient(135deg, var(--accent-500), var(--accent-600))",
+          iconBg:
+            "linear-gradient(135deg, var(--accent-100), var(--accent-200))",
+          iconColor: "var(--accent-600)",
+          buttonBg:
+            "linear-gradient(135deg, var(--accent-500), var(--accent-600))",
+          hoverShadow: "rgba(34, 197, 94, 0.15)",
         };
     }
   };
@@ -48,17 +93,18 @@ export const GameActionCard: React.FC<GameActionCardProps> = ({
       clickable
       hover
       sx={{
-        flex: 1,
-        maxWidth: { xs: '100%', md: 280 },
-        position: 'relative',
-        overflow: 'hidden',
-        '&:hover': {
-          transform: 'translateY(-8px)',
-          boxShadow: `0 20px 40px ${colors.hoverShadow}`,
+        ...styles.card,
+        position: "relative",
+        overflow: "hidden",
+        "&:hover": {
+          transform: isMobile ? "scale(1.02)" : "translateY(-8px)",
+          boxShadow: `0 ${isMobile ? 10 : 20}px ${isMobile ? 20 : 40}px ${
+            colors.hoverShadow
+          }`,
         },
-        '&::before': {
+        "&::before": {
           content: '""',
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
           right: 0,
@@ -68,57 +114,56 @@ export const GameActionCard: React.FC<GameActionCardProps> = ({
       }}
       onClick={onClick}
     >
-      <Box sx={{ textAlign: 'center' }}>
+      <Box sx={{ textAlign: "center" }}>
         <Box
           sx={{
-            width: 72,
-            height: 72,
-            borderRadius: '50%',
+            ...styles.icon,
+            borderRadius: "50%",
             background: colors.iconBg,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            mx: 'auto',
-            mb: 3,
-            '& svg': {
-              fontSize: 36,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            mx: "auto",
+            "& svg": {
+              fontSize: isMobile ? 24 : 36,
               color: colors.iconColor,
             },
           }}
         >
           {icon}
         </Box>
-        
+
         <Text
-          variant="h5"
+          variant={isMobile ? "subtitle1" : "h5"}
           weight="bold"
-          sx={{ mb: 2 }}
+          sx={{ mb: isMobile ? 1 : 2 }}
         >
           {title}
         </Text>
-        
+
         <Text
-          variant="body2"
+          variant={isMobile ? "body2" : "body2"}
           color="secondary"
           sx={{
-            mb: 3,
-            lineHeight: 1.6,
+            mb: isMobile ? 1.5 : 3,
+            lineHeight: 1.5,
+            fontSize: isMobile ? "0.85rem" : "0.875rem",
           }}
         >
           {description}
         </Text>
-        
+
         <Button
           variant="contained"
-          startIcon={icon}
+          startIcon={isMobile ? undefined : icon}
+          fullWidth={isMobile}
           sx={{
+            ...styles.button,
             background: colors.buttonBg,
-            fontWeight: 'bold',
-            py: 1,
-            px: 3,
-            '&:hover': {
+            fontWeight: "bold",
+            "&:hover": {
               background: colors.buttonBg,
-              filter: 'brightness(1.1)',
+              filter: "brightness(1.1)",
             },
           }}
         >
@@ -128,4 +173,3 @@ export const GameActionCard: React.FC<GameActionCardProps> = ({
     </Card>
   );
 };
-

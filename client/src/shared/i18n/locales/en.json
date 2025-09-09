@@ -106,7 +106,9 @@
     "loading": "Loading...",
     "pasteFromClipboard": "Paste from clipboard",
     "viewOnGitHub": "View on GitHub",
-    "logout": "Logout"
+    "logout": "Logout",
+    "theme": "Theme",
+    "language": "Language"
   },
   "pages": {
     "home": "Home",

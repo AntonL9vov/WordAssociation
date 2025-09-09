@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useBreakpoints } from "@/shared/hooks/useBreakpoints";
 import { Button, Input, Text } from "@/shared/ui";
 import { Box, Tooltip, IconButton } from "@mui/material";
 import {
@@ -7,6 +8,31 @@ import {
   Login as LoginIcon,
   ContentCopy as CopyIcon,
 } from "@mui/icons-material";
+
+// Separated styles for clean mobile optimization
+const desktopFormStyles = {
+  container: { display: "flex", flexDirection: "column", gap: 3 },
+  description: { mb: 2 },
+  button: { 
+    py: 1.5, 
+    fontSize: "1.1rem",
+    maxWidth: "fit-content",
+    alignSelf: "center",
+    minWidth: 180,
+  },
+  hint: { mt: 1 },
+};
+
+const mobileFormStyles = {
+  container: { display: "flex", flexDirection: "column", gap: 2 },
+  description: { mb: 1.5 },
+  button: { 
+    py: 2, 
+    fontSize: "1rem",
+    // На мобильном кнопка может быть полной ширины
+  },
+  hint: { mt: 0.5 },
+};
 
 interface EnterGameFormBaseProps {
   onJoinGame: (gameId: string) => void;
@@ -39,6 +65,9 @@ export const EnterGameForm: React.FC<EnterGameFormProps> = ({
   buttonDisabled,
 }) => {
   const { t } = useTranslation();
+  const { isMobile } = useBreakpoints();
+  const styles = isMobile ? mobileFormStyles : desktopFormStyles;
+
   const handleJoinGame = (gameId: string | undefined) => {
     if (gameId) {
       onJoinGame(gameId);
@@ -57,14 +86,14 @@ export const EnterGameForm: React.FC<EnterGameFormProps> = ({
   };
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+    <Box sx={styles.container}>
       {withGameId && (
         <Box>
           <Text
             variant="body2"
             color="secondary"
             weight="medium"
-            sx={{ mb: 2 }}
+            sx={styles.description}
           >
             {t("game.enterGameIdDescription")}
           </Text>
@@ -108,22 +137,31 @@ export const EnterGameForm: React.FC<EnterGameFormProps> = ({
       )}
 
       <Button
-        fullWidth
+        fullWidth={isMobile} // На мобильном fullWidth, на десктопе - нет
         size="large"
         disabled={!gameId || buttonDisabled}
         onClick={() => handleJoinGame(gameId)}
         startIcon={<LoginIcon />}
         gradient
         sx={{
-          py: 1.5,
-          fontSize: "1.1rem",
+          ...styles.button,
+          // Ограничиваем ширину при disabled состоянии на десктопе
+          ...((!gameId || buttonDisabled) && !isMobile && {
+            maxWidth: 220,
+            minWidth: 180,
+          }),
         }}
       >
         {buttonLabel}
       </Button>
 
       {withGameId && (
-        <Text variant="caption" color="muted" align="center" sx={{ mt: 1 }}>
+        <Text 
+          variant="caption" 
+          color="muted" 
+          align="center" 
+          sx={styles.hint}
+        >
           {t("game.shareGameIdHint")}
         </Text>
       )}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePluralization } from "@/shared/hooks";
+import { useBreakpoints } from "@/shared/hooks/useBreakpoints";
 import {
   Box,
   Paper,
@@ -21,9 +22,48 @@ import { useGameStore } from "@/shared/stores/game-store";
 import { getRandomWord, startGame as startGameApi } from "../api/api";
 import { Input } from "@/shared";
 
+// Separated style objects for clean mobile optimization
+const desktopStyles = {
+  container: { p: 2 },
+  paper: { p: 3, borderRadius: 3 },
+  spacing: 2,
+  buttonSpacing: 1,
+  gameId: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 2,
+  },
+  buttonContainer: {
+    display: "flex",
+    gap: 1,
+    justifyContent: "flex-start",
+  },
+};
+
+const mobileStyles = {
+  container: { p: 1 },
+  paper: { p: 2, borderRadius: 2 },
+  spacing: 1.5,
+  buttonSpacing: 0.5,
+  gameId: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 1,
+    flexWrap: "nowrap" as const,
+  },
+  buttonContainer: {
+    display: "flex",
+    flexDirection: "column" as const,
+    gap: 1,
+  },
+};
+
 export const StartGame = () => {
   const { t } = useTranslation();
   const { players, formatCount } = usePluralization();
+  const { isMobile } = useBreakpoints();
   const game = useGameStore((s) => s.game);
   const setGame = useGameStore((s) => s.setGame);
 
@@ -34,6 +74,8 @@ export const StartGame = () => {
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const styles = isMobile ? mobileStyles : desktopStyles;
 
   const playersCount = useMemo(
     () => game?.players?.length ?? 0,
@@ -89,44 +131,64 @@ export const StartGame = () => {
   };
 
   return (
-    <Box p={2}>
-      <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
-        <Stack spacing={2}>
+    <Box sx={styles.container}>
+      <Paper elevation={2} sx={styles.paper}>
+        <Stack spacing={styles.spacing}>
           <Typography variant="h5" fontWeight={700}>
             {t("game.gameSetup")}
           </Typography>
 
           <Stack
             direction={{ xs: "column", sm: "row" }}
-            spacing={2}
+            spacing={styles.spacing}
             alignItems={{ sm: "center" }}
             justifyContent="space-between"
+            sx={styles.gameId}
           >
-            <Stack spacing={0.5}>
+            <Box sx={{ 
+              minWidth: 0, // Allow text to shrink
+              flex: 1,
+              maxWidth: isMobile ? '70%' : 'none',
+            }}>
               <Typography variant="body2" color="text.secondary">
                 {t("game.gameId")}
               </Typography>
-              <Typography variant="h6" sx={{ wordBreak: "break-all" }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  wordBreak: "break-all",
+                  fontSize: isMobile ? '1rem' : '1.25rem',
+                  lineHeight: 1.2,
+                }}
+              >
                 {game.id}
               </Typography>
-            </Stack>
+            </Box>
 
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Box sx={{ flexShrink: 0 }}>
               <Tooltip title={copied ? t("game.copied") : t("game.copyGameId")}>
                 <span>
-                  <IconButton onClick={handleCopyId} disabled={isCopying}>
+                  <IconButton 
+                    onClick={handleCopyId} 
+                    disabled={isCopying}
+                    size={isMobile ? "small" : "medium"}
+                    sx={{
+                      minWidth: 40,
+                      minHeight: 40,
+                    }}
+                  >
                     <ContentCopyIcon fontSize="small" />
                   </IconButton>
                 </span>
               </Tooltip>
-            </Stack>
+            </Box>
           </Stack>
 
           <Divider />
 
           <Stack
             direction={{ xs: "column", sm: "row" }}
-            spacing={2}
+            spacing={styles.spacing}
             alignItems={{ sm: "center" }}
             justifyContent="space-between"
           >
@@ -161,7 +223,7 @@ export const StartGame = () => {
                 fullWidth
               />
             ) : (
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack direction="row" spacing={styles.buttonSpacing} alignItems="center">
                 <Input
                   label={t("game.startGame.randomWord")}
                   value={randomWord}
@@ -181,21 +243,32 @@ export const StartGame = () => {
 
           {error && <Alert severity="error">{error}</Alert>}
 
-          <Stack direction="row" spacing={1}>
+          <Box sx={styles.buttonContainer}>
             <Button
               variant="contained"
               startIcon={<PlayArrowIcon />}
               onClick={handleStartGame}
               disabled={!canStart}
+              sx={{
+                maxWidth: isMobile ? '100%' : 200,
+                minWidth: isMobile ? '100%' : 150,
+              }}
             >
               {t("game.startGameButton")}
             </Button>
             {!canStartByPlayers && (
-              <Button variant="outlined" disabled>
+              <Button 
+                variant="outlined" 
+                disabled
+                sx={{
+                  maxWidth: isMobile ? '100%' : 200,
+                  minWidth: isMobile ? '100%' : 150,
+                }}
+              >
                 {t("game.waitForPlayers")}
               </Button>
             )}
-          </Stack>
+          </Box>
 
           <Typography variant="body2" color="text.secondary">
             {t("game.shareGameId")}

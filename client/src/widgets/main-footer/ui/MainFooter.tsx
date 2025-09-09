@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
+import { useBreakpoints } from '@/shared/hooks/useBreakpoints';
 import { 
   Box, 
   Container, 
@@ -13,13 +14,15 @@ import {
 
 export const MainFooter: React.FC = () => {
   const { t } = useTranslation();
+  const { isMobile } = useBreakpoints();
+  
   return (
     <Box
       component="footer"
       sx={{
         backgroundColor: 'var(--bg-elevated)',
         borderTop: '1px solid var(--border-primary)',
-        py: 1,
+        py: isMobile ? 0.5 : 0.75,
         mt: 'auto',
       }}
     >
@@ -27,10 +30,11 @@ export const MainFooter: React.FC = () => {
         <Box
           sx={{
             display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
+            flexDirection: 'row', // Always single row
             justifyContent: 'space-between',
             alignItems: 'center',
-            gap: 2,
+            gap: 1,
+            minHeight: isMobile ? 40 : 48,
           }}
         >
           {/* Копирайт */}
@@ -38,35 +42,42 @@ export const MainFooter: React.FC = () => {
             variant="body2"
             sx={{
               color: 'var(--text-muted)',
-              textAlign: { xs: 'center', sm: 'left' },
+              fontSize: isMobile ? '0.75rem' : '0.875rem',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
             © 2025 Word Association Game
           </Typography>
 
           {/* Ссылки и иконки */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography
-              variant="body2"
-              sx={{
-                color: 'var(--text-muted)',
-                display: { xs: 'none', sm: 'block' },
-              }}
-            >
-              Open Source
-            </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexShrink: 0 }}>
+            {!isMobile && (
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'var(--text-muted)',
+                  fontSize: '0.875rem',
+                }}
+              >
+                Open Source
+              </Typography>
+            )}
             <Tooltip title={t('common.viewOnGitHub')}>
               <IconButton
                 size="small"
                 sx={{
                   color: 'var(--text-muted)',
+                  width: isMobile ? 32 : 36,
+                  height: isMobile ? 32 : 36,
                   '&:hover': {
                     color: 'var(--text-primary)',
                     backgroundColor: 'var(--bg-tertiary)',
                   },
                 }}
               >
-                <GitHubIcon fontSize="small" />
+                <GitHubIcon fontSize={isMobile ? "small" : "medium"} />
               </IconButton>
             </Tooltip>
           </Box>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, BoxProps } from '@mui/material';
+import { useBreakpoints } from '@/shared/hooks/useBreakpoints';
 
 export interface ContainerProps extends Omit<BoxProps, 'maxWidth'> {
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | false;
@@ -15,11 +16,18 @@ const maxWidthMap = {
   xl: '1200px',
 };
 
-const paddingMap = {
+const desktopPaddingMap = {
   none: 0,
   small: 'var(--space-sm)',
   medium: 'var(--space-md)',
   large: 'var(--space-lg)',
+};
+
+const mobilePaddingMap = {
+  none: 0,
+  small: 'var(--space-xs)',
+  medium: 'var(--space-sm)', 
+  large: 'var(--space-md)',
 };
 
 export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(({
@@ -30,6 +38,9 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(({
   sx = {},
   ...props
 }, ref) => {
+  const { isMobile } = useBreakpoints();
+  const paddingMap = isMobile ? mobilePaddingMap : desktopPaddingMap;
+
   return (
     <Box
       ref={ref}
@@ -38,9 +49,6 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(({
         maxWidth: maxWidth ? maxWidthMap[maxWidth] : 'none',
         margin: center ? '0 auto' : '0',
         padding: paddingMap[padding],
-        '@media (max-width: 768px)': {
-          padding: padding !== 'none' ? 'var(--space-sm)' : 0,
-        },
         ...sx,
       }}
       {...props}

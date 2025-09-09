@@ -1,54 +1,28 @@
 import { useState, useEffect } from 'react';
-import { useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
 
 export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export const useBreakpoints = () => {
-  const theme = useTheme();
-  
-  const isXs = useMediaQuery(theme.breakpoints.only('xs'));
-  const isSm = useMediaQuery(theme.breakpoints.only('sm'));
-  const isMd = useMediaQuery(theme.breakpoints.only('md'));
-  const isLg = useMediaQuery(theme.breakpoints.only('lg'));
-  const isXl = useMediaQuery(theme.breakpoints.only('xl'));
-  
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const isMediumScreen = useMediaQuery(theme.breakpoints.between('md', 'lg'));
-  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
-  
-  const current: Breakpoint = isXs ? 'xs' : isSm ? 'sm' : isMd ? 'md' : isLg ? 'lg' : 'xl';
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isPhone = useMediaQuery('(max-width: 480px)');
   
   return {
-    current,
-    isXs,
-    isSm, 
-    isMd,
-    isLg,
-    isXl,
-    isSmallScreen,
-    isMediumScreen,
-    isLargeScreen,
-    isPhone: isXs || isSm,
-    isTablet: isMd,
-    isDesktop: isLg || isXl,
+    isMobile,
+    isPhone,
+    isDesktop: !isMobile,
   };
 };
 
 export const useResponsiveValue = <T>(values: Partial<Record<Breakpoint, T>>, defaultValue: T): T => {
-  const { current } = useBreakpoints();
+  const { isMobile } = useBreakpoints();
   
-  // Порядок приоритета: current -> lg -> md -> sm -> xs -> default
-  const breakpointOrder: Breakpoint[] = ['xl', 'lg', 'md', 'sm', 'xs'];
-  const currentIndex = breakpointOrder.indexOf(current);
-  
-  // Ищем значение начиная с текущего breakpoint и идем вниз
-  for (let i = currentIndex; i < breakpointOrder.length; i++) {
-    const breakpoint = breakpointOrder[i];
-    if (values[breakpoint] !== undefined) {
-      return values[breakpoint]!;
-    }
-  }
+  // Simple responsive value selection based on mobile vs desktop
+  if (isMobile && values.xs !== undefined) return values.xs;
+  if (isMobile && values.sm !== undefined) return values.sm;
+  if (!isMobile && values.lg !== undefined) return values.lg;
+  if (!isMobile && values.xl !== undefined) return values.xl;
+  if (values.md !== undefined) return values.md;
   
   return defaultValue;
 };

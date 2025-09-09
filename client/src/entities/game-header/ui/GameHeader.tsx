@@ -1,12 +1,47 @@
 import React from "react";
 import { useTranslation } from 'react-i18next';
 import { usePluralization } from "@/shared/hooks";
+import { useBreakpoints } from "@/shared/hooks/useBreakpoints";
 import { Card, Text } from "@/shared/ui";
 import { Box, Chip } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import GroupIcon from "@mui/icons-material/Group";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+
+// Separated style objects for clean mobile optimization
+const desktopHeaderStyles = {
+  container: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 2,
+    height: "100%",
+  },
+  chipContainer: {
+    display: "flex",
+    alignItems: "center",
+    gap: 2,
+    flexWrap: "wrap",
+  },
+};
+
+const mobileHeaderStyles = {
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 1.5,
+    height: "100%",
+  },
+  chipContainer: {
+    display: "flex",
+    alignItems: "center",
+    gap: 1,
+    flexWrap: "wrap",
+    justifyContent: "center",
+  },
+};
 
 export interface GameHeaderProps {
   gameId: string;
@@ -23,6 +58,8 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
 }) => {
   const { t } = useTranslation();
   const { players, formatCount } = usePluralization();
+  const { isMobile } = useBreakpoints();
+  const styles = isMobile ? mobileHeaderStyles : desktopHeaderStyles;
   
   const getStatusInfo = () => {
     switch (status) {
@@ -69,53 +106,47 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
         minHeight: "fit-content",
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 2,
-          height: "100%",
-        }}
-      >
-        <Box sx={{ height: "100%" }}>
-          <Text variant="h6" weight="bold">
-            {t('game.gameRoom')}
-          </Text>
-        </Box>
-        <Box>
-          <Text variant="body1" color="secondary">
-            {t('game.gameId')}:{" "}
-            <Text component="span" weight="bold" sx={{ display: "inline" }}>
-              {gameId}
+      <Box sx={styles.container}>
+        {!isMobile && (
+          <Box sx={{ height: "100%" }}>
+            <Text variant="h6" weight="bold">
+              {t('game.gameRoom')}
             </Text>
-          </Text>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-            flexWrap: "wrap",
-          }}
-        >
+          </Box>
+        )}
+        
+        {/* Показываем ID игры только в статусе "created" */}
+        {status === "created" && (
+          <Box sx={{ textAlign: isMobile ? "center" : "left" }}>
+            <Text variant={isMobile ? "body2" : "body1"} color="secondary">
+              {t('game.gameId')}:{" "}
+              <Text component="span" weight="bold" sx={{ display: "inline" }}>
+                {gameId}
+              </Text>
+            </Text>
+          </Box>
+        )}
+        
+        <Box sx={styles.chipContainer}>
           <Chip
             icon={statusInfo.icon}
             label={statusInfo.label}
             color={statusInfo.color}
             variant="filled"
+            size={isMobile ? "small" : "medium"}
           />
           <Chip
             icon={<GroupIcon />}
             label={formatCount(playersCount, players)}
             variant="outlined"
+            size={isMobile ? "small" : "medium"}
           />
           <Chip
             icon={<ExitToAppIcon color="error" />}
             label={t('game.leave')}
             variant="filled"
             color="error"
+            size={isMobile ? "small" : "medium"}
             sx={{
               cursor: "pointer",
             }}

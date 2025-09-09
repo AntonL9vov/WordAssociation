@@ -1,19 +1,34 @@
 import React from "react";
 import { MainHeader } from "@/widgets";
 import { MainFooter } from "@/widgets";
+import { useBreakpoints } from "@/shared/hooks/useBreakpoints";
 import { Box, Container } from "@mui/material";
+
+// Separated style objects for clean mobile optimization
+const desktopLayoutStyles = {
+  container: { py: 3 },
+  main: { minHeight: "100vh" },
+};
+
+const mobileLayoutStyles = {
+  container: { py: 1 },
+  main: { minHeight: "100dvh" }, // Dynamic viewport height for mobile
+};
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  const { isMobile } = useBreakpoints();
+  const styles = isMobile ? mobileLayoutStyles : desktopLayoutStyles;
+
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
-        minHeight: "100vh",
+        ...styles.main,
         backgroundColor: "var(--bg-primary)",
         maxHeight: "100vh",
         overflow: "hidden",
@@ -36,7 +51,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           maxWidth="lg"
           sx={{
             flex: 1,
-            py: 3,
+            ...styles.container,
             display: "flex",
             flexDirection: "column",
             height: "100%",
