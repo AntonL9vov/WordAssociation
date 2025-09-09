@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
-import { HomePage } from "../../pages";
-import { NotFoundPage } from "../../pages/not-found";
+import { GamePage, HomePage, AuthPage, NotFoundPage } from "@/pages";
 
 // Define the route configuration interface
 export interface RouteConfig {
@@ -23,11 +22,12 @@ export const routesConfig: RouteConfig[] = [
     meta: {
       title: "Home",
       layout: "main",
+      auth: true,
     },
   },
   {
     path: "/game",
-    element: null,
+    element: <GamePage />,
     meta: {
       title: "Game",
       layout: "main",
@@ -36,7 +36,7 @@ export const routesConfig: RouteConfig[] = [
   },
   {
     path: "/login",
-    element: null,
+    element: <AuthPage />,
     meta: {
       title: "Login",
       layout: "auth",

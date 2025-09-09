@@ -27,6 +27,6 @@
       "@features/*": ["./src/features/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "src/__tests__/e2e"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

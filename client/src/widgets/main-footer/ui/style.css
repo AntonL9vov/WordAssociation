@@ -1,9 +1,11 @@
 .main-footer {
-    padding: 10px;
+    padding: var(--space-md);
     text-align: center;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--bg-elevated);
+    color: var(--text-secondary);
     width: 100%;
-    border: 0;
+    border-top: 1px solid var(--border-primary);
     margin: 0;
+    flex-shrink: 0;
+    font-size: var(--font-size-sm);
 }

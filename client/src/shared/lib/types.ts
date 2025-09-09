@@ -1,32 +1,11 @@
-// Common types used throughout the application
+import { z } from "zod";
+import { gameSchema, roundSchema, wordSchema } from "../schemas/game";
+import { userSchema } from "../schemas/user";
 
-export interface User {
-  id: string;
-  username: string;
-  avatar?: string;
-}
+export type User = z.infer<typeof userSchema>;
 
-export interface GameState {
-  id: string;
-  status: 'waiting' | 'playing' | 'finished';
-  players: Player[];
-  currentTurn?: string; // player id
-  startedAt?: Date;
-  endedAt?: Date;
-}
+export type Game = z.infer<typeof gameSchema>;
 
-export interface Player {
-  id: string;
-  userId: string;
-  username: string;
-  score: number;
-  isReady: boolean;
-  isOnline: boolean;
-}
+export type Word = z.infer<typeof wordSchema>;
 
-export type GameAction = {
-  type: string;
-  payload: any;
-  playerId: string;
-  timestamp: number;
-};
+export type Round = z.infer<typeof roundSchema>;

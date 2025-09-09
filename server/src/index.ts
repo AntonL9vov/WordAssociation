@@ -1,35 +1,19 @@
-import express from 'express';
-import http from 'http';
-import { Server } from 'socket.io';
-import cors from 'cors';
+import { BaseGame } from "./base";
+import dotenv from "dotenv";
 
-const app = express();
-const httpServer = http.createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"]
+// Load environment variables
+dotenv.config();
+
+async function startServer() {
+  try {
+    const gameEntity = new BaseGame(3000); // Single port for both HTTP and Socket
+    await gameEntity.init();
+    console.log('🚀 Server started successfully');
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
   }
-});
+}
 
-app.use(cors());
-app.use(express.json());
-
-// Basic route
-app.get('/', (req, res) => {
-  res.send('Multiplayer Game Server is running');
-});
-
-// Socket.IO connection handling
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-  });
-});
-
-const PORT = process.env.PORT || 3000;
-httpServer.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Start the server
+startServer();

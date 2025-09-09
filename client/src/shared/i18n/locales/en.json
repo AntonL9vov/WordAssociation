@@ -1,0 +1,118 @@
+{
+  "app": {
+    "title": "Word Association",
+    "subtitle": "Multiplayer Word Game",
+    "tagline": "Connect minds through words"
+  },
+  "auth": {
+    "playerNameLabel": "Your Name",
+    "playerNamePlaceholder": "Enter your player name",
+    "startPlaying": "Start Playing",
+    "connecting": "Connecting...",
+    "enterNameError": "Please enter your name",
+    "connectionError": "Failed to connect. Please try again.",
+    "joinWorldwideGame": "Join players from around the world in this fun word game!",
+    "features": {
+      "realtime": "Real-time multiplayer",
+      "wordFun": "Word association fun",
+      "chat": "Chat with players",
+      "endless": "Endless rounds"
+    }
+  },
+  "home": {
+    "title": "Ready to Play?",
+    "subtitle": "Choose how you want to start your word adventure",
+    "description": "Create a new game or join friends in an existing one"
+  },
+  "game": {
+    "createGame": "Create Game",
+    "createGameDescription": "Start a new game and invite friends to join your word association adventure",
+    "createNewGame": "Create New Game",
+    "joinGame": "Join Game",
+    "joinGameDescription": "Enter a game ID to join an existing game with friends and other players",
+    "gameIdLabel": "Game ID",
+    "gameIdPlaceholder": "Enter game ID (e.g. abc123)",
+    "enterGameIdDescription": "Enter the Game ID shared by your friend to join their game",
+    "shareGameIdHint": "Ask your friend to share their Game ID with you",
+    "leave": "Leave",
+    "loading": "Loading game...",
+
+    "playersLabel": "Players",
+    "atLeastTwoPlayers": "At least two players needed",
+    "startGameButton": "Start game",
+    "waitForPlayers": "Wait for other players",
+    "shareGameId": "Share game ID with your friend",
+    "randomWordError": "Failed to get random word",
+    "matchFound": "Match Found!",
+    "gameRound": "Game Round",
+    "gameRounds": "Game Rounds",
+    "gameRoom": "Game Room",
+    "gameId": "Game ID",
+    "startGame": {
+      "randomStartWord": "Random start word",
+      "startWord": "Start word",
+      "startWordPlaceholder": "Enter start word",
+      "randomWord": "Random word",
+      "regenerate": "Regenerate"
+    },
+    "statuses": {
+      "setup": {
+        "label": "Setup",
+        "description": "Setting up the game"
+      },
+      "playing": {
+        "label": "Playing",
+        "description": "Game in progress"
+      },
+      "finished": {
+        "label": "Finished",
+        "description": "Game completed"
+      },
+      "unknown": {
+        "label": "Unknown",
+        "description": "Unknown status"
+      }
+    },
+    "gameCompleted": "Game completed! Great job everyone!",
+    "restartGame": "Restart Game",
+    "startGameError": "Failed to start game",
+    "copyGameId": "Copy Game ID",
+    "copied": "Copied!",
+    "gameSetup": "Game setup"
+  },
+  "messenger": {
+    "title": "Game Chat",
+    "subtitle": "Submit your words and chat with players",
+    "typeMessage": "Type your message or word...",
+    "typeMessageDisabled": "Waiting for other players",
+    "placeholderDefault": "Enter your word or message",
+    "placeholderDisabled": "You have already emitted a word",
+    "addEmoji": "Add emoji",
+    "gameStarted": "Game Started!",
+    "noRoundsYet": "No rounds yet",
+    "submitFirstWord": "Submit your first word to begin the word association chain",
+    "roundsWillAppear": "Game rounds will appear here once the game starts",
+    "round": "Round",
+    "waitingForWords": "Waiting for words...",
+    "otherPlayers": "Other players",
+    "yourWord": "Your word",
+    "wordSubmitted": "Words submitted",
+    "startWord": "Start word",
+    "send": "Send",
+    "allPlayersChose": "All players chose",
+    "submitted": "submitted"
+  },
+  "common": {
+    "loading": "Loading...",
+    "pasteFromClipboard": "Paste from clipboard",
+    "viewOnGitHub": "View on GitHub",
+    "logout": "Logout"
+  },
+  "pages": {
+    "home": "Home",
+    "game": "Game",
+    "login": "Login",
+    "notFound": "Not Found",
+    "pageNotFound": "404 Not Found"
+  }
+}

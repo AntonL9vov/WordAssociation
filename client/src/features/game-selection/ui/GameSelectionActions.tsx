@@ -1,0 +1,49 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { GameActionCard } from '@/entities/game-action-card';
+import { Stack } from '@mui/material';
+import {
+  Rocket as RocketIcon,
+  Group as GroupIcon,
+} from '@mui/icons-material';
+
+interface GameSelectionActionsProps {
+  onCreateGame: () => void;
+  onJoinGame: () => void;
+}
+
+export const GameSelectionActions: React.FC<GameSelectionActionsProps> = ({
+  onCreateGame,
+  onJoinGame,
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Stack 
+      direction={{ xs: 'column', md: 'row' }} 
+      spacing={3}
+      sx={{ 
+        alignItems: 'stretch',
+        justifyContent: 'center',
+      }}
+    >
+      <GameActionCard
+        title={t('game.createGame')}
+        description={t('game.createGameDescription')}
+        icon={<RocketIcon />}
+        buttonText={t('game.createNewGame')}
+        colorScheme="primary"
+        onClick={onCreateGame}
+      />
+
+      <GameActionCard
+        title={t('game.joinGame')}
+        description={t('game.joinGameDescription')}
+        icon={<GroupIcon />}
+        buttonText={t('game.joinGame')}
+        colorScheme="secondary"
+        onClick={onJoinGame}
+      />
+    </Stack>
+  );
+};
+

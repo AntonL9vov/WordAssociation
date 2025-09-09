@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { routesConfig, RouteConfig } from "./config";
 import { MainLayout, AuthLayout } from "../layouts";
+import { useAuth } from "@/shared/context/AuthContext";
 
 // Function to get the appropriate layout component
 const getLayout = (layoutName: string | undefined) => {
@@ -17,6 +18,8 @@ const getLayout = (layoutName: string | undefined) => {
 
 // Recursive function to render routes from configuration
 const renderRoutes = (routes: RouteConfig[]) => {
+  const { isAuthenticated } = useAuth();
+
   return routes.map((route) => {
     const PageComponent = route.element;
     const LayoutComponent = route.meta?.layout
@@ -24,7 +27,7 @@ const renderRoutes = (routes: RouteConfig[]) => {
       : ({ children }: { children: React.ReactNode }) => <>{children}</>;
 
     const requiresAuth = route.meta?.auth;
-    const isAuthenticated = false; // TODO: Implement actual auth check
+    const isAuthPage = route.path === "/login";
 
     const routeElement = <LayoutComponent>{PageComponent}</LayoutComponent>;
 
@@ -35,6 +38,8 @@ const renderRoutes = (routes: RouteConfig[]) => {
         element={
           requiresAuth && !isAuthenticated ? (
             <Navigate to="/login" replace />
+          ) : isAuthPage && isAuthenticated ? (
+            <Navigate to="/" replace />
           ) : (
             routeElement
           )
@@ -47,10 +52,5 @@ const renderRoutes = (routes: RouteConfig[]) => {
 };
 
 export const AppRouter = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.log(location);
-  }, [location]);
   return <Routes>{renderRoutes(routesConfig)}</Routes>;
 };
