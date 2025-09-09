@@ -1,0 +1,93 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+dist
+*.local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+coverage
+.nyc_output
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+test-results/
+playwright-report/
+playwright/.cache/
+!docker-entrypoint.sh
+
+# Production builds
+dist/
+build/
+
+# Environment files
+.env*
+!.env.example
+
+# Testing
+coverage/
+test-results/
+.nyc_output/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Cache directories
+.cache/
+.npm/
+
+# Development files
+nodemon.json
+
+# Database files (for local development)
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated documentation (will be regenerated in container)
+public/swagger.json
+public/asyncapi.json
+public/asyncapi.html
+public/asyncapi-fixed.html

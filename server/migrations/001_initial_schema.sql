@@ -2,7 +2,7 @@
 -- Create database: CREATE DATABASE multiplayer_game;
 
 -- Users table
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -10,7 +10,7 @@ CREATE TABLE users (
 );
 
 -- Games table
-CREATE TABLE games (
+CREATE TABLE IF NOT EXISTS games (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     start_word VARCHAR(255) DEFAULT '',
     status VARCHAR(20) NOT NULL DEFAULT 'created' CHECK (status IN ('created', 'started', 'finished')),
@@ -19,7 +19,7 @@ CREATE TABLE games (
 );
 
 -- Game players junction table
-CREATE TABLE game_players (
+CREATE TABLE IF NOT EXISTS game_players (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     game_id UUID NOT NULL REFERENCES games(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -28,7 +28,7 @@ CREATE TABLE game_players (
 );
 
 -- Rounds table
-CREATE TABLE rounds (
+CREATE TABLE IF NOT EXISTS rounds (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     game_id UUID NOT NULL REFERENCES games(id) ON DELETE CASCADE,
     round_number INTEGER NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE rounds (
 );
 
 -- Words table
-CREATE TABLE words (
+CREATE TABLE IF NOT EXISTS words (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     round_id UUID NOT NULL REFERENCES rounds(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -48,7 +48,7 @@ CREATE TABLE words (
 );
 
 -- Players emitted words tracking (for current round)
-CREATE TABLE player_round_submissions (
+CREATE TABLE IF NOT EXISTS player_round_submissions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     game_id UUID NOT NULL REFERENCES games(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -59,15 +59,15 @@ CREATE TABLE player_round_submissions (
 );
 
 -- Indexes for better performance
-CREATE INDEX idx_games_status ON games(status);
-CREATE INDEX idx_games_created_at ON games(created_at);
-CREATE INDEX idx_game_players_game_id ON game_players(game_id);
-CREATE INDEX idx_game_players_user_id ON game_players(user_id);
-CREATE INDEX idx_rounds_game_id ON rounds(game_id);
-CREATE INDEX idx_rounds_game_round ON rounds(game_id, round_number);
-CREATE INDEX idx_words_round_id ON words(round_id);
-CREATE INDEX idx_words_user_id ON words(user_id);
-CREATE INDEX idx_player_submissions_game_round ON player_round_submissions(game_id, round_id);
+CREATE INDEX IF NOT EXISTS idx_games_status ON games(status);
+CREATE INDEX IF NOT EXISTS idx_games_created_at ON games(created_at);
+CREATE INDEX IF NOT EXISTS idx_game_players_game_id ON game_players(game_id);
+CREATE INDEX IF NOT EXISTS idx_game_players_user_id ON game_players(user_id);
+CREATE INDEX IF NOT EXISTS idx_rounds_game_id ON rounds(game_id);
+CREATE INDEX IF NOT EXISTS idx_rounds_game_round ON rounds(game_id, round_number);
+CREATE INDEX IF NOT EXISTS idx_words_round_id ON words(round_id);
+CREATE INDEX IF NOT EXISTS idx_words_user_id ON words(user_id);
+CREATE INDEX IF NOT EXISTS idx_player_submissions_game_round ON player_round_submissions(game_id, round_id);
 
 -- Trigger to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()

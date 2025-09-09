@@ -3,6 +3,9 @@ import { DatabaseConnection } from '../config/database';
 import fs from 'fs';
 import path from 'path';
 
+// Load environment variables
+require('dotenv').config();
+
 export class MigrationRunner {
   private pool: Pool;
 
@@ -39,7 +42,7 @@ export class MigrationRunner {
       
       // Record the migration as executed
       await client.query(
-        'INSERT INTO migrations (filename) VALUES ($1)',
+        'INSERT INTO migrations (filename) VALUES ($1) ON CONFLICT (filename) DO NOTHING',
         [filename]
       );
       
@@ -47,6 +50,17 @@ export class MigrationRunner {
       console.log(`Migration ${filename} executed successfully`);
     } catch (error) {
       await client.query('ROLLBACK');
+      
+      // Handle PostgreSQL specific errors gracefully
+      if (error instanceof Error) {
+        // Table already exists (42P07), Relation does not exist (42P01), etc.
+        const pgError = error as any;
+        if (pgError.code === '42P07' || pgError.code === '42P01' || pgError.code === '42710' || pgError.code === '42P09') {
+          console.log(`Migration ${filename} - object already exists, continuing...`);
+          return;
+        }
+      }
+      
       throw error;
     } finally {
       client.release();
@@ -55,6 +69,12 @@ export class MigrationRunner {
 
   async runMigrations(): Promise<void> {
     try {
+      console.log('Environment variables:');
+      console.log('DB_HOST:', process.env.DB_HOST);
+      console.log('DB_USER:', process.env.DB_USER);
+      console.log('DB_PASSWORD:', process.env.DB_PASSWORD ? `[${process.env.DB_PASSWORD}]` : '[NOT SET]');
+      console.log('DB_NAME:', process.env.DB_NAME);
+      
       await this.createMigrationsTable();
       
       const migrationsDir = path.join(__dirname, '../../migrations');

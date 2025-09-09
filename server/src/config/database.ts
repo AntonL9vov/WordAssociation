@@ -1,4 +1,4 @@
-import { Pool, PoolConfig } from 'pg';
+import { Pool, PoolConfig } from "pg";
 
 export interface DatabaseConfig {
   host: string;
@@ -13,16 +13,32 @@ export interface DatabaseConfig {
 }
 
 export const getDatabaseConfig = (): DatabaseConfig => {
+  console.log("Using database config:", {
+    host: process.env.DB_HOST || "localhost",
+    port: parseInt(process.env.DB_PORT || "5432"),
+    database: process.env.DB_NAME || "multiplayer_game",
+    user: process.env.DB_USER || "postgres",
+    password: process.env.DB_PASSWORD || "",
+    ssl: process.env.DB_SSL === "true",
+    max: parseInt(process.env.DB_MAX_CONNECTIONS || "20"),
+    idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT || "30000"),
+    connectionTimeoutMillis: parseInt(
+      process.env.DB_CONNECTION_TIMEOUT || "2000"
+    ),
+  });
+  
   return {
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5432'),
-    database: process.env.DB_NAME || 'multiplayer_game',
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || '',
-    ssl: process.env.DB_SSL === 'true',
-    max: parseInt(process.env.DB_MAX_CONNECTIONS || '20'),
-    idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT || '30000'),
-    connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT || '2000'),
+    host: process.env.DB_HOST || "localhost",
+    port: parseInt(process.env.DB_PORT || "5432"),
+    database: process.env.DB_NAME || "multiplayer_game",
+    user: process.env.DB_USER || "postgres",
+    password: process.env.DB_PASSWORD || "",
+    ssl: process.env.DB_SSL === "true",
+    max: parseInt(process.env.DB_MAX_CONNECTIONS || "20"),
+    idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT || "30000"),
+    connectionTimeoutMillis: parseInt(
+      process.env.DB_CONNECTION_TIMEOUT || "2000"
+    ),
   };
 };
 
@@ -34,8 +50,8 @@ export class DatabaseConnection {
     const config = getDatabaseConfig();
     this.pool = new Pool(config as PoolConfig);
 
-    this.pool.on('error', (err) => {
-      console.error('Unexpected error on idle client', err);
+    this.pool.on("error", (err) => {
+      console.error("Unexpected error on idle client", err);
       process.exit(-1);
     });
   }
@@ -58,11 +74,11 @@ export class DatabaseConnection {
   public async testConnection(): Promise<boolean> {
     try {
       const client = await this.pool.connect();
-      await client.query('SELECT 1');
+      await client.query("SELECT 1");
       client.release();
       return true;
     } catch (error) {
-      console.error('Database connection test failed:', error);
+      console.error("Database connection test failed:", error);
       return false;
     }
   }

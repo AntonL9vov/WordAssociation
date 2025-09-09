@@ -17,6 +17,10 @@ export const iocContainer: IocContainer = {
       return new controller(services.gameService, services.socketEmitterService) as T;
     }
     
+    if (controller.name === "HealthController") {
+      return new controller() as T;
+    }
+    
     throw new Error(`Controller ${controller.name} not registered in IoC container`);
   }
 };

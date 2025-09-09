@@ -2,7 +2,7 @@
   "entryFile": "src/index.ts",
   "tsConfigFilePath": "./tsconfig.json",
   "noImplicitAdditionalProperties": "silently-remove-extras",
-  "controllerPathGlobs": ["src/controllers/**/*Controller*.ts"],
+  "controllerPathGlobs": ["src/controllers/**/*.controller.ts"],
   "spec": {
     "outputDirectory": "public",
     "specVersion": 3,

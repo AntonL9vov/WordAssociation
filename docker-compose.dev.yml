@@ -1,0 +1,143 @@
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:15-alpine
+    container_name: multiplayer-game-db-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-multiplayer_game_dev}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-devpassword}
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./server/migrations:/docker-entrypoint-initdb.d
+    ports:
+      - "5433:5432"
+    networks:
+      - multiplayer-dev-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-multiplayer_game_dev}"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # Backend Server (Development with hot reload)
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: multiplayer-game-server-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-multiplayer_game_dev}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-devpassword}
+      DB_SSL: "false"
+      DB_MAX_CONNECTIONS: 10
+      DB_IDLE_TIMEOUT: 30000
+      DB_CONNECTION_TIMEOUT: 2000
+      STORAGE_TYPE: postgres
+      CORS_ORIGIN: "http://localhost:5173"
+    volumes:
+      - ./server/src:/app/src:ro
+      - ./server/package.json:/app/package.json:ro
+      - ./server/tsconfig.json:/app/tsconfig.json:ro
+      - ./server/tsconfig.build.json:/app/tsconfig.build.json:ro
+      - ./server/tsoa.json:/app/tsoa.json:ro
+      - ./server/nodemon.json:/app/nodemon.json:ro
+      - server_dev_logs:/app/logs
+      - server_node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - multiplayer-dev-network
+    command: |
+      sh -c '
+        echo "Checking nodemon availability..."
+        npx nodemon --version || echo "nodemon check failed"
+        echo "Starting development server..."
+        npm run dev
+      '
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Frontend Client (Development with hot reload)
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: multiplayer-game-client-dev
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: "http://localhost:3000"
+      VITE_WS_URL: "http://localhost:3000"
+    volumes:
+      - ./client/src:/app/src:ro
+      - ./client/public:/app/public:ro
+      - ./client/package.json:/app/package.json:ro
+      - ./client/tsconfig.json:/app/tsconfig.json:ro
+      - ./client/tsconfig.build.json:/app/tsconfig.build.json:ro
+      - ./client/tsconfig.node.json:/app/tsconfig.node.json:ro
+      - ./client/vite.config.ts:/app/vite.config.ts:ro
+      - ./client/index.html:/app/index.html:ro
+      - client_node_modules:/app/node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - multiplayer-dev-network
+    command: npm run dev -- --host 0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Redis (Development)
+  redis:
+    image: redis:7-alpine
+    container_name: multiplayer-game-redis-dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - multiplayer-dev-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+networks:
+  multiplayer-dev-network:
+    driver: bridge
+    name: multiplayer-dev-network
+
+volumes:
+  postgres_dev_data:
+    driver: local
+    name: multiplayer-game-postgres-dev-data
+  server_dev_logs:
+    driver: local
+    name: multiplayer-game-server-dev-logs
+  server_node_modules:
+    driver: local
+    name: multiplayer-game-server-node-modules
+  client_node_modules:
+    driver: local
+    name: multiplayer-game-client-node-modules
