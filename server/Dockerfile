@@ -16,8 +16,11 @@ RUN npm run build
 
 # Production stage
 FROM base AS production
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001
+# Для Debian используйте такой синтаксис:
+RUN groupadd -g 1001 nodejs && \
+    useradd -u 1001 -g nodejs -s /bin/bash -m nextjs
+
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=build --chown=nextjs:nodejs /app/dist ./dist
 COPY --from=build --chown=nextjs:nodejs /app/migrations ./migrations
