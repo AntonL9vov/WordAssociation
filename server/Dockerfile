@@ -2,15 +2,15 @@ FROM node:18-bullseye-slim AS base
 WORKDIR /app
 RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
 
-# Dependencies stage
+# Dependencies stage - только production зависимости
 FROM base AS deps
 COPY package*.json ./
-RUN npm install --only=production --silent --ignore-scripts
+RUN npm ci --only=production --silent --ignore-scripts
 
-# Build stage
+# Build stage - все зависимости для сборки
 FROM base AS build
 COPY package*.json ./
-RUN npm install --silent --ignore-scripts
+RUN npm ci --silent
 COPY . .
 RUN npm run build
 
@@ -20,7 +20,6 @@ FROM base AS production
 RUN groupadd -g 1001 nodejs && \
     useradd -u 1001 -g nodejs -s /bin/bash -m nextjs
 
-COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=build --chown=nextjs:nodejs /app/dist ./dist
 COPY --from=build --chown=nextjs:nodejs /app/migrations ./migrations

@@ -2,12 +2,12 @@
 FROM node:18-alpine AS base
 WORKDIR /app
 
-# Dependencies stage
+# Dependencies stage - только production зависимости
 FROM base AS deps
 COPY package*.json ./
 RUN npm ci --only=production --silent
 
-# Build stage
+# Build stage - все зависимости для сборки
 FROM base AS build
 COPY package*.json ./
 RUN npm ci --silent

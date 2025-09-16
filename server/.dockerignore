@@ -1,37 +1,34 @@
 # Dependencies
 node_modules
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-lerna-debug.log*
-dist
-*.local
+.git
+.gitignore
+README.md
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-coverage
 .nyc_output
-.git
-.gitignore
-README.md
-Dockerfile
-.dockerignore
-test-results/
-playwright-report/
-playwright/.cache/
-!docker-entrypoint.sh
+coverage
+*.log
+.DS_Store
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.tmp
+.cache
+dist
+build
+# Test files
+**/*.test.ts
+**/*.test.js
+__tests__
+# Development files
+nodemon.json
+*.tsbuildinfo
 
 # Production builds
 dist/
