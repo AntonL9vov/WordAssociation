@@ -1,7 +1,12 @@
 # Multi-stage build for Node.js server
 FROM node:18-alpine AS base
 WORKDIR /app
-RUN apk add --no-cache postgresql-client
+
+# Добавьте стабильные репозитории Alpine
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/v3.18/main" > /etc/apk/repositories && \
+    echo "https://dl-cdn.alpinelinux.org/alpine/v3.18/community" >> /etc/apk/repositories && \
+    apk update && \
+    apk add --no-cache postgresql-client
 
 # Dependencies stage
 FROM base AS deps
