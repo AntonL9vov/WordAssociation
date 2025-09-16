@@ -5,12 +5,12 @@ RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/ap
 # Dependencies stage
 FROM base AS deps
 COPY package*.json ./
-RUN npm ci --only=production --silent --ignore-scripts
+RUN npm install --only=production --silent --ignore-scripts
 
 # Build stage
 FROM base AS build
 COPY package*.json ./
-RUN npm ci --silent --ignore-scripts
+RUN npm install --silent --ignore-scripts
 COPY . .
 RUN npm run build
 
