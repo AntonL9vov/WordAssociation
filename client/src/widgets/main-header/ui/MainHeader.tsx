@@ -8,19 +8,12 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  Button,
   Box,
-  Chip,
   IconButton,
   Container,
-  Menu,
-  MenuItem,
 } from "@mui/material";
 import {
   SportsCricket as GameIcon,
-  Person as PersonIcon,
-  Logout as LogoutIcon,
-  MoreVert as MoreIcon,
 } from "@mui/icons-material";
 
 // Separated style objects for clean mobile optimization

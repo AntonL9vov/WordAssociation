@@ -3,7 +3,7 @@ import { JoinGame } from "@/features";
 import { HomeHeader } from "@/entities/home-header";
 import { GameSelectionActions } from "@/features/game-selection";
 import { useBreakpoints } from "@/shared/hooks/useBreakpoints";
-import { Card, Text, Container } from "@/shared/ui";
+import { Card, Container } from "@/shared/ui";
 import { Fade } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { MobileHeader } from "./MobileHeader";

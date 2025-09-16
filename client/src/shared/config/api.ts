@@ -1,13 +1,16 @@
 // API configuration for the game client
+import { getApiBaseUrl, getWebSocketUrl, logEnvironmentConfig } from './environment';
+
+// Log configuration in development
+logEnvironmentConfig();
+
 export const API_CONFIG = {
-  baseUrl: 'http://localhost:3000/api', // REST API server (unified with socket)
-  socketUrl: 'http://localhost:3000', // Socket.IO server (unified)
+  baseUrl: `${getApiBaseUrl()}/api`, // REST API server
+  socketUrl: getApiBaseUrl(), // Socket.IO server
   endpoints: {
-    auth: '/auth',
-    game: '/game',
-    players: '/players',
+    auth: "/auth",
+    game: "/game",
+    players: "/players",
   },
-  wsUrl: import.meta.env.PROD
-    ? import.meta.env.VITE_API_WS_URL_PROD
-    : import.meta.env.VITE_API_WS_URL_DEV
+  wsUrl: getWebSocketUrl(),
 };

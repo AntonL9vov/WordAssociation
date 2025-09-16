@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Chip, IconButton, Menu, MenuItem, Divider } from "@mui/material";
+import { Chip, IconButton, Menu, MenuItem, Divider } from "@mui/material";
 import { Person as PersonIcon, Logout as LogoutIcon, MoreVert as MoreIcon } from "@mui/icons-material";
 import { ThemeToggle, LanguageSwitcher } from "@/shared/ui";
 
