@@ -22,15 +22,10 @@ VITE_API_WS_URL_PROD=ws://YOUR_SERVER_IP:3000
 # Example: VITE_API_BASE_URL_PROD=http://192.168.1.100:3000
 ```
 
-### 2. Generate package-lock.json (Optional)
-If you want to use `npm ci` for faster builds in the future:
-```bash
-cd server
-npm install
-cd ../client  
-npm install
-cd ..
-```
+### 2. Fixed Docker Issues
+✅ **Fixed npm install postinstall script error**
+- Added `--ignore-scripts` flag to skip git hooks setup in Docker
+- Git hooks are only needed for development, not production
 
 ### 3. Build and Run
 ```bash

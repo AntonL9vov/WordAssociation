@@ -5,13 +5,14 @@ RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/ap
 # Dependencies stage - только production зависимости
 FROM base AS deps
 COPY package*.json ./
-# Используем npm install если package-lock.json отсутствует
+# Пропускаем postinstall скрипты для продакшна
 RUN npm install --only=production --silent --ignore-scripts
 
 # Build stage - все зависимости для сборки
 FROM base AS build
 COPY package*.json ./
-RUN npm install --silent
+# Пропускаем postinstall скрипты в Docker
+RUN npm install --silent --ignore-scripts
 COPY . .
 RUN npm run build
 
