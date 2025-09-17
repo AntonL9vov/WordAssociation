@@ -5,12 +5,12 @@ WORKDIR /app
 # Dependencies stage - только production зависимости
 FROM base AS deps
 COPY package*.json ./
-RUN npm ci --only=production --silent
+RUN npm install --only=production --silent
 
 # Build stage - все зависимости для сборки
 FROM base AS build
 COPY package*.json ./
-RUN npm ci --silent
+RUN npm install --silent
 COPY . .
 RUN npm run build
 

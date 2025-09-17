@@ -5,12 +5,13 @@ RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/ap
 # Dependencies stage - только production зависимости
 FROM base AS deps
 COPY package*.json ./
-RUN npm ci --only=production --silent --ignore-scripts
+# Используем npm install если package-lock.json отсутствует
+RUN npm install --only=production --silent --ignore-scripts
 
 # Build stage - все зависимости для сборки
 FROM base AS build
 COPY package*.json ./
-RUN npm ci --silent
+RUN npm install --silent
 COPY . .
 RUN npm run build
 
