@@ -16,6 +16,8 @@ export class ApiService {
       },
     });
 
+    console.log("API_CONFIG", API_CONFIG)
+
     // Add request interceptor for authentication
     this.axiosInstance.interceptors.request.use((config) => {
       const token = localStorage.getItem("token");

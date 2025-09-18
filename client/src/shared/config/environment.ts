@@ -14,12 +14,15 @@ export const ENV_CONFIG = {
 export const getApiBaseUrl = (): string => {
   const devUrl = import.meta.env.VITE_API_BASE_URL_DEV;
   const prodUrl = import.meta.env.VITE_API_BASE_URL_PROD;
+
+  console.log("Environment:", ENV_CONFIG, import.meta.env.VITE_API_BASE_URL_DEV, import.meta.env.VITE_API_BASE_URL_PROD )
   
   if (ENV_CONFIG.isDevelopment) {
     return devUrl || 'http://localhost:3000';
   }
   
-  return prodUrl || 'http://localhost:3000';
+  // In production, use relative paths for reverse proxy setup
+  return prodUrl || window.location.origin;
 };
 
 export const getWebSocketUrl = (): string => {
@@ -30,7 +33,19 @@ export const getWebSocketUrl = (): string => {
     return devUrl || 'ws://localhost:3000';
   }
   
-  return prodUrl || 'wss://localhost/ws';
+  // In production, use WebSocket with same origin (will be proxied)
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  return prodUrl || `${protocol}//${window.location.host}`;
+};
+
+// Get API base path for production routing
+export const getApiBasePath = (): string => {
+  return ENV_CONFIG.isProduction ? '' : ''; // No additional path prefix needed
+};
+
+// Get WebSocket path for production routing
+export const getWebSocketPath = (): string => {
+  return ENV_CONFIG.isProduction ? '/ws' : '';
 };
 
 // Log current configuration (for debugging)
@@ -42,6 +57,8 @@ export const logEnvironmentConfig = () => {
       isProduction: ENV_CONFIG.isProduction,
       apiBaseUrl: getApiBaseUrl(),
       websocketUrl: getWebSocketUrl(),
+      apiBasePath: getApiBasePath(),
+      websocketPath: getWebSocketPath(),
     });
   }
 };

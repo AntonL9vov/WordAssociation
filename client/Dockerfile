@@ -20,22 +20,11 @@ FROM nginx:alpine AS production
 # Copy built files
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Create custom nginx config
-RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
-    echo '    listen 80;' >> /etc/nginx/conf.d/default.conf && \
-    echo '    location / {' >> /etc/nginx/conf.d/default.conf && \
-    echo '        root /usr/share/nginx/html;' >> /etc/nginx/conf.d/default.conf && \
-    echo '        index index.html index.htm;' >> /etc/nginx/conf.d/default.conf && \
-    echo '        try_files $uri $uri/ /index.html;' >> /etc/nginx/conf.d/default.conf && \
-    echo '    }' >> /etc/nginx/conf.d/default.conf && \
-    echo '    location /api/ {' >> /etc/nginx/conf.d/default.conf && \
-    echo '        proxy_pass http://server:3000/;' >> /etc/nginx/conf.d/default.conf && \
-    echo '        proxy_set_header Host $host;' >> /etc/nginx/conf.d/default.conf && \
-    echo '        proxy_set_header X-Real-IP $remote_addr;' >> /etc/nginx/conf.d/default.conf && \
-    echo '    }' >> /etc/nginx/conf.d/default.conf && \
-    echo '    gzip on;' >> /etc/nginx/conf.d/default.conf && \
-    echo '    gzip_types text/css application/javascript application/json;' >> /etc/nginx/conf.d/default.conf && \
-    echo '}' >> /etc/nginx/conf.d/default.conf
+# Copy custom nginx configuration
+COPY --from=build /app/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Remove default nginx config
+RUN rm -f /etc/nginx/conf.d/default.conf.bak
 
 EXPOSE 80
 
