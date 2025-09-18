@@ -19,7 +19,7 @@ export const getApiBaseUrl = (): string => {
     return devUrl || 'http://localhost:3000';
   }
   
-  return prodUrl || 'http://association-game.ru';
+  return prodUrl || 'http://localhost:3000';
 };
 
 export const getWebSocketUrl = (): string => {
@@ -30,7 +30,7 @@ export const getWebSocketUrl = (): string => {
     return devUrl || 'ws://localhost:3000';
   }
   
-  return prodUrl || 'wss://association-game.ru/ws';
+  return prodUrl || 'wss://localhost/ws';
 };
 
 // Log current configuration (for debugging)
