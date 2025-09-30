@@ -1,6 +1,8 @@
 import { ReactNode } from "react";
 import { GamePage, HomePage, AuthPage, NotFoundPage } from "@/pages";
 
+export type Layout = "main" | "auth";
+
 // Define the route configuration interface
 export interface RouteConfig {
   path: string;
@@ -9,7 +11,7 @@ export interface RouteConfig {
   meta?: {
     auth?: boolean;
     title?: string;
-    layout?: string;
+    layout?: Layout;
     [key: string]: any;
   };
 }

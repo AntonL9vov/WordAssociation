@@ -1,11 +1,11 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { routesConfig, RouteConfig } from "./config";
+import { routesConfig, RouteConfig, Layout } from "./config";
 import { MainLayout, AuthLayout } from "../layouts";
 import { useAuth } from "@/shared/context/AuthContext";
 
 // Function to get the appropriate layout component
-const getLayout = (layoutName: string | undefined) => {
+const getLayout = (layoutName: Layout) => {
   switch (layoutName) {
     case "main":
       return MainLayout;
