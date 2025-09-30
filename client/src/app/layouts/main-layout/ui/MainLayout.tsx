@@ -4,22 +4,23 @@ import { MainFooter } from "@/widgets";
 import { useBreakpoints } from "@/shared/hooks/useBreakpoints";
 import { Box, Container } from "@mui/material";
 
-// Separated style objects for clean mobile optimization
+//TODO: Протестить просто height без min и max
+
 const desktopLayoutStyles = {
   container: { py: 3 },
-  main: { minHeight: "100vh" },
+  main: { minHeight: "100vh", maxHeight: "100vh" },
 };
 
 const mobileLayoutStyles = {
   container: { py: 1 },
-  main: { minHeight: "100dvh" }, // Dynamic viewport height for mobile
+  main: { minHeight: "100dvh", maxHeight: "100dvh" },
 };
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+export const MainLayout = ({ children }: MainLayoutProps) => {
   const { isMobile } = useBreakpoints();
   const styles = isMobile ? mobileLayoutStyles : desktopLayoutStyles;
 
@@ -30,7 +31,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         flexDirection: "column",
         ...styles.main,
         backgroundColor: "var(--bg-primary)",
-        maxHeight: "100vh",
         overflow: "hidden",
       }}
     >
