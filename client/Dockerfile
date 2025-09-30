@@ -9,9 +9,24 @@ RUN npm install --only=production --silent
 
 # Build stage - все зависимости для сборки
 FROM base AS build
+# Accept build arguments for environment variables
+ARG VITE_API_BASE_URL
+ARG VITE_API_WS_URL
+
+# Set environment variables
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_API_WS_URL=$VITE_API_WS_URL
+
 COPY package*.json ./
 RUN npm install --silent
 COPY . .
+
+# Create .env file with environment variables
+RUN echo "VITE_API_BASE_URL=${VITE_API_BASE_URL}" > .env
+RUN echo "VITE_API_WS_URL=${VITE_API_WS_URL}" >> .env
+
+# Build the application
+
 RUN npm run build
 
 # Production stage with Nginx
@@ -27,8 +42,5 @@ COPY --from=build /app/nginx.conf /etc/nginx/conf.d/default.conf
 RUN rm -f /etc/nginx/conf.d/default.conf.bak
 
 EXPOSE 80
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]

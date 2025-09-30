@@ -9,6 +9,7 @@ export class ApiService {
 
   constructor() {
     this.baseUrl = API_CONFIG.baseUrl;
+    console.log(this.baseUrl, API_CONFIG);
     this.axiosInstance = axios.create({
       baseURL: this.baseUrl,
       headers: {
@@ -16,9 +17,6 @@ export class ApiService {
       },
     });
 
-    console.log("API_CONFIG", API_CONFIG)
-
-    // Add request interceptor for authentication
     this.axiosInstance.interceptors.request.use((config) => {
       const token = localStorage.getItem("token");
       if (token && config.headers) {
@@ -28,7 +26,6 @@ export class ApiService {
     });
   }
 
-  // Type guard to detect a Zod schema at runtime
   private isZodSchema(value: unknown): value is ZodTypeAny {
     return (
       typeof value === "object" &&
@@ -39,7 +36,6 @@ export class ApiService {
     );
   }
 
-  // Overloads for GET with optional Zod schema validation
   async get<T>(endpoint: string, config?: AxiosRequestConfig): Promise<T>;
   async get<S extends ZodTypeAny>(
     endpoint: string,
@@ -72,7 +68,6 @@ export class ApiService {
     }
   }
 
-  // Overloads for POST with optional Zod schema validation
   async post<T>(
     endpoint: string,
     data: unknown,
@@ -111,7 +106,10 @@ export class ApiService {
     }
   }
 
-  async delete(endpoint: string, config?: AxiosRequestConfig): Promise<AxiosResponse> {
+  async delete(
+    endpoint: string,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse> {
     const response = await this.axiosInstance.delete(endpoint, config);
     return response;
   }

@@ -20,4 +20,9 @@ export default defineConfig({
       generateScopedName: '[name]__[local]__[hash:base64:5]'
     }
   },
+  define: {
+    'process.env': {
+      
+    }
+  }
 });

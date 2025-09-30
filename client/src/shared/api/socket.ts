@@ -1,6 +1,5 @@
 import { io, Socket } from "socket.io-client";
 import { API_CONFIG } from "../config/api";
-import { ENV_CONFIG } from "../config/environment";
 
 export class SocketService {
   private socket: Socket;
@@ -19,13 +18,6 @@ export class SocketService {
       transports: ['websocket', 'polling'], // Ensure fallback
       timeout: 5000,
     };
-    
-    // In production, Socket.IO will be proxied through nginx
-    // so we don't need to specify a different path
-    if (!ENV_CONFIG.isDevelopment) {
-      // Use relative path in production (proxied by nginx)
-      socketConfig.path = '/socket.io/';
-    }
     
     this.socket = io(API_CONFIG.socketUrl, socketConfig);
     
