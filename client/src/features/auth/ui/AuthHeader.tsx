@@ -7,7 +7,7 @@ export const AuthHeader: React.FC = () => {
   const { t } = useTranslation();
   
   return (
-    <Box sx={{ textAlign: 'center', mb: 4 }}>
+    <Box sx={{ textAlign: 'center', mb: 4, mt: 4 }}>
       <Text
         variant="h3"
         weight="bold"

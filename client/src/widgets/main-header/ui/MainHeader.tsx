@@ -12,9 +12,6 @@ import {
   IconButton,
   Container,
 } from "@mui/material";
-import {
-  SportsCricket as GameIcon,
-} from "@mui/icons-material";
 
 // Separated style objects for clean mobile optimization
 const desktopHeaderStyles = {
@@ -59,6 +56,7 @@ const mobileHeaderStyles = {
 
 import { MobileUserMenu } from "./MobileUserMenu";
 import { DesktopUserMenu } from "./DesktopUserMenu";
+import { Logo } from "@/shared/ui/Logo/Logo";
 
 export const MainHeader: React.FC = () => {
   const { t } = useTranslation();
@@ -82,21 +80,14 @@ export const MainHeader: React.FC = () => {
           <Box sx={styles.logo}>
             <IconButton
               size={isMobile ? "medium" : "large"}
-              edge="start"
               sx={{
-                background:
-                  "linear-gradient(135deg, var(--primary-500), var(--primary-600))",
                 color: "white",
                 width: isMobile ? 40 : 48,
                 height: isMobile ? 40 : 48,
                 marginLeft: isMobile ? 1 : 0,
-                "&:hover": {
-                  background:
-                    "linear-gradient(135deg, var(--primary-600), var(--primary-700))",
-                },
               }}
             >
-              <GameIcon fontSize={isMobile ? "medium" : "large"} />
+              <Logo size={isMobile ? 40 : 48} />
             </IconButton>
             {!isMobile && (
               <Box>
@@ -125,14 +116,14 @@ export const MainHeader: React.FC = () => {
           <Box sx={styles.rightSection}>
             {!isMobile && <ThemeToggle />}
             {!isMobile && <LanguageSwitcher />}
-            
-            {isAuthenticated && user && (
-              isMobile ? (
+
+            {isAuthenticated &&
+              user &&
+              (isMobile ? (
                 <MobileUserMenu user={user} onLogout={handleLogout} t={t} />
               ) : (
                 <DesktopUserMenu user={user} onLogout={handleLogout} t={t} />
-              )
-            )}
+              ))}
           </Box>
         </Toolbar>
       </Container>

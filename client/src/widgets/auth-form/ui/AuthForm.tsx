@@ -1,8 +1,8 @@
 import React from "react";
 import { playerConnect } from "../api/api";
-import { User } from "@/shared/lib/types";
+import { User } from "@/shared";
 import { AuthFormCard } from "@/entities/auth-form";
-import { AuthHeader, AuthForm as AuthFormFeature } from "@/features/auth";
+import { AuthHeader, AuthFormBody } from "@/features";
 
 interface AuthFormWidgetProps {
   onAuthSuccess: (user: User) => void;
@@ -12,7 +12,7 @@ export const AuthForm: React.FC<AuthFormWidgetProps> = ({ onAuthSuccess }) => {
   return (
     <AuthFormCard>
       <AuthHeader />
-      <AuthFormFeature
+      <AuthFormBody
         onSubmit={playerConnect}
         onSuccess={onAuthSuccess}
       />

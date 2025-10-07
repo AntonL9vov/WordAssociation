@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AuthFormFields, AuthFormFeatures } from "@/entities/auth-form";
+import { AuthFormFields, AuthFormFeatures } from "@/entities";
 import { Text } from "@/shared/ui";
 import { Box } from "@mui/material";
 import { User } from "@/shared/lib/types";
@@ -10,7 +10,10 @@ interface AuthFormProps {
   onSuccess: (user: User) => void;
 }
 
-export const AuthForm: React.FC<AuthFormProps> = ({ onSubmit, onSuccess }) => {
+export const AuthFormBody: React.FC<AuthFormProps> = ({
+  onSubmit,
+  onSuccess,
+}) => {
   const { t } = useTranslation();
   const [playerName, setPlayerName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -34,12 +37,16 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSubmit, onSuccess }) => {
     }
   };
 
+  const features = [
+    t("auth.features.realtime"),
+    t("auth.features.wordFun"),
+    t("auth.features.chat"),
+    t("auth.features.endless"),
+  ];
+
   return (
     <>
-      {/* Фичи */}
-      <AuthFormFeatures />
-
-      {/* Форма */}
+      <AuthFormFeatures features={features} />
       <Box sx={{ mt: 4 }}>
         <AuthFormFields
           playerName={playerName}
@@ -48,13 +55,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onSubmit, onSuccess }) => {
           onPlayerNameChange={setPlayerName}
           onSubmit={handleSubmit}
         />
-      </Box>
-
-      {/* Дополнительная информация */}
-      <Box sx={{ textAlign: "center", mt: 4 }}>
-        <Text variant="body2" color="muted">
-          {t("auth.joinWorldwideGame")}
-        </Text>
       </Box>
     </>
   );

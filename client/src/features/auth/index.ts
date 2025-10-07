@@ -1,3 +1,3 @@
 export { AuthHeader } from './ui/AuthHeader';
-export { AuthForm } from './ui/AuthForm';
+export { AuthFormBody } from './ui/AuthForm';
 

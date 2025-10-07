@@ -23,6 +23,7 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
   onSubmit,
 }) => {
   const { t } = useTranslation();
+  
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !isLoading && playerName.trim()) {
       onSubmit();

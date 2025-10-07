@@ -95,14 +95,15 @@ export const createMuiTheme = (isDark: boolean): Theme => {
               transform: "translateY(0)",
               boxShadow: "var(--shadow-sm)",
             },
+            color: "var(--text-primary)",
           },
           containedPrimary: {
             background:
               "linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%)",
-            color: "var(--text-inverse)",
             "&:hover": {
               background:
                 "linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%)",
+              color: "var(--text-primary)",
             },
           },
           outlined: {
