@@ -2,8 +2,6 @@ import { ReactNode } from "react";
 import { GamePage, HomePage, AuthPage, NotFoundPage } from "@/pages";
 
 export type Layout = "main" | "auth";
-
-// Define the route configuration interface
 export interface RouteConfig {
   path: string;
   element: ReactNode;
@@ -16,7 +14,6 @@ export interface RouteConfig {
   };
 }
 
-// Define the routes configuration
 export const routesConfig: RouteConfig[] = [
   {
     path: "/",

@@ -1,32 +1,18 @@
-import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { routesConfig, RouteConfig, Layout } from "./config";
-import { MainLayout, AuthLayout } from "../layouts";
+import { routesConfig, RouteConfig } from "./config";
+import { getLayout } from "./utils/getLayout";
 import { useAuth } from "@/shared/context/AuthContext";
 
-// Function to get the appropriate layout component
-const getLayout = (layoutName: Layout) => {
-  switch (layoutName) {
-    case "main":
-      return MainLayout;
-    case "auth":
-      return AuthLayout;
-    default:
-      return MainLayout;
-  }
-};
-
-// Recursive function to render routes from configuration
 const renderRoutes = (routes: RouteConfig[]) => {
   const { isAuthenticated } = useAuth();
 
   return routes.map((route) => {
     const PageComponent = route.element;
-    const LayoutComponent = route.meta?.layout
-      ? getLayout(route.meta.layout)
-      : ({ children }: { children: React.ReactNode }) => <>{children}</>;
+
+    const LayoutComponent = getLayout(route.meta?.layout);
 
     const requiresAuth = route.meta?.auth;
+
     const isAuthPage = route.path === "/login";
 
     const routeElement = <LayoutComponent>{PageComponent}</LayoutComponent>;
