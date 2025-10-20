@@ -110,11 +110,15 @@
     "theme": "Тема",
     "language": "Язык"
   },
+  "actions": {
+    "goHome": "На главную"
+  },
   "pages": {
     "home": "Главная",
     "game": "Игра",
     "login": "Вход",
     "notFound": "Не найдено",
-    "pageNotFound": "404 Страница не найдена"
+    "pageNotFound": "404 Страница не найдена",
+    "pageNotFoundDescription": "Страница не существует или была перемещена."
   }
 }

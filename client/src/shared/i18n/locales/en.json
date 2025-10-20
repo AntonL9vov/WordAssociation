@@ -110,11 +110,15 @@
     "theme": "Theme",
     "language": "Language"
   },
+  "actions": {
+    "goHome": "Go home"
+  },
   "pages": {
     "home": "Home",
     "game": "Game",
     "login": "Login",
     "notFound": "Not Found",
-    "pageNotFound": "404 Not Found"
+    "pageNotFound": "404 Not Found",
+    "pageNotFoundDescription": "The page you are looking for doesn't exist or has been moved."
   }
 }
