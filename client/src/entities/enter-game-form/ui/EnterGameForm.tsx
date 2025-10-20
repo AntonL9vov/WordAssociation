@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { useBreakpoints } from "@/shared/hooks/useBreakpoints";
 import { Button, Input, Text } from "@/shared/ui";
@@ -8,13 +7,13 @@ import {
   Login as LoginIcon,
   ContentCopy as CopyIcon,
 } from "@mui/icons-material";
+import { useState, useEffect, useCallback } from "react";
 
-// Separated styles for clean mobile optimization
 const desktopFormStyles = {
   container: { display: "flex", flexDirection: "column", gap: 3 },
   description: { mb: 2 },
-  button: { 
-    py: 1.5, 
+  button: {
+    py: 1.5,
     fontSize: "1.1rem",
     maxWidth: "fit-content",
     alignSelf: "center",
@@ -26,52 +25,63 @@ const desktopFormStyles = {
 const mobileFormStyles = {
   container: { display: "flex", flexDirection: "column", gap: 2 },
   description: { mb: 1.5 },
-  button: { 
-    py: 2, 
+  button: {
+    py: 2,
     fontSize: "1rem",
-    // На мобильном кнопка может быть полной ширины
   },
   hint: { mt: 0.5 },
 };
 
-interface EnterGameFormBaseProps {
+interface EnterGameFormProps {
   onJoinGame: (gameId: string) => void;
   buttonLabel: string;
   buttonDisabled?: boolean;
-}
-
-interface EnterGameFormWithGameIdProps extends EnterGameFormBaseProps {
-  withGameId: true;
   gameId: string;
   onGameIdChange: (gameId: string) => void;
 }
 
-interface EnterGameFormWithoutGameIdProps extends EnterGameFormBaseProps {
-  withGameId: false;
-  gameId?: never;
-  onGameIdChange?: never;
-}
-
-type EnterGameFormProps =
-  | EnterGameFormWithGameIdProps
-  | EnterGameFormWithoutGameIdProps;
-
-export const EnterGameForm: React.FC<EnterGameFormProps> = ({
+export const EnterGameForm = ({
   gameId,
   onGameIdChange,
   onJoinGame,
   buttonLabel,
-  withGameId,
   buttonDisabled,
-}) => {
+}: EnterGameFormProps) => {
   const { t } = useTranslation();
   const { isMobile } = useBreakpoints();
   const styles = isMobile ? mobileFormStyles : desktopFormStyles;
+  
+  const [validationError, setValidationError] = useState<string | null>(null);
 
-  const handleJoinGame = (gameId: string | undefined) => {
-    if (gameId) {
-      onJoinGame(gameId);
-    }
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+  const debouncedValidate = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return (value: string) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          if (value && value.trim()) {
+            if (!uuidRegex.test(value.trim())) {
+              setValidationError(t("game.invalidGameId"));
+            } else {
+              setValidationError(null);
+            }
+          } else {
+            setValidationError(null);
+          }
+        }, 500); 
+      };
+    })(),
+    [t]
+  );
+
+  useEffect(() => {
+    debouncedValidate(gameId);
+  }, [gameId, debouncedValidate]);
+
+  const handleJoinGame = (gameId: string) => {
+    onJoinGame(gameId.trim());
   };
 
   const handlePasteFromClipboard = async () => {
@@ -81,90 +91,85 @@ export const EnterGameForm: React.FC<EnterGameFormProps> = ({
         onGameIdChange(text.trim());
       }
     } catch (err) {
-      console.log("Failed to read clipboard");
+      console.error("Failed to read clipboard");
     }
   };
 
+  const isButtonDisabled = !gameId?.trim() || !!buttonDisabled || !!validationError;
+
   return (
     <Box sx={styles.container}>
-      {withGameId && (
-        <Box>
-          <Text
-            variant="body2"
-            color="secondary"
-            weight="medium"
-            sx={styles.description}
-          >
-            {t("game.enterGameIdDescription")}
-          </Text>
-          <Input
-            fullWidth
-            label={t("game.gameIdLabel")}
-            placeholder={t("game.gameIdPlaceholder")}
-            value={gameId}
-            onChange={(e) => onGameIdChange(e.target.value.trim())}
-            autoFocus
-            startIcon={<GameIcon />}
-            endIcon={
-              <Tooltip title={t("common.pasteFromClipboard")}>
-                <IconButton
-                  size="small"
-                  onClick={handlePasteFromClipboard}
-                  sx={{
-                    color: "var(--text-muted)",
-                    "&:hover": {
-                      color: "var(--primary-600)",
-                    },
-                  }}
-                >
-                  <CopyIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            }
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                backgroundColor: "var(--bg-elevated)",
-                "&:hover": {
-                  backgroundColor: "var(--bg-primary)",
-                },
-                "&.Mui-focused": {
-                  backgroundColor: "var(--bg-primary)",
-                },
+      <Box>
+        <Text
+          variant="body2"
+          color="secondary"
+          weight="medium"
+          sx={styles.description}
+        >
+          {t("game.enterGameIdDescription")}
+        </Text>
+        <Input
+          fullWidth
+          label={t("game.gameIdLabel")}
+          placeholder={t("game.gameIdPlaceholder")}
+          value={gameId}
+          onChange={(e) => onGameIdChange(e.target.value.trim())}
+          autoFocus
+          error={!!validationError}
+          helperText={validationError || undefined}
+          startIcon={<GameIcon />}
+          endIcon={
+            <Tooltip title={t("common.pasteFromClipboard")}>
+              <IconButton
+                size="small"
+                onClick={handlePasteFromClipboard}
+                sx={{
+                  color: "var(--text-muted)",
+                  "&:hover": {
+                    color: "var(--primary-600)",
+                  },
+                }}
+              >
+                <CopyIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          }
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              backgroundColor: "var(--bg-elevated)",
+              "&:hover": {
+                backgroundColor: "var(--bg-primary)",
               },
-            }}
-          />
-        </Box>
-      )}
+              "&.Mui-focused": {
+                backgroundColor: "var(--bg-primary)",
+              },
+            },
+          }}
+        />
+      </Box>
 
       <Button
-        fullWidth={isMobile} // На мобильном fullWidth, на десктопе - нет
+        fullWidth={isMobile}
         size="large"
-        disabled={!gameId || buttonDisabled}
+        disabled={isButtonDisabled}
         onClick={() => handleJoinGame(gameId)}
         startIcon={<LoginIcon />}
         gradient
         sx={{
           ...styles.button,
-          // Ограничиваем ширину при disabled состоянии на десктопе
-          ...((!gameId || buttonDisabled) && !isMobile && {
-            maxWidth: 220,
-            minWidth: 180,
-          }),
+          ...(isButtonDisabled &&
+            !isMobile && {
+              maxWidth: 220,
+              minWidth: 180,
+            }),
         }}
       >
         {buttonLabel}
       </Button>
 
-      {withGameId && (
-        <Text 
-          variant="caption" 
-          color="muted" 
-          align="center" 
-          sx={styles.hint}
-        >
-          {t("game.shareGameIdHint")}
-        </Text>
-      )}
+      <Text variant="caption" color="muted" align="center" sx={styles.hint}>
+        {t("game.shareGameIdHint")}
+      </Text>
     </Box>
   );
 };

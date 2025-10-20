@@ -1,14 +1,13 @@
-import React from "react";
 import { Box, IconButton } from "@mui/material";
 import { ArrowBack as ArrowBackIcon } from "@mui/icons-material";
 import { Text } from "@/shared/ui";
 
-interface MobileHeaderProps {
+interface JoinGameHeaderProps {
   title: string;
   onBack: () => void;
 }
 
-export const MobileHeader: React.FC<MobileHeaderProps> = ({ title, onBack }) => (
+export const JoinGameHeader = ({ title, onBack }: JoinGameHeaderProps) => (
   <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
     <IconButton
       onClick={onBack}

@@ -33,6 +33,7 @@
     "gameIdLabel": "Game ID",
     "gameIdPlaceholder": "Enter game ID (e.g. abc123)",
     "enterGameIdDescription": "Enter the Game ID shared by your friend to join their game",
+    "invalidGameId": "Game ID must be in UUID format",
     "shareGameIdHint": "Ask your friend to share their Game ID with you",
     "leave": "Leave",
     "loading": "Loading game...",
@@ -108,7 +109,8 @@
     "viewOnGitHub": "View on GitHub",
     "logout": "Logout",
     "theme": "Theme",
-    "language": "Language"
+    "language": "Language",
+    "unknownError": "Unknown error"
   },
   "actions": {
     "goHome": "Go home"

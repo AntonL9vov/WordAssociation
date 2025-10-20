@@ -60,9 +60,14 @@ export class ApiService {
       return schema ? schema.parse(data) : data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(
-          `API Error: ${error.response?.status || "Unknown"} - ${error.message}`
-        );
+        const data = error.response?.data as unknown;
+        const serverMessage =
+          (typeof data === "string" ? data : (data as { message?: string; error?: string } | undefined)?.message) ||
+          (typeof data === "object" && data !== null
+            ? (data as { error?: string }).error
+            : undefined);
+        const fallback = `API Error: ${error.response?.status || "Unknown"} - ${error.message}`;
+        throw new Error(serverMessage || fallback);
       }
       throw new Error(`Error with ${endpoint} - ${error}`);
     }
@@ -98,9 +103,14 @@ export class ApiService {
       return schema ? schema.parse(responseData) : responseData;
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        throw new Error(
-          `API Error: ${error.response?.status || "Unknown"} - ${error.message}`
-        );
+        const data = error.response?.data as unknown;
+        const serverMessage =
+          (typeof data === "string" ? data : (data as { message?: string; error?: string } | undefined)?.message) ||
+          (typeof data === "object" && data !== null
+            ? (data as { error?: string }).error
+            : undefined);
+        const fallback = `API Error: ${error.response?.status || "Unknown"} - ${error.message}`;
+        throw new Error(serverMessage || fallback);
       }
       throw new Error(`Error with ${endpoint} - ${error}`);
     }

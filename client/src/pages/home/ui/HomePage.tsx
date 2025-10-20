@@ -1,6 +1,5 @@
-import { EnterGame } from "@/widgets";
-import "./style.css";
-import { useEffect } from "react";
+import { EnterGame, LoadingState } from "@/widgets";
+import { useEffect, useState } from "react";
 import { isPlayerInGame } from "../api/api";
 import { useAuth } from "@/shared/context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -10,19 +9,25 @@ export const HomePage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const setGame = useGameStore((state) => state.setGame);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
-      isPlayerInGame(user.id).then((response) => {
-        if (response) {
-          setGame(response);
-          navigate("/game");
-        }
-      });
+      setIsLoading(true);
+      isPlayerInGame(user.id)
+        .then((response) => {
+          if (response) {
+            setGame(response);
+            navigate("/game");
+          }
+        })
+        .finally(() => setIsLoading(false));
     }
-  }, [user]);
+  }, [user?.id]);
 
-  return (
+  return isLoading ? (
+    <LoadingState />
+  ) : (
     <div className="home-page">
       <EnterGame />
     </div>

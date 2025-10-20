@@ -33,6 +33,7 @@
     "gameIdLabel": "ID игры",
     "gameIdPlaceholder": "Введите ID игры (например abc123)",
     "enterGameIdDescription": "Введите ID игры, которым поделился ваш друг, чтобы присоединиться к его игре",
+    "invalidGameId": "ID игры должен быть в формате UUID",
     "shareGameIdHint": "Попросите друга поделиться с вами ID игры",
     "leave": "Покинуть",
     "loading": "Загрузка игры...",
@@ -108,7 +109,8 @@
     "viewOnGitHub": "Посмотреть на GitHub",
     "logout": "Выйти",
     "theme": "Тема",
-    "language": "Язык"
+    "language": "Язык",
+    "unknownError": "Неизвестная ошибка"
   },
   "actions": {
     "goHome": "На главную"
