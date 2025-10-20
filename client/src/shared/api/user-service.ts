@@ -32,19 +32,6 @@ export class UserService {
     }
   }
 
-  // Создать нового пользователя
-  async createUser(name: string): Promise<User> {
-    try {
-      const response = await this.apiService.post<{ user: User }>("/users", {
-        name,
-      });
-      return response.user;
-    } catch (error) {
-      console.error("Error creating user:", error);
-      throw error;
-    }
-  }
-
   // Обновить пользователя
   async updateUser(id: string, name: string): Promise<User> {
     try {

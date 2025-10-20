@@ -67,8 +67,8 @@ export const AuthFormFields: React.FC<AuthFormFieldsProps> = ({
         size="large"
         disabled={!playerName.trim() || isLoading}
         loading={isLoading}
-        gradient
         startIcon={<PlayIcon />}
+        gradient
         onClick={onSubmit}
         sx={{
           py: 1.5,

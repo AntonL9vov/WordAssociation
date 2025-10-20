@@ -16,15 +16,16 @@ export const AuthFormFeatures = ({ features }: AuthFormFeaturesProps) => {
         justifyContent: "center",
       }}
     >
-      {features.map((feature, index) => (
+      {features.map((feature) => (
         <Feature
-          key={index}
+          key={feature}
           label={feature}
           size="small"
-          icon={<SparkleIcon sx={{ fontSize: "16px !important" }} />}
+          icon={<SparkleIcon />}
           color="var(--accent-100)"
           textColor="var(--accent-700)"
           iconColor="var(--accent-600)"
+          fontSize="14px"
           style={{
             fontWeight: "medium",
           }}

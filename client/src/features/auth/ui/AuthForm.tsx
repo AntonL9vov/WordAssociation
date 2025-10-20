@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AuthFormFields, AuthFormFeatures } from "@/entities";
-import { Text } from "@/shared/ui";
 import { Box } from "@mui/material";
 import { User } from "@/shared/lib/types";
 

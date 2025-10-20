@@ -8,6 +8,7 @@ interface FeatureProps {
   iconColor: string;
   style: React.CSSProperties;
   size: "small" | "medium";
+  fontSize: string;
 }
 
 export const Feature = ({
@@ -18,7 +19,8 @@ export const Feature = ({
   iconColor,
   style,
   size,
-}: FeatureProps) => {
+  fontSize,
+}: Partial<FeatureProps>) => {
   return (
     <Chip
       label={label}
@@ -30,6 +32,9 @@ export const Feature = ({
         fontWeight: "medium",
         "& .MuiChip-icon": {
           color: iconColor,
+        },
+        "& .MuiChip-label": {
+          fontSize: fontSize,
         },
         ...style,
       }}
