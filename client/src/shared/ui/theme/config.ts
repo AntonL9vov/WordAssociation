@@ -95,7 +95,7 @@ export const createMuiTheme = (isDark: boolean): Theme => {
               transform: "translateY(0)",
               boxShadow: "var(--shadow-sm)",
             },
-            color: "var(--text-primary)",
+            color: "#f8fafc",
           },
           containedPrimary: {
             background:
