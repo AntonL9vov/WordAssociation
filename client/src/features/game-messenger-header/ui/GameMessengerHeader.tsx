@@ -4,16 +4,21 @@ import { Box, Stack, Typography } from "@mui/material";
 import { Chat as ChatIcon } from "@mui/icons-material";
 import { Game } from "@/shared";
 
-type GameStatus = Game["status"];
+interface GameMessengerHeaderProps {
+  gameStatus?: Game["status"];
+}
 
-// Separated style objects for clean mobile optimization
 const desktopHeaderStyles = {
   container: {
     p: 2,
     backgroundColor: "var(--bg-elevated)",
     borderBottom: "1px solid var(--border-primary)",
   },
-  titleStack: { direction: "row" as const, alignItems: "center" as const, spacing: 1 },
+  titleStack: {
+    direction: "row" as const,
+    alignItems: "center" as const,
+    spacing: 1,
+  },
 };
 
 const mobileHeaderStyles = {
@@ -22,18 +27,20 @@ const mobileHeaderStyles = {
     backgroundColor: "var(--bg-elevated)",
     borderBottom: "1px solid var(--border-primary)",
   },
-  titleStack: { direction: "column" as const, alignItems: "flex-start" as const, spacing: 0.5 },
+  titleStack: {
+    direction: "column" as const,
+    alignItems: "flex-start" as const,
+    spacing: 0.5,
+  },
 };
 
 export const GameMessengerHeader = ({
   gameStatus,
-}: {
-  gameStatus?: GameStatus;
-}) => {
+}: GameMessengerHeaderProps) => {
   const { t } = useTranslation();
   const { isMobile } = useBreakpoints();
   const styles = isMobile ? mobileHeaderStyles : desktopHeaderStyles;
-  
+
   return (
     <Box sx={styles.container}>
       <Stack {...styles.titleStack}>

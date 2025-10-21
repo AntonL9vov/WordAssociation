@@ -1,93 +1,85 @@
 import { useRef, useEffect } from "react";
-import { useGameStore } from "@/shared/stores/game-store";
-import { onGameRoundFinished } from "../api/listeners";
-import { useSocketStore } from "@/shared/stores/socket-store";
 import { Box, Typography } from "@mui/material";
-import { RoundStatus } from "@/entities";
-import { GameRounds } from "@/entities";
-import { GameHistoryHeader } from "@/entities";
-import { EmptyHistory } from "./EmptyHistory";
 import { useTranslation } from "react-i18next";
+import { useShallow } from "zustand/react/shallow";
+import { useGameStore, useSocketStore } from "@/shared";
+import { RoundStatus, GameRounds, GameHistoryHeader } from "@/entities";
+import { onGameRoundFinished } from "../api/listeners";
+
+const BoxStyles = {
+  flex: 1,
+  overflowY: "auto",
+  p: 2,
+  display: "flex",
+  flexDirection: "column",
+  gap: 2,
+  minHeight: 0,
+  scrollBehavior: "smooth",
+  "&::-webkit-scrollbar": {
+    width: 6,
+  },
+  "&::-webkit-scrollbar-track": {
+    backgroundColor: "var(--bg-tertiary)",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "var(--border-secondary)",
+    borderRadius: 3,
+    "&:hover": {
+      backgroundColor: "var(--border-primary)",
+    },
+  },
+  scrollbarWidth: "thin",
+  scrollbarColor: "var(--border-secondary) var(--bg-tertiary)",
+};
 
 export const MessengerHistory = () => {
-  const historyRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const socket = useSocketStore((state) => state.socket);
-  const setGame = useGameStore((state) => state.setGame);
-  const game = useGameStore((state) => state.game);
-  const startWord = useGameStore((state) => state.game?.startWord);
   const { t } = useTranslation();
 
+  const { setGame, gameStatus, startWord, rounds } = useGameStore(
+    useShallow((state) => ({
+      setGame: state.setGame,
+      gameStatus: state.game?.status,
+      startWord: state.game?.startWord,
+      rounds: state.game?.rounds ?? [],
+    }))
+  );
+
   useEffect(() => {
-    if (!socket) {
-      return;
-    }
+    if (!socket) return;
+
     const cleanup = onGameRoundFinished(setGame, socket);
 
-    return () => {
-      cleanup();
-    };
+    return cleanup;
   }, [socket, setGame]);
 
-  const history = useGameStore((state) => state.game?.rounds || []);
-
   useEffect(() => {
-    if (historyRef.current && historyRef.current.scrollHeight > 0) {
-      try {
-        historyRef.current.scrollTop = historyRef.current.scrollHeight;
-      } catch (error) {
-        console.warn("Failed to scroll to bottom:", error);
-      }
-    }
-  }, [history]);
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [rounds]);
 
   return (
-    <Box
-      ref={historyRef}
-      data-testid="messenger-history"
-      sx={{
-        flex: 1,
-        overflowY: "auto",
-        p: 2,
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
-        minHeight: 0,
-        scrollBehavior: "smooth",
-        "&::-webkit-scrollbar": {
-          width: "6px",
-        },
-        "&::-webkit-scrollbar-track": {
-          backgroundColor: "var(--bg-tertiary)",
-          borderRadius: "3px",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          backgroundColor: "var(--border-secondary)",
-          borderRadius: "3px",
-          "&:hover": {
-            backgroundColor: "var(--border-primary)",
-          },
-        },
-      }}
-    >
+    <Box data-testid="messenger-history" sx={BoxStyles}>
       {startWord && (
-        <Typography variant="h6" sx={{ textAlign: "center" }}>
-          {t('messenger.startWord')}: {startWord}
+        <Typography
+          variant="h6"
+          sx={{
+            textAlign: "center",
+            wordBreak: "break-word",
+            whiteSpace: "pre-wrap",
+          }}
+        >
+          {t("messenger.startWord")}: {startWord}
         </Typography>
       )}
 
-      {history.length === 0 ? (
-        <EmptyHistory gameStatus={game?.status} />
-      ) : (
-        <>
-          <GameHistoryHeader roundNumber={history.length} />
+      <GameHistoryHeader roundNumber={rounds.length} />
 
-          <GameRounds history={history} />
+      <GameRounds history={rounds} />
 
-          {game?.status === "started" && (
-            <RoundStatus roundNumber={history.length} />
-          )}
-        </>
-      )}
+      {gameStatus === "started" && <RoundStatus roundNumber={rounds.length} />}
+
+      <div ref={scrollRef} />
     </Box>
   );
 };

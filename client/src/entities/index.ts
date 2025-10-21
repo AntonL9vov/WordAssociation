@@ -16,3 +16,4 @@ export { GameStatusAlert } from "./game-status-alert";
 export { RoundStatus } from "./round-status";
 export { GameHistoryHeader } from "./game-history-header";
 export { GameRounds } from "./game-rounds";
+export { GameContent } from "./game-content";

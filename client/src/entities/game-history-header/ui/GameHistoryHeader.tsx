@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { Box, Divider, Typography } from "@mui/material";
 import { History as HistoryIcon } from "@mui/icons-material";
 
@@ -21,7 +21,7 @@ export const GameHistoryHeader = ({ roundNumber }: GameHistoryHeaderProps) => {
         }}
       >
         <HistoryIcon fontSize="small" />
-{t('game.gameRounds')} ({roundNumber})
+        {t("game.gameRounds")} ({roundNumber})
       </Typography>
       <Divider sx={{ mt: 1 }} />
     </Box>

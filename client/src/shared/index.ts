@@ -10,6 +10,8 @@ export { Logo } from "./ui/Logo";
 export { Card } from "./ui/Card";
 export { Container } from "./ui/Container";
 export { Text } from "./ui/Text";
+export { useGameStore } from "./stores/game-store";
+export { useSocketStore } from "./stores/socket-store";
 
 // API
 export { api } from "./api/api";

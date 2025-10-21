@@ -7,6 +7,8 @@ import { useSocketStore } from "@/shared/stores/socket-store";
 import { useGameStore } from "@/shared/stores/game-store";
 import { useAuth } from "@/shared/context/AuthContext";
 import { Box, Paper, Divider } from "@mui/material";
+import { Game } from "@/shared/lib/types";
+import { SocketService } from "@/shared/api/socket";
 
 // Separated style objects for clean mobile optimization
 const desktopMessengerStyles = {
@@ -41,6 +43,12 @@ const mobileMessengerStyles = {
   },
 };
 
+const canSendMessage = (
+  game: Game | null,
+  userId: string | undefined,
+  socket: SocketService | null
+) => socket && game && userId && !game.playersEmittedWords[userId];
+
 export const GameMessenger: React.FC = () => {
   const socket = useSocketStore((state) => state.socket);
   const game = useGameStore((state) => state.game);
@@ -48,14 +56,12 @@ export const GameMessenger: React.FC = () => {
   const { isMobile } = useBreakpoints();
   const styles = isMobile ? mobileMessengerStyles : desktopMessengerStyles;
 
+
   const handleSend = (message: string) => {
-    if (!socket || !game || !user) {
-      return;
+    const userId = user?.id;
+    if (canSendMessage(game, userId, socket)) {
+      sendMessage(message, game!.id, userId!, socket!);
     }
-    if (game.playersEmittedWords[user.id]) {
-      return;
-    }
-    sendMessage(message, game.id, user.id, socket);
   };
 
   return (

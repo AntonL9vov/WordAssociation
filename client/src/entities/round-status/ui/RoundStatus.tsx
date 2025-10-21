@@ -1,11 +1,14 @@
 import { useTranslation } from "react-i18next";
 import { Box, Typography, Zoom } from "@mui/material";
 import { PlayArrow as PlayIcon } from "@mui/icons-material";
+interface RoundStatusProps {
+  roundNumber: number;
+}
 
-export const RoundStatus = ({ roundNumber }: { roundNumber: number }) => {
+export const RoundStatus = ({ roundNumber }: RoundStatusProps) => {
   const { t } = useTranslation();
   return (
-    <Zoom in timeout={400}>
+    <Zoom in timeout={{ enter: 400, exit: 200 }} unmountOnExit appear>
       <Box
         sx={{
           p: 2,
@@ -18,16 +21,18 @@ export const RoundStatus = ({ roundNumber }: { roundNumber: number }) => {
       >
         <Typography
           variant="body2"
-          sx={{
-            color: "var(--primary-700)",
-            fontWeight: "medium",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 1,
-          }}
+          fontWeight={500}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          gap={1}
+          color="var(--primary-700)"
         >
-          <PlayIcon fontSize="small" />
+          <PlayIcon
+            fontSize="small"
+            sx={{ color: "var(--primary-600)", mr: 0.5 }}
+            aria-hidden
+          />{" "}
           {t("messenger.round")} {roundNumber} -{" "}
           {t("messenger.waitingForWords")}
         </Typography>

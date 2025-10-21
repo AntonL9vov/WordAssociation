@@ -3,7 +3,6 @@ import { Fade } from "@mui/material";
 import { Round } from "@/shared";
 import { GameRound } from "@/entities";
 import { useGameStore } from "@/shared/stores/game-store";
-import { useEffect, useState } from "react";
 
 interface GameRoundsProps {
   history: Round[];
@@ -11,13 +10,7 @@ interface GameRoundsProps {
 
 export const GameRounds = ({ history }: GameRoundsProps) => {
   const game = useGameStore((state) => state.game);
-  const [isTheLastRound, setIsTheLastRound] = useState(false);
-
-  useEffect(() => {
-    if (game?.status === "finished") {
-      setIsTheLastRound(true);
-    }
-  }, [game?.rounds, history]);
+  const isTheLastRound = game?.status === "finished";
 
   return (
     <>
@@ -25,14 +18,17 @@ export const GameRounds = ({ history }: GameRoundsProps) => {
         <Fade
           key={round.id}
           in
-          timeout={300}
+          timeout={{ enter: 300, exit: 150 }}
           style={{ transitionDelay: `${index * 50}ms` }}
+          unmountOnExit
+          appear
         >
           <Box>
             <GameRound
+              key={round.id}
               messages={round.words}
               roundNumber={index + 1}
-              isTheLastRound={history.length - 1 === index && isTheLastRound}
+              isTheLastRound={index === history.length - 1 && isTheLastRound}
             />
           </Box>
         </Fade>

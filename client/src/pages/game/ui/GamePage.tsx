@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useGameStore } from "@/shared/stores/game-store";
 import { useSocket } from "@/shared/hooks/useSocket";
-import { GameHeader } from "@/entities/game-header";
-import { GameStatusAlert } from "@/entities/game-status-alert";
-import { GameContent } from "@/features";
+import { GameHeader } from "@/entities";
+import { GameStatusAlert } from "@/entities";
+import { GameContent } from "@/entities";
 import { LoadingState } from "@/widgets/loading-state";
 import { initGameListeners, onGameWordEmitted } from "../api/gameListeners";
 import { Box, Fade } from "@mui/material";
@@ -18,30 +18,32 @@ export const GamePage: React.FC = () => {
   const setGame = useGameStore((state) => state.setGame);
   const clearGame = useGameStore((state) => state.clearGame);
   const gameStatus = useGameStore((state) => state.game?.status);
-  const setPlayersEmittedWords = useGameStore((state) => state.setPlayersEmittedWords);
-  
-  // Use the new socket hook
+  const setPlayersEmittedWords = useGameStore(
+    (state) => state.setPlayersEmittedWords
+  );
+
   const { socket, isConnected } = useSocket(game?.id);
 
-  // Redirect if no game
   useEffect(() => {
     if (!game) {
       navigate("/");
     }
   }, [game, navigate]);
 
-  // Set up socket listeners when socket is connected
   useEffect(() => {
     if (!socket || !isConnected || !game) {
       return;
     }
 
-    const cleanup1 = initGameListeners(setGame, socket);
-    const cleanup2 = onGameWordEmitted(setPlayersEmittedWords, socket);
+    const cleanupGameUpdateSockets = initGameListeners(setGame, socket);
+    const cleanupGameWordSockets = onGameWordEmitted(
+      setPlayersEmittedWords,
+      socket
+    );
 
     return () => {
-      cleanup1();
-      cleanup2();
+      cleanupGameUpdateSockets();
+      cleanupGameWordSockets();
     };
   }, [socket, isConnected, game?.id, setGame, setPlayersEmittedWords]);
 
@@ -49,9 +51,13 @@ export const GamePage: React.FC = () => {
     if (!game) {
       return;
     }
-    const response = await leaveGame(game.id, game.players[0].id);
-    if (response) {
-      clearGame();
+    try {
+      const response = await leaveGame(game.id, game.players[0].id);
+      if (response) {
+        clearGame();
+      }
+    } catch (error) {
+      console.error("Error leaving game:", error);
     }
   };
 
@@ -59,14 +65,18 @@ export const GamePage: React.FC = () => {
     if (!game) {
       return;
     }
-    const response = await restartGame(game.id);
-    if (response) {
-      clearGame();
+    try {
+      const response = await restartGame(game.id);
+      if (response) {
+        clearGame();
+      }
+    } catch (error) {
+      console.error("Error restarting game:", error);
     }
   };
 
   if (!game || !gameStatus) {
-    return <LoadingState message={t('game.loading')} />;
+    return <LoadingState message={t("game.loading")} />;
   }
 
   return (

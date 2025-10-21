@@ -1,23 +1,29 @@
 import { Game } from "@/shared/lib/types";
 import { SocketService } from "@/shared/api/socket";
 
-const GAME_EVENTS = {
-  PLAYERS_UPDATE: "game:players:updated", // Updated event name
-  GAME_START: "game:started", // Updated event name
-  GAME_FINISHED: "game:finished",
-  GAME_RESTART: "game:restart",
-};
+enum GAME_EVENTS {
+  PLAYERS_UPDATE = "game:players:updated",
+  GAME_START = "game:started",
+  GAME_FINISHED = "game:finished",
+  GAME_RESTART = "game:restart",
+}
 
 export const initGameListeners = (
   setGame: (game: Game) => void,
   socket: SocketService
 ) => {
   const callback = (game: Game) => {
-    setGame(game);
+    try {
+      setGame(game);
+    } catch (error) {
+      console.error("Error setting game:", error);
+    }
   };
 
   Object.values(GAME_EVENTS).forEach((event) => {
-    socket.on(event, callback);
+    if (socket.connected) {
+      socket.on(event, callback);
+    }
   });
 
   return () => {
@@ -28,14 +34,16 @@ export const initGameListeners = (
 };
 
 export const onGameWordEmitted = (
-  setPlayersEmittedWords: (playersEmittedWords: { [playerId: string]: string }) => void,
+  setPlayersEmittedWords: (playersEmittedWords: Record<string, string>) => void,
   socket: SocketService
 ) => {
-  const callback = (playersEmittedWords: { [playerId: string]: string }) => {
+  const callback = (playersEmittedWords: Record<string, string>) => {
     setPlayersEmittedWords(playersEmittedWords);
   };
 
-  socket.on("game:word", callback);
+  if (socket.connected) {
+    socket.on("game:word", callback);
+  }
 
   return () => {
     socket.off("game:word", callback);
