@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { User } from "@/shared/lib/types";
-import { userService } from "../api/user-service";
+import { api } from "../api/api";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -8,6 +8,20 @@ interface AuthContextType {
   login: (user: User) => void;
   logout: () => void;
 }
+
+interface UserResponse {
+  user: User;
+}
+
+const getUserById = async (id: string) => {
+  try {
+    const response = await api.get<UserResponse>(`/users/${id}`);
+    return response.user;
+  } catch (error) {
+    console.error("Failed to fetch user:", error);
+    return null;
+  }
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -37,8 +51,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (user) {
-      userService
-        .getUserById(user.id)
+      getUserById(user.id)
         .then((updatedUser) => {
           setUser(updatedUser);
         })
@@ -47,13 +60,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           try {
             localStorage.removeItem("user");
           } catch (storageError) {
-            console.error("Failed to remove user from localStorage:", storageError);
+            console.error(
+              "Failed to remove user from localStorage:",
+              storageError
+            );
           }
           console.error("Failed to fetch user:", error);
         });
     }
   }, [user?.id]);
-  
+
   const login = (user: User) => {
     if (!user) {
       console.error("Cannot login with null or undefined user");

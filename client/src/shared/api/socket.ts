@@ -9,41 +9,38 @@ export class SocketService {
 
   constructor(gameId: string) {
     this.gameId = gameId;
-    
+
     // Socket.IO configuration based on environment
     const socketConfig: any = {
       query: {
         gameId,
       },
-      transports: ['websocket', 'polling'], // Ensure fallback
+      transports: ["websocket", "polling"], // Ensure fallback
       timeout: 5000,
     };
-    
+
     this.socket = io(API_CONFIG.socketUrl, socketConfig);
-    
+
     // Create a promise that resolves when connected
     this.connectionPromise = new Promise((resolve) => {
       this.socket.on("connect", () => {
-        console.log("✅ Connected to server, socket ID:", this.socket.id);
         this.isConnected = true;
         resolve();
       });
     });
-    
+
     this.socket.on("disconnect", () => {
-      console.log("❌ Disconnected from server");
       this.isConnected = false;
     });
-    
-    this.socket.on("connect_error", (err) => {
-      console.log("🔴 Socket connect_error", err);
+
+    this.socket.on("connect_error", () => {
       this.isConnected = false;
     });
-    
-    // Log all events for debugging
-    this.socket.onAny((event: string, ...args: any[]) => {
-      console.log("🔥 Socket event received:", event, args);
-    });
+
+    // // Log all events for debugging
+    // this.socket.onAny((event: string, ...args: any[]) => {
+    //   console.log("🔥 Socket event received:", event, args);
+    // });
   }
 
   // Wait for connection before setting up listeners
@@ -52,7 +49,7 @@ export class SocketService {
       return Promise.resolve();
     }
     await this.connectionPromise;
-    
+
     // Auto-join room after connection is established
     await this.joinRoom();
   }
@@ -61,32 +58,30 @@ export class SocketService {
   private async joinRoom(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!this.connected) {
-        reject(new Error('Socket not connected'));
+        reject(new Error("Socket not connected"));
         return;
       }
 
       // Get user from auth context - we'll need to pass this
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
       if (!user.id) {
-        reject(new Error('No user found in localStorage'));
+        reject(new Error("No user found in localStorage"));
         return;
       }
 
       // Listen for successful room join
-      this.socket.once('game:room:joined', () => {
-        console.log('✅ Successfully joined game room');
+      this.socket.once("game:room:joined", () => {
         resolve();
       });
 
       // Listen for error
-      this.socket.once('game:room:join:error', (error: string) => {
-        console.error('❌ Failed to join room:', error);
+      this.socket.once("game:room:join:error", (error: string) => {
+        console.error("❌ Failed to join room:", error);
         reject(new Error(error));
       });
 
       // Emit join room event
-      this.socket.emit('game:join:room', this.gameId, user.id);
-      console.log('📤 Emitted game:join:room for gameId:', this.gameId, 'playerId:', user.id);
+      this.socket.emit("game:join:room", this.gameId, user.id);
     });
   }
 
@@ -107,7 +102,7 @@ export class SocketService {
     if (this.connected) {
       this.socket.emit(event, ...args);
     } else {
-      console.warn('⚠️ Attempted to emit while disconnected:', event);
+      console.warn("⚠️ Attempted to emit while disconnected:", event);
     }
   }
 
@@ -115,7 +110,7 @@ export class SocketService {
     if (this.connected) {
       this.socket.send(JSON.stringify({ event, data }));
     } else {
-      console.warn('⚠️ Attempted to send while disconnected:', event);
+      console.warn("⚠️ Attempted to send while disconnected:", event);
     }
   }
 

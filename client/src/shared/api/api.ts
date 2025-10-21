@@ -9,7 +9,6 @@ export class ApiService {
 
   constructor() {
     this.baseUrl = API_CONFIG.baseUrl;
-    console.log(this.baseUrl, API_CONFIG);
     this.axiosInstance = axios.create({
       baseURL: this.baseUrl,
       headers: {
