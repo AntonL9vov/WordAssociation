@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+} from "react";
 import { User } from "@/shared/lib/types";
 import { api } from "../api/api";
 
@@ -13,7 +19,7 @@ interface UserResponse {
   user: User;
 }
 
-const getUserById = async (id: string) => {
+const getUserById = async (id: string): Promise<User | null> => {
   try {
     const response = await api.get<UserResponse>(`/users/${id}`);
     return response.user;
@@ -24,6 +30,22 @@ const getUserById = async (id: string) => {
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const saveUserToStorage = (user: User) => {
+  try {
+    localStorage.setItem("user", JSON.stringify(user));
+  } catch (err) {
+    console.error("Failed to save user:", err);
+  }
+};
+
+const removeUserFromStorage = () => {
+  try {
+    localStorage.removeItem("user");
+  } catch (err) {
+    console.error("Failed to remove user:", err);
+  }
+};
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -44,60 +66,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return storedUser ? JSON.parse(storedUser) : null;
     } catch (error) {
       console.error("Failed to parse user from localStorage:", error);
-      localStorage.removeItem("user");
+      removeUserFromStorage();
       return null;
     }
   });
 
   useEffect(() => {
-    if (user) {
-      getUserById(user.id)
-        .then((updatedUser) => {
-          setUser(updatedUser);
-        })
-        .catch((error) => {
+    let isMounted = true;
+
+    const fetchUser = async () => {
+      if (!user?.id) return;
+      try {
+        const updatedUser = await getUserById(user.id);
+        if (isMounted && updatedUser) setUser(updatedUser);
+      } catch (error) {
+        if (isMounted) {
           setUser(null);
-          try {
-            localStorage.removeItem("user");
-          } catch (storageError) {
-            console.error(
-              "Failed to remove user from localStorage:",
-              storageError
-            );
-          }
-          console.error("Failed to fetch user:", error);
-        });
-    }
+          removeUserFromStorage();
+          console.error(error);
+        }
+      }
+    };
+
+    fetchUser();
+
+    return () => {
+      isMounted = false;
+    };
   }, [user?.id]);
 
-  const login = (user: User) => {
-    if (!user) {
-      console.error("Cannot login with null or undefined user");
-      return;
-    }
-    setUser(user);
-    try {
-      localStorage.setItem("user", JSON.stringify(user));
-    } catch (error) {
-      console.error("Failed to save user to localStorage:", error);
-    }
+  const login = (newUser: User) => {
+    setUser(newUser);
+    saveUserToStorage(newUser);
   };
 
   const logout = () => {
     setUser(null);
-    try {
-      localStorage.removeItem("user");
-    } catch (error) {
-      console.error("Failed to remove user from localStorage:", error);
-    }
+    removeUserFromStorage();
   };
 
-  const value: AuthContextType = {
-    isAuthenticated: !!user,
-    user,
-    login,
-    logout,
-  };
+  const value: AuthContextType = useMemo(
+    () => ({
+      isAuthenticated: !!user,
+      user,
+      login,
+      logout,
+    }),
+    [user]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
