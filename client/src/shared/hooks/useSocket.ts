@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { SocketService } from '../api/socket';
 import { useSocketStore } from '../stores/socket-store';
 
-export const useSocket = (gameId: string | undefined) => {
+export const useSocket = (gameId: string | undefined, userId: string | undefined) => {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const socketRef = useRef<SocketService | null>(null);
   const setSocket = useSocketStore((state) => state.setSocket);
 
   useEffect(() => {
-    if (!gameId) {
+    if (!gameId || !userId) {
       return;
     }
 
@@ -24,7 +24,7 @@ export const useSocket = (gameId: string | undefined) => {
         }
 
         // Create new socket
-        const newSocket = new SocketService(gameId);
+        const newSocket = new SocketService(gameId, userId);
         socketRef.current = newSocket;
         setSocket(newSocket);
 

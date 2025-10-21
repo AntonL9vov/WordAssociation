@@ -6,9 +6,12 @@ export class SocketService {
   private isConnected: boolean = false;
   private connectionPromise: Promise<void>;
   private gameId: string;
+  private hasJoinedRoom: boolean = false;
+  private userId: string;
 
-  constructor(gameId: string) {
+  constructor(gameId: string, userId: string) {
     this.gameId = gameId;
+    this.userId = userId;
 
     // Socket.IO configuration based on environment
     const socketConfig: any = {
@@ -22,10 +25,20 @@ export class SocketService {
     this.socket = io(API_CONFIG.socketUrl, socketConfig);
 
     // Create a promise that resolves when connected
-    this.connectionPromise = new Promise((resolve) => {
-      this.socket.on("connect", () => {
+    this.connectionPromise = new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error("Socket connection timeout"));
+      }, 5000);
+
+      this.socket.once("connect", () => {
         this.isConnected = true;
+        clearTimeout(timeout);
         resolve();
+      });
+
+      this.socket.once("connect_error", (err) => {
+        clearTimeout(timeout);
+        reject(err);
       });
     });
 
@@ -45,13 +58,12 @@ export class SocketService {
 
   // Wait for connection before setting up listeners
   async waitForConnection(): Promise<void> {
-    if (this.isConnected) {
-      return Promise.resolve();
-    }
+    if (this.isConnected && this.hasJoinedRoom) return;
     await this.connectionPromise;
-
-    // Auto-join room after connection is established
-    await this.joinRoom();
+    if (!this.hasJoinedRoom) {
+      await this.joinRoom();
+      this.hasJoinedRoom = true;
+    }
   }
 
   // Join the game room
@@ -62,10 +74,8 @@ export class SocketService {
         return;
       }
 
-      // Get user from auth context - we'll need to pass this
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      if (!user.id) {
-        reject(new Error("No user found in localStorage"));
+      if (!this.userId) {
+        reject(new Error("No user id found"));
         return;
       }
 
@@ -81,7 +91,7 @@ export class SocketService {
       });
 
       // Emit join room event
-      this.socket.emit("game:join:room", this.gameId, user.id);
+      this.socket.emit("game:join:room", this.gameId, this.userId);
     });
   }
 
@@ -118,5 +128,7 @@ export class SocketService {
   disconnect() {
     this.socket.disconnect();
     this.isConnected = false;
+    this.socket.removeAllListeners();
+    this.hasJoinedRoom = false;
   }
 }

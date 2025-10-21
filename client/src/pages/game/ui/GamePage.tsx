@@ -10,19 +10,26 @@ import { LoadingState } from "@/widgets/loading-state";
 import { initGameListeners, onGameWordEmitted } from "../api/gameListeners";
 import { Box, Fade } from "@mui/material";
 import { leaveGame, restartGame } from "../api/http";
+import { useAuth } from "@/shared/context/AuthContext";
+import { useShallow } from "zustand/react/shallow";
 
 export const GamePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const game = useGameStore((state) => state.game);
-  const setGame = useGameStore((state) => state.setGame);
-  const clearGame = useGameStore((state) => state.clearGame);
-  const gameStatus = useGameStore((state) => state.game?.status);
-  const setPlayersEmittedWords = useGameStore(
-    (state) => state.setPlayersEmittedWords
-  );
+  const { game, setGame, clearGame, setPlayersEmittedWords, gameStatus } =
+    useGameStore(
+      useShallow((state) => ({
+        game: state.game,
+        setGame: state.setGame,
+        clearGame: state.clearGame,
+        setPlayersEmittedWords: state.setPlayersEmittedWords,
+        gameStatus: state.game?.status,
+      }))
+    );
 
-  const { socket, isConnected } = useSocket(game?.id);
+  const { user } = useAuth();
+
+  const { socket, isConnected } = useSocket(game?.id, user?.id ?? "");
 
   useEffect(() => {
     if (!game) {
