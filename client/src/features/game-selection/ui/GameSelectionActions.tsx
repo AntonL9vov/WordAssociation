@@ -26,6 +26,8 @@ export const GameSelectionActions: React.FC<GameSelectionActionsProps> = ({
         justifyContent: "center",
         width: "100%",
         maxWidth: "100%",
+        flexDirection: isMobile ? "column" : "row",
+        maxHeight: "100%"
       }}
     >
       <GameActionCard

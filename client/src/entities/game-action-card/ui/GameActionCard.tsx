@@ -34,17 +34,16 @@ const mobileCardStyles = {
   card: {
     flex: 1,
     maxWidth: "100%",
-    p: 2, // Reduced padding
   },
   icon: {
-    width: 48, // Smaller icon
+    width: 48,
     height: 48,
   },
   button: {
     py: 1.2,
     px: 2,
     fontSize: "0.9rem",
-    minHeight: 44, // Ensure touch-friendly size but smaller
+    minHeight: 44,
   },
 };
 

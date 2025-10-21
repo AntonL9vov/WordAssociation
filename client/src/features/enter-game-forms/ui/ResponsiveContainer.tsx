@@ -22,10 +22,10 @@ interface ResponsiveContainerProps {
   isMobile: boolean;
 }
 
-export const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
+export const ResponsiveContainer = ({
   children,
   isMobile,
-}) => (
+}: ResponsiveContainerProps) => (
   <Box sx={isMobile ? mobileContainerStyles : desktopContainerStyles}>
     {children}
   </Box>
